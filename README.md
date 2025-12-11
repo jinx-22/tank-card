@@ -1,5 +1,5 @@
 # Tank Card – Tank Fill Visualization
-*(Link to German version: [Deutsch](#tank-card-tankfüllstände-visualisierung-deutsch))*
+*(Link to German version: [Deutsch](#Tank-Card-–-Tank-Visualisierung-(Deutsch)))*
 
 **Version:** 0.2.1  
 **Description:** A Home Assistant custom card to visualize tank levels, total capacity, and consumption.  
@@ -153,7 +153,7 @@ Currently, only the YAML editor is supported in Home Assistant
 <img width="1797" height="2020" alt="tank-card-v 0 2 1" src="https://github.com/user-attachments/assets/97c8f236-a223-4e27-b61e-f272b85d1a18" />
 
 
-# Tank Card – Tankfüllstände Visualisierung (Deutsch)
+# Tank Card – Tank Visualisierung (Deutsch)
 
 **Version:** 0.2.1  
 **Beschreibung:** Eine Home Assistant Custom Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.  
