@@ -62,13 +62,13 @@ Depending on configuration, this custom card shows:
 
 ### Flexible Layout
 - Multiple tanks in a responsive row  
-- Customizable tank shapes and colors  
-- Font and background adjustments  
+- Customizable tank shapes and colors
+- Background adjustments  
 
 ### Display Options
 - Show/hide liters per tank  
 - Show/hide consumption  
-- Custom background and font  
+- Custom background
 
 ### Sensor Support
 - Consumption sensor  
@@ -106,8 +106,6 @@ The card is now selectable and visible in the GUI.
 | `liquid_type` | `'heizoel'` | string | Liquid type (heizoel, wasser, diesel, gas, orange, red, brown, blue, yellow) |
 | `tank_form` | `'rect'` | string | Tank shape (rect, capsule, pool) |
 | `bg_color` | `'rgba(0,0,0,0.3)'` | string | Card background color |
-| `font_family` | `'sans-serif'` | string | Font family |
-| `font_size` | `'1em'` | string | Font size |
 | `show_liters` | `true` | boolean | Show liters in tank |
 
 ---
@@ -124,8 +122,6 @@ consumption_sensor: sensor.heizoelverbrauch_brenner_gesamt_l
 liquid_type: heizoel
 tank_form: rect
 bg_color: 'rgba(0,0,0,0.4)'
-font_family: Arial, sans-serif
-font_size: 1em
 show_liters: true
 entities:
   - name: Tank 1
@@ -217,12 +213,12 @@ Diese Custom Card zeigt je nach Konfiguration:
 ### Flexibles Layout
 - Mehrere Tanks in einer responsiven Reihe  
 - Anpassbare Tankformen und Farben  
-- Schrift- und Hintergrundanpassung  
+- Hintergrundanpassung  
 
 ### Anzeigeoptionen
 - Literanzeige ein-/ausblendbar  
 - Verbrauchsanzeige ein-/ausblendbar  
-- Hintergrund und Schrift individuell einstellbar  
+- Hintergrund individuell einstellbar  
 
 ### Sensorunterstützung
 - Verbrauchssensor  
@@ -255,8 +251,6 @@ consumption_sensor: sensor.heizoelverbrauch_brenner_gesamt_l
 liquid_type: heizoel
 tank_form: rect
 bg_color: 'rgba(0,0,0,0.4)'
-font_family: Arial, sans-serif
-font_size: 1em
 show_liters: true
 entities:
   - name: Tank 1
@@ -277,8 +271,6 @@ entities:
 | `liquid_type` | `'heizoel'` | string | Flüssigkeitstyp |
 | `tank_form` | `'rect'` | string | Tankform (rect, capsule, pool) |
 | `bg_color` | `'rgba(0,0,0,0.3)'` | string | Hintergrundfarbe der Karte |
-| `font_family` | `'sans-serif'` | string | Schriftart |
-| `font_size` | `'1em'` | string | Schriftgröße |
 | `show_liters` | `true` | boolean | Literanzeige im Tank |
 
 ---
