@@ -1,49 +1,57 @@
 # Tank Card – Tank Fill Visualization
 *(Link to German version: [Deutsch](#deutsch))*
 
-**Version:** 0.2.1  
-**Description:** A Home Assistant custom card to visualize tank levels, total capacity, and consumption.  
-Ideal for heating oil, water, diesel, or other liquids.
+**Version:** 0.3.0  - What is NEW in this version → [Changelog](https://github.com/jinx-22/tank-card/blob/main/Changelog.md)
+
+---
+
+**Description:** A Home Assistant custom card to visualize tank fill levels, total capacity, and consumption using either consumption sensors or fill level sensors.  
+Ideal for heating oil, water, diesel, gas, pellets, wood chips, or other bulk materials.
 
 > **Note:**  
-> Fill levels are calculated based on initial fill minus consumption sensor.  
-> Liters and percentage values are displayed per tank.
+> Fill levels are calculated consistently based on the configured sensor mode:  
+> - Consumption sensor: `initial_fill - consumption`  
+> - Fill level sensor (L / kg / m³): absolute value  
+> - Fill level sensor (%): percentage of `initial_fill`  
+>  
+> Units and display behavior are fully configurable.
 
 ---
 
 ## Table of Contents
 1. [What does this card do?](#what-does-this-card-do)  
-2. [License](#license)
-3. [Screenshot](#screenshot)
+2. [License](#license)  
+3. [Screenshot](#screenshot)  
 4. [Features](#features)  
 5. [Installation](#manual-installation)  
 6. [Example Configuration](#example-configuration)  
-7. [All Configuration Options](#configuration-options)  
+7. [All Configuration Options](#all-configuration-options)  
 8. [Functionality](#functionality)  
-9. [Developer Notes](#developer-notes)
+9. [Developer Notes](#developer-notes)  
 
 ---
 
 ## What does this card do?
 
-Depending on configuration, this custom card shows:
+Depending on configuration, this custom card displays:
 
-- Multiple tanks with individual names  
-- Current fill per tank in liters and percent  
-- Total capacity and consumption  
-- Color-coded fill levels by liquid type (heating oil, water, diesel, gas, or custom)  
-- Customizable tank shapes: rectangle, capsule, pool  
-- Responsive layout for desktop and mobile  
+- One or multiple tanks with individual names  
+- Current fill level per tank  
+- System-wide fill level in absolute values and percent  
+- Total capacity and calculated consumption  
+- Support for liquids and bulk materials (e.g. pellets, wood chips)  
+- Color- and pattern-based fill visualization by material type  
+- Responsive layout for desktop and mobile dashboards  
 
 ---
 
 ## License
 
-**Creative Commons – CC BY-NC-SA 4.0**  
+**Creative Commons – CC BY-NC-SA 4.0**
 
-- Editing & modifying allowed  
+- Editing and modification allowed  
 - Non-commercial use only  
-- Share adaptations under same license  
+- Share adaptations under the same license  
 
 [Link to full license](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -51,28 +59,40 @@ Depending on configuration, this custom card shows:
 
 ## Features
 
-### Tank Visualization
-- Each tank shows current fill in liters and percent  
-- Gradient colors according to liquid type  
+### Tank Visualization 
+- Visual representation of one or more tanks  
+- Fill level displayed per tank and system-wide  
+- Material-specific colors and patterns  
 
-### Tank Information
-- Total capacity  
-- Current fill  
-- Consumption  
+### Supported Materials
+- Heating oil  
+- Water  
+- Diesel  
+- Gas  
+- Pellets   (<-NEW)
+- Wood chips  (<-NEW)
+- Custom colors  
 
-### Flexible Layout
-- Multiple tanks in a responsive row  
-- Customizable tank shapes and colors
-- Background adjustments  
-
-### Display Options
-- Show/hide liters per tank  
-- Show/hide consumption  
-- Custom background
+### Units
+- Liters (`L`)  
+- Kilograms (`kg`)  
+- Cubic meters (`m³`)  
 
 ### Sensor Support
 - Consumption sensor  
-- Optional multiple tanks with individual names  
+- Fill level sensor (absolute value)  
+- Fill level sensor (percentage)  
+- Sensor mode selectable via visual editor or YAML  
+
+### Visual Editor
+- Integrated Home Assistant visual editor (`ha-form`)  
+- Dynamic schema based on selected sensor mode    
+
+### Layout & Display Options
+- Adjustable tank shapes (rectangle, capsule, pool)  
+- Show or hide values per tank  
+- Configurable background and styling  
+- Responsive layout  
 
 ---
 
@@ -85,28 +105,11 @@ Depending on configuration, this custom card shows:
    - Three-dot menu  
    - Resources  
    - Add Resource  
-   - URL: **/local/tank-card.js**  
-     Type: **JavaScript Module**
-3. Reload browser (CTRL + F5)  
+   - URL: `/local/tank-card.js`  
+     Type: **JavaScript Module**  
+3. Reload the browser (CTRL + F5)  
 
-The card is now selectable and visible in the GUI.
-
----
-
-### Configuration Options
-
-| Option | Default | Type | Description |
-|--------|---------|------|-------------|
-| `type` | `'custom:tank-card'` | string | Card type |
-| `title` | `'Tank Card'` | string | Card title |
-| `tank_count` | `3` | number | Number of tanks |
-| `tank_capacity` | `1500` | number | Max capacity per tank (L) |
-| `initial_fill` | `tank_count*tank_capacity` | number | Initial fill in liters |
-| `consumption_sensor` | `''` | string | Consumption sensor entity |
-| `liquid_type` | `'heizoel'` | string | Liquid type (heizoel, wasser, diesel, gas, orange, red, brown, blue, yellow) |
-| `tank_form` | `'rect'` | string | Tank shape (rect, capsule, pool) |
-| `bg_color` | `'rgba(0,0,0,0.3)'` | string | Card background color |
-| `show_liters` | `true` | boolean | Show liters in tank |
+The card is now available in the card picker.
 
 ---
 
@@ -114,84 +117,115 @@ The card is now selectable and visible in the GUI.
 
 ```yaml
 type: custom:tank-card
-title: Meine Tanks
+title: Tank Card
 tank_count: 3
 tank_capacity: 1500
-initial_fill: 1200
-consumption_sensor: sensor.heizoelverbrauch_brenner_gesamt_l
-liquid_type: heizoel
+initial_fill: 4500
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+level_sensor: ""
+content_type: heating_oil
+unit: L
 tank_form: rect
 bg_color: 'rgba(0,0,0,0.4)'
-show_liters: true
+show_unittank: true
 entities:
   - name: Tank 1
   - name: Tank 2
   - name: Tank 3
 ```
 
-# Functionality
+## All Configuration Options
 
-Calculates current fill per tank: current_fill = initial_fill - consumption
+| Option               | Default                         | Type     | Description                                                                                   |
+|---------------------|---------------------------------|----------|-----------------------------------------------------------------------------------------------|
+| `type`              | `'custom:tank-card'`            | string   | Card type                                                                                     |
+| `title`             | `'Tank Card'`                   | string   | Card title                                                                                    |
+| `tank_count`        | `3`                             | number   | Number of tanks                                                                               |
+| `tank_capacity`     | `1500`                          | number   | Capacity per tank (L / kg / m³)                                                              |
+| `initial_fill`      | `tank_count * tank_capacity`    | number   | Initial system fill                                                                           |
+| `sensor_mode`       | `'consumption'`                 | string   | Sensor mode: `consumption`, `fill_level_l`, `fill_level_percent`                              |
+| `consumption_sensor`| `''`                            | string   | Consumption sensor (only if `sensor_mode: consumption`)                                       |
+| `level_sensor`      | `''`                            | string   | Fill level sensor (only if `sensor_mode: fill_level_l` or `fill_level_percent`)               |
+| `unit`              | `'L'`                           | string   | Unit: `L`, `kg`, `m3`                                                                         |
+| `tank_form`         | `'rect'`                        | string   | Tank shape: `rect`, `capsule`, `pool`                                                        |
+| `bg_color`          | `'rgba(0,0,0,0.3)'`             | string   | Card background color                                                                         |
+| `show_unittank`     | `true`                          | boolean  | Show value per tank (L / kg / m³)                                                            |
+| `content_type`      | `'heating_oil'`                 | string   | Material type: `heating_oil`, `water`, `diesel`, `gas`, `pellets`, `wood_chips`, colors      |
+| `entities`          | `[]`                            | list     | List of tanks with `name` field, e.g. `[ {name: "Tank 1"}, {name: "Tank 2"} ]`                |
 
-Divides current fill evenly among tanks
+---
 
-Displays fill as colored gradient
+## Functionality
+Calculates the current system fill based on selected sensor mode  
+Determines consumption relative to `initial_fill`  
+Distributes the fill evenly across all tanks  
+Visualizes fill level via height, color, and pattern  
 
-Responsive layout adjusts for multiple tanks
+## Developer Notes
+Compatible with Home Assistant visual editor and YAML editor  
+Frontend-only custom card, no backend integration required
 
-
-# Developer Notes
-
-Currently, only the YAML editor is supported in Home Assistant
 
 
 ## Screenshot
-<img width="1797" height="2020" alt="tank-card-v 0 2 1" src="https://github.com/user-attachments/assets/97c8f236-a223-4e27-b61e-f272b85d1a18" />
+<img width="1888" height="2016" alt="tank-card-v0 3 0" src="https://github.com/user-attachments/assets/680864ea-473d-4cb5-b0f6-1b60cd0848c9" />
+
 
 ## deutsch
-# Tank Card – Tank Visualisierung (Deutsch)
+# Tank Card – Tankfüllstands-Visualisierung
 
-**Version:** 0.2.1  
-**Beschreibung:** Eine Home Assistant Custom Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.  
-Ideal für Heizöl, Wasser, Diesel oder andere Flüssigkeiten.
+**Version:** 0.3.0 – **Neu in dieser Version** → [Changelog](https://github.com/jinx-22/tank-card/blob/main/Changelog.md)
 
-> Hinweis:  
-> Die Füllstände werden anhand des Initialfüllstands minus Verbrauchssensor berechnet.  
-> Literangaben und Prozentwerte werden pro Tank angezeigt.
+---
+
+## **Beschreibung:**  
+Eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.  
+Es können sowohl **Verbrauchssensoren** als auch **Füllstandssensoren** (absolut oder prozentual) verwendet werden.  
+Geeignet für Heizöl, Wasser, Diesel, Gas, Pellets, Hackschnitzel und andere Flüssigkeiten oder Schüttgüter.
+
+> **Hinweis:**  
+> Die Füllstandsberechnung erfolgt abhängig vom gewählten Sensormodus:  
+> - **Verbrauchssensor:** `initial_fill - consumption`  
+> - **Füllstandssensor (L / kg / m³):** absoluter Wert  
+> - **Füllstandssensor (%):** Prozentwert bezogen auf `initial_fill`  
+>  
+> Einheit und Anzeigeverhalten sind vollständig konfigurierbar.
 
 ---
 
 ## Inhaltsverzeichnis
-1. [Was macht die Karte?](#was-macht-die-karte)
-2. [Lizenz](#lizenz)
-3. [Screenshot](#screenshot)
-4. [Features](#features)
-5. [Installation (manuell)](#installation-manuell)
-6. [Beispiel-Konfiguration](#beispiel-konfiguration)
-7. [Alle Konfigurationsoptionen](#alle-konfigurationsoptionen)
-8. [Funktionsweise](#funktionsweise)
-9. [Entwicklerhinweise](#entwicklerhinweise)
+1. [Was macht diese Karte?](#was-macht-diese-karte)  
+2. [Lizenz](#lizenz)  
+3. [Screenshot](#screenshot)  
+4. [Features](#features)  
+5. [Installation](#installation-manuell)  
+6. [Beispiel-Konfiguration](#beispiel-konfiguration)  
+7. [Alle Konfigurationsoptionen](#alle-konfigurationsoptionen)  
+8. [Funktionsweise](#funktionsweise)  
+9. [Entwicklerhinweise](#entwicklerhinweise)  
 
 ---
 
-## Was macht die Karte?
+## Was macht diese Karte?
 
-Diese Custom Card zeigt je nach Konfiguration:
+Abhängig von der Konfiguration zeigt diese Custom Card:
 
-- Mehrere Tanks mit individuellen Namen  
-- Aktueller Füllstand in Litern und Prozent  
-- Gesamtkapazität und Verbrauch  
-- Farblich codierte Flüssigkeitsfüllstände nach Typ (Heizöl, Wasser, Diesel, Gas oder individuell)  
-- Anpassbare Tankformen: Rechteck, Kapsel, Pool  
-- Responsive Layout für Desktop und Mobilgeräte  
+- Einen oder mehrere Tanks mit individuellen Namen  
+- Aktuellen Füllstand pro Tank  
+- Gesamtsystem-Füllstand absolut und in Prozent  
+- Gesamtkapazität und berechneten Verbrauch  
+- Unterstützung für Flüssigkeiten und Schüttgüter (z. B. Pellets, Hackschnitzel)  
+- Farb- und musterbasierte Füllstandsdarstellung je Material  
+- Responsives Layout für Desktop- und Mobile-Dashboards  
 
 ---
 
 ## Lizenz
 
-**Creative Commons – CC BY-NC-SA 4.0**  
+**Creative Commons – CC BY-NC-SA 4.0**
 
-- Bearbeiten & Anpassen erlaubt  
+- Bearbeiten und Anpassen erlaubt  
 - Keine kommerzielle Nutzung  
 - Weitergabe nur unter gleicher Lizenz  
 
@@ -201,41 +235,57 @@ Diese Custom Card zeigt je nach Konfiguration:
 
 ## Features
 
-### Tankvisualisierung
-- Jeder Tank zeigt Füllstand in Litern und Prozent  
-- Farbverläufe je nach Flüssigkeitstyp  
+### Tank-Visualisierung
+- Grafische Darstellung eines oder mehrerer Tanks  
+- Füllstand pro Tank
+- Materialabhängige Farben und Muster  
 
-### Tankinformationen
-- Gesamtkapazität  
-- Aktueller Füllstand  
-- Verbrauch  
+### Unterstützte Materialien
+- Heizöl  
+- Wasser  
+- Diesel  
+- Gas  
+- Pellets  
+- Hackschnitzel  
+- Benutzerdefinierte Farben  
 
-### Flexibles Layout
-- Mehrere Tanks in einer responsiven Reihe  
-- Anpassbare Tankformen und Farben  
-- Hintergrundanpassung  
+### Einheiten
+- Liter (`L`)  
+- Kilogramm (`kg`)  
+- Kubikmeter (`m³`)  
 
-### Anzeigeoptionen
-- Literanzeige ein-/ausblendbar  
-- Verbrauchsanzeige ein-/ausblendbar  
-- Hintergrund individuell einstellbar  
-
-### Sensorunterstützung
+### Sensor-Unterstützung
 - Verbrauchssensor  
-- Optional mehrere Tanks mit individuellen Namen  
+- Füllstandssensor (absoluter Wert)  
+- Füllstandssensor (Prozent)  
+- Sensormodus wählbar über visuellen Editor oder YAML  
+
+### Visueller Editor
+- Integrierter Home-Assistant-Editor (`ha-form`)  
+- Dynamisches Schema abhängig vom Sensormodus  
+
+### Layout- & Anzeigeoptionen
+- Verschiedene Tankformen (Rechteck, Kapsel, Pool)  
+- Anzeige von Werten pro Tank ein-/ausblendbar  
+- Konfigurierbarer Hintergrund und Styling  
+- Responsives Layout  
 
 ---
 
 ## Installation (manuell)
 
-1. Datei **tank-card.js** nach `/config/www/` kopieren  
+1. **tank-card.js** nach `/config/www/` kopieren  
 2. In Home Assistant:  
-   - Einstellungen → Dashboards → Drei-Punkte-Menü → Ressourcen → Ressource hinzufügen  
+   - Einstellungen  
+   - Dashboards  
+   - Drei-Punkte-Menü  
+   - Ressourcen  
+   - Ressource hinzufügen  
    - URL: `/local/tank-card.js`  
-     Typ: **JavaScript-Modul**
+     Typ: **JavaScript-Modul**  
 3. Browser neu laden (STRG + F5)  
 
-Die Karte ist nun in der GUI auswählbar.
+Die Karte ist nun im Karten-Picker verfügbar.
 
 ---
 
@@ -243,15 +293,18 @@ Die Karte ist nun in der GUI auswählbar.
 
 ```yaml
 type: custom:tank-card
-title: Meine Tanks
+title: Tank Card
 tank_count: 3
 tank_capacity: 1500
-initial_fill: 1200
-consumption_sensor: sensor.heizoelverbrauch_brenner_gesamt_l
-liquid_type: heizoel
+initial_fill: 4500
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+level_sensor: ""
+content_type: heating_oil
+unit: L
 tank_form: rect
 bg_color: 'rgba(0,0,0,0.4)'
-show_liters: true
+show_unittank: true
 entities:
   - name: Tank 1
   - name: Tank 2
@@ -260,30 +313,32 @@ entities:
 
 ## Alle Konfigurationsoptionen
 
-| Option | Standardwert | Typ | Beschreibung |
-|--------|--------------|------|-------------|
-| `type` | `'custom:tank-card'` | string | Karten-Typ |
-| `title` | `'Tank Card'` | string | Kartentitel |
-| `tank_count` | `3` | number | Anzahl der Tanks |
-| `tank_capacity` | `1500` | number | Maximalfüllmenge pro Tank (L) |
-| `initial_fill` | `tank_count*tank_capacity` | number | Startfüllung in Litern |
-| `consumption_sensor` | `''` | string | Entity des Verbrauchssensors |
-| `liquid_type` | `'heizoel'` | string | Flüssigkeitstyp |
-| `tank_form` | `'rect'` | string | Tankform (rect, capsule, pool) |
-| `bg_color` | `'rgba(0,0,0,0.3)'` | string | Hintergrundfarbe der Karte |
-| `show_liters` | `true` | boolean | Literanzeige im Tank |
+| Option               | Default                         | Typ      | Beschreibung                                                                                  |
+|---------------------|---------------------------------|----------|----------------------------------------------------------------------------------------------|
+| `type`              | `'custom:tank-card'`            | string   | Kartentyp                                                                                     |
+| `title`             | `'Tank Card'`                   | string   | Titel der Karte                                                                               |
+| `tank_count`        | `3`                             | number   | Anzahl der Tanks                                                                              |
+| `tank_capacity`     | `1500`                          | number   | Kapazität pro Tank (L / kg / m³)                                                             |
+| `initial_fill`      | `tank_count * tank_capacity`    | number   | Startfüllung des Systems                                                                     |
+| `sensor_mode`       | `'consumption'`                 | string   | Sensormodus: `consumption`, `fill_level_l`, `fill_level_percent`                              |
+| `consumption_sensor`| `''`                            | string   | Verbrauchssensor (nur wenn `sensor_mode: consumption`)                                        |
+| `level_sensor`      | `''`                            | string   | Füllstandsensor (nur wenn `sensor_mode: fill_level_l` oder `fill_level_percent`)             |
+| `unit`              | `'L'`                           | string   | Einheit: `L`, `kg`, `m3`                                                                     |
+| `tank_form`         | `'rect'`                        | string   | Tankform: `rect`, `capsule`, `pool`                                                          |
+| `bg_color`          | `'rgba(0,0,0,0.3)'`             | string   | Hintergrundfarbe der Karte                                                                    |
+| `show_unittank`     | `true`                          | boolean  | Liter/Kg/m³ im Tank anzeigen                                                                 |
+| `content_type`      | `'heating_oil'`                 | string   | Materialtyp: `heating_oil`, `water`, `diesel`, `gas`, `pellets`, `wood_chips`, Farben       |
+| `entities`          | `[]`                            | list     | Liste der Tanks mit `name`-Feld, z.B. `[ {name: "Tank 1"}, {name: "Tank 2"} ]`                |
 
 ---
 
 ## Funktionsweise
-
-- Berechnet aktuellen Füllstand pro Tank: `current_fill = initial_fill - consumption`  
-- Verteilt Füllstand gleichmäßig auf alle Tanks  
-- Zeigt Füllstand als farbigen Verlauf  
-- Responsives Layout passt sich mehreren Tanks an  
-
----
+Berechnet den aktuellen Systemfüllstand abhängig vom Sensormodus
+Ermittelt den Verbrauch relativ zu initial_fill
+Verteilt den Füllstand gleichmäßig auf alle Tanks
+Visualisiert den Füllstand über Höhe, Farbe und Muster
 
 ## Entwicklerhinweise
+Home-Assistant-visuellem Editor und YAML-Editor
+Reine Frontend-Custom-Card
 
-- Derzeit wird nur der YAML-Editor in Home Assistant unterstützt 
