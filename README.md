@@ -95,21 +95,25 @@ Depending on configuration, this custom card displays:
 - Responsive layout  
 
 ---
+Installation over HACS
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
 
 ## Manual Installation
 
-1. Copy **tank-card.js** to `/config/www/`  
-2. In Home Assistant:  
+1. Download **battery-cells-card.js**  
+2. Copy it to `/config/www/community/tank-card/`  
+3. In Home Assistant:  
    - Settings  
    - Dashboards  
    - Three-dot menu  
    - Resources  
    - Add Resource  
-   - URL: `/local/tank-card.js`  
-     Type: **JavaScript Module**  
-3. Reload the browser (CTRL + F5)  
+   - URL: **/local/community/tank-card/tank-card.js**  
+     Type: **JavaScript Module**
+4. Reload browser (CTRL + F5)
 
-The card is now available in the card picker.
+The card is now selectable and visible in the GUI.
 
 ---
 
