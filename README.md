@@ -101,7 +101,7 @@ Installation over HACS
 
 ## Manual Installation
 
-1. Download **battery-cells-card.js**  
+1. Download **tanks-card.js**  
 2. Copy it to `/config/www/community/tank-card/`  
 3. In Home Assistant:  
    - Settings  
@@ -312,20 +312,25 @@ Abhängig von der Konfiguration zeigt diese Custom Card:
 
 ---
 
+Installation über HACS
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
+
 ## Installation (manuell)
 
-1. **tank-card.js** nach `/config/www/` kopieren  
-2. In Home Assistant:  
+1. Datei **tanks-card.js** herunterladen  
+2. In `/config/www/community/tank-card/` kopieren  
+3. In Home Assistant:  
    - Einstellungen  
    - Dashboards  
-   - Drei-Punkte-Menü  
+   - Drei Punkte  
    - Ressourcen  
    - Ressource hinzufügen  
-   - URL: `/local/tank-card.js`  
-     Typ: **JavaScript-Modul**  
-3. Browser neu laden (STRG + F5)  
+   - URL: **/local/community/tank-card/tanks-card.js**   
+     Typ: **JavaScript-Modul**
+4. Browser neu laden (STRG + F5)
 
-Die Karte ist nun im Karten-Picker verfügbar.
+Danach ist die Karte in der GUI verfügbar und auswählbar.
 
 ---
 
