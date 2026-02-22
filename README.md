@@ -1,3 +1,11 @@
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+![GitHub total downloads](https://img.shields.io/github/downloads/jinx-22/tank-card/total?style=flat-square&color=red)
+[![GitHub release](https://img.shields.io/github/release/jinx-22/tank-card?include_prereleases=&sort=semver&color=blue)](https://github.com/jinx-22/tank-card/releases/)
+![File size](https://img.shields.io/github/size/jinx-22/tank-card/tank-card.js?label=Card%20Size)
+![last commit](https://img.shields.io/github/last-commit/jinx-22/tank-card)
+[![README deutsch](https://img.shields.io/badge/README-DE)](https://github.com/jinx-22/tank-card/tree/tank-card-v.0.3.0#tank-card)
+[![stars](https://img.shields.io/github/stars/jinx-22/tank-card)](https://github.com/jinx-22/tank-card/stargazers)
+
 # Tank Card – Tank Fill Visualization
 *(Link to German version: [Deutsch](#deutsch))*
 
