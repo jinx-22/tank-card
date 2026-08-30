@@ -7,6 +7,8 @@
 ![last commit](https://img.shields.io/github/last-commit/jinx-22/tank-card)
 [![README deutsch](https://img.shields.io/badge/README-DE)](https://github.com/jinx-22/tank-card/tree/tank-card-v.0.3.0#tank-card)
 [![stars](https://img.shields.io/github/stars/jinx-22/tank-card)](https://github.com/jinx-22/tank-card/stargazers)
+[![Donate Bitcoin](https://img.shields.io/badge/₿-Bitcoin-F7931A?style=flat-square)](#bitcoin)
+[![Donate Lightning](https://img.shields.io/badge/⚡-Lightning-FFD700?style=flat-square)](#lightning)
 
 **Version:** 0.4.0 
 
@@ -221,11 +223,21 @@ Alle Änderungen: [Changelog](https://github.com/jinx-22/tank-card/blob/main/Cha
 
 Wenn dir die **Tank Card** gefällt und du die weitere Entwicklung unterstützen möchtest, kannst du das Projekt gerne mit einer Spende unterstützen.
 
-### Bitcoin
+## Lightning
 
-**BTC-Adresse:**
+<p align="center">
+⚡ <b>Address:</b><br><br>
+<code>usefulplay52@walletofsatoshi.com</code><br><br>
+<img width="320" alt="Self_Wallet of Satoshi" src="https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf" />
+</p>
 
-`DEINE_BITCOIN_ADRESSE`
+## Bitcoin
+
+<div align="center">
+<img src="https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b" /><br><br>
+<code>bc1qkz7mtp23cmshxnru96lzgeayu0urlysvqk5vry</code><br><br>
+<img alt="Donations_240px" src="https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45" />
+</div>
 
 Jede Unterstützung ist freiwillig und hilft bei der weiteren Entwicklung und Pflege des Projekts.
 
