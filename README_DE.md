@@ -187,18 +187,6 @@ Der Sensorwert wird auf die Gesamtkapazität bezogen:
 - `gas` – Gas
 - `pellets` – Pellets
 - `wood_chips` – Hackschnitzel
-
----
-
-## Lokalisierung
-
-Die Karte verwendet die in Home Assistant eingestellte Sprache.
-
-Unterstützt werden:
-
-- 🇬🇧 Englisch
-- 🇩🇪 Deutsch
-
 ---
 
 ## Version 0.4.0
@@ -206,16 +194,8 @@ Unterstützt werden:
 Version 0.4.0 bringt unter anderem:
 
 - überarbeiteten visuellen Editor
-- mehrere Sensormodi
-- absolute und prozentuale Füllstandssensoren
-- verschiedene Tankformen
-- Materialdarstellungen
 - Home-Assistant-Theme-Unterstützung
-- konfigurierbare Typografie
-- Lokalisierung
-- Entfernung von `bg_color`
-
-Alle Änderungen: [Changelog](https://github.com/jinx-22/tank-card/blob/main/Changelog.md)
+- Übersetzung `bg_color`
 
 ---
 
