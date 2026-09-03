@@ -131,6 +131,9 @@ Afterwards, reload your browser, for example with **Ctrl + F5**.
 > **Removed since v0.4.0:** `bg_color`  
 > Background styling is handled through the Home Assistant theme.
 
+<img width="797" height="672" alt="tankUnbenannt" src="https://github.com/user-attachments/assets/93ad16d6-bd15-4ed5-afac-4c9d66b0a496" />
+
+
 ---
 
 # 📊 Sensor Modes
@@ -190,6 +193,10 @@ The sensor value (0–100 %) is calculated relative to the total system capacity
 - `brown`
 - `blue`
 - `yellow`
+
+<img width="620" height="762" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/b49d3ef9-836f-417c-b29a-ffc1296d459e" />
+
+
 
 ---
 
