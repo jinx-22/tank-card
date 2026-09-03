@@ -11,30 +11,24 @@
 
 🇬🇧 [**English**](README.md) · 🇩🇪 **Deutsch**
 
-**Aktuelle Version: 0.5.0**
-
 ---
 
-## Was ist neu in Version 0.5.0
+**Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-- Version wird im Code und im Card-Picker angezeigt (`TANK_CARD_VERSION` + Console-Banner)
-- Zusätzliche Inhaltsfarben: `orange`, `red`, `brown`, `blue`, `yellow`
-- Schriftgröße (`font_size`) jetzt als Prozentwert (Standard `100`), unterstützt Zahl, `%`, `em` und `px`
-- Anzeige der Schriftgröße wird auf **50–200 %** begrenzt (Editor akzeptiert auch kleinere Werte)
-- Standard-Schriftart: `inherit`
-- Verbesserte Lokalisierung (u. a. Labels für Füllstand und Verbrauch)
-- Hilfetexte im visuellen Editor (Sensoren + Schriftgröße)
-- Bessere Sections-Unterstützung (`getGridOptions`: 12 Spalten, min. 6 Spalten / 3 Zeilen)
-- Robustere Entity- und State-Verarbeitung
-- `documentationURL` zeigt auf das GitHub-Repository
+**Aktuelle Version: 0.6.4**
+
+## 🆕 0.6.4
+
+- Editor-Reihenfolge überarbeite6
+- Nicht benötigte Sensorfelder werden abhängig von der Auswahl deaktiviert
+- Editor weiter an die Home-Assistant-Konventionen angepasst
+- Einfachere und übersichtlichere Konfiguration
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
 
 ---
 
 ## 📖 Über Tank Card
-
-**Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
 Unterstützt werden Verbrauchssensoren sowie Füllstandssensoren mit absoluten Werten oder Prozentangaben. Geeignet für Heizöl, Wasser, Diesel, Gas, Pellets, Hackschnitzel und weitere Flüssigkeiten oder Schüttgüter – sowie für freie Farbdarstellungen.
 
@@ -52,10 +46,10 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 - Tankformen `rect`, `pool` und `capsule`
 - Material- und farbabhängige Füllverläufe / Muster
 - Einheiten `L`, `kg` und `m³`
-- Konfigurierbare Schriftart und Schriftgröße (50–200 %)
+- Konfigurierbare Schriftgröße (50–200 %)
 - Optionales Home-Assistant-Theme
 - Responsives Layout (Container Queries)
-- Visueller Home-Assistant-Editor mit Hilfetexten
+- Visueller Home-Assistant-Editor
 - Englisch und Deutsch (folgt der HA-Sprache)
 - Home-Assistant-konforme Kartenkonfiguration
 
