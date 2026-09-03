@@ -233,9 +233,7 @@ Vielen Dank für deine Unterstützung — ein kostenloser ⭐ hilft anderen, das
 
 # 📜 Lizenz
 
-**Creative Commons BY-NC-SA 4.0**
-
-[Details zur Lizenz](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+**Apache-2.0**
 
 ---
 
