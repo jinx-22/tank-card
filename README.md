@@ -11,24 +11,20 @@
 
 🇬🇧 **English** · 🇩🇪 [**Deutsch**](README_DE.md)
 
-**Current version: 0.5.0**
-
 ---
 
-## What's new in version 0.5.0
+**Tank Card** is a Home Assistant custom card for visualizing tank levels, total capacity, and consumption.
 
-- Version is shown in the code and in the Card Picker (`TANK_CARD_VERSION` + console banner)
-- Additional content colors: `orange`, `red`, `brown`, `blue`, `yellow`
-- Font size (`font_size`) is now a percentage value (default `100`); supports number, `%`, `em`, and `px`
-- Displayed font size is limited to **50–200 %** (the editor still accepts smaller values)
-- Default font family: `inherit`
-- Improved localization (including level and consumption labels)
-- Helper texts in the visual editor (sensors + font size)
-- Better Sections support (`getGridOptions`: 12 columns, min. 6 columns / 3 rows)
-- More robust entity and state handling
-- `documentationURL` points to the GitHub repository
+**Current Version: 0.6.4**
 
-> **Note:** After updating, hard-reload the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
+## 🆕 0.6.4
+
+- Improved editor order
+- Unneeded sensor fields are disabled depending on the selected option
+- Editor further aligned with Home Assistant conventions
+- Simpler and clearer configuration
+
+> **Note:** After updating, hard-refresh the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
 
 ---
 
