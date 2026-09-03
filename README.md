@@ -242,9 +242,7 @@ Thank you for your support — even a free ⭐ helps others discover the project
 
 # 📜 License
 
-**Creative Commons BY-NC-SA 4.0**
-
-[License details](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+**Apache-2.0**
 
 ---
 
