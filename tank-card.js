@@ -1,6 +1,6 @@
 /*
  * Tank Card
- * Version: 0.6.4
+ * Version: 0.6.5
  * Home Assistant custom card – cleaned, HA-aligned + conditional editor
  */
 const TANK_CARD_VERSION = "0.6.4";
@@ -117,8 +117,8 @@ const LANGUAGES = {
 };
 
 const CONTENT_GRADIENTS = {
-  heating_oil: "linear-gradient(to top,rgba(190,0,40,1),rgba(220,90,130,1))",
-  gas: "linear-gradient(to top,rgba(180,220,255,.6),rgba(200,240,255,.6))",
+  heating_oil: "linear-gradient(to top,#8a0018,#ff2a55)",
+  gas: "linear-gradient(to top,#00a8d6,#c4f6ff)",
   pellets:
     "repeating-linear-gradient(135deg,#8B4513 0 6px,transparent 6px 12px)," +
     "repeating-linear-gradient(45deg,#CD853F 0 4px,#8B4513 4px 9px)",
@@ -127,13 +127,25 @@ const CONTENT_GRADIENTS = {
     "repeating-linear-gradient(67deg,#9C5A1A 0 5px,#6B3A10 5px 11px)," +
     "repeating-linear-gradient(140deg,#B87333 0 4px,transparent 4px 9px)," +
     "linear-gradient(to top,#8B4513,#A0522D)",
-  water: "linear-gradient(to top,rgba(0,120,255,.8),rgba(0,180,255,.8))",
-  diesel: "linear-gradient(to top,rgba(210,180,50,1),rgba(255,220,80,1))",
-  orange: "linear-gradient(to top,orange,darkorange)",
+  water: "linear-gradient(to top,#0046d0,#00c8ff)",
+  diesel: "linear-gradient(to top,#ffe14d,#b88a00)",
+  orange: "linear-gradient(to top,#ffb300,#e65100)",
   red: "linear-gradient(to top,red,darkred)",
-  brown: "linear-gradient(to top,sienna,saddlebrown)",
-  blue: "linear-gradient(to top,dodgerblue,deepskyblue)",
-  yellow: "linear-gradient(to top,yellow,gold)"
+  brown: "linear-gradient(to top,#6b2f0a,#cf6a1f)",
+  blue: "linear-gradient(to top,#1030d0,#3aa6ff)",
+  yellow: "linear-gradient(to top,#e0b000,#fff176)"
+};
+
+const CONTENT_GLOWS = {
+  heating_oil: "rgba(255,40,80,.75)",
+  gas: "rgba(0,200,255,.7)",
+  water: "rgba(0,170,255,.75)",
+  diesel: "rgba(255,210,50,.7)",
+  orange: "rgba(255,150,0,.75)",
+  red: "rgba(255,0,0,.75)",
+  brown: "rgba(220,110,30,.6)",
+  blue: "rgba(40,120,255,.75)",
+  yellow: "rgba(255,235,60,.75)"
 };
 
 const VALID_SENSOR_MODES = new Set(["consumption", "fill_level_l", "fill_level_percent"]);
@@ -371,12 +383,11 @@ class TankCard extends HTMLElement {
 
   getGridOptions() {
     return {
-      rows: 6,
+      rows: 7,
       columns: 12,
-      min_rows: 3,
-      min_columns: 6,
+      min_rows: 5,
+      min_columns: 12,
       max_rows: 8,
-//      max_columns: 48//
     };
   }
 
@@ -513,166 +524,38 @@ class TankCard extends HTMLElement {
     const borderRadius = this._getTankBorderRadius();
 
     const style = document.createElement("style");
+    const rect = borderRadius === "4px";
     style.textContent = `
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-        min-height: 0;
-        box-sizing: border-box;
-        container-type: inline-size;
-      }
-      ha-card {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        min-height: 0;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
-      .content {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        min-height: 0;
-        gap: 10px;
-        padding: 10px;
-        box-sizing: border-box;
-        font-family: inherit;
-        font-size: var(--tank-card-font-size, 100%);
-        color: var(--primary-text-color);
-      }
-      .title {
-        flex: 0 0 auto;
-        text-align: center;
-        font-size: 1.7em;
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-      .info-bar {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: .2em 1.5em;
-        width: 100%;
-        flex: 0 0 auto;
-        box-sizing: border-box;
-        font-size: 1.2em;
-        font-weight: bold;
-        color: var(--primary-text-color);
-      }
-      @container (min-width: 20em) {
-        .info-bar {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        }
-      }
-      .info-column {
-        display: grid;
-        grid-template-columns: max-content minmax(0, 1fr);
-        row-gap: .2em;
-        column-gap: .5em;
-        align-items: baseline;
-        min-width: 0;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .info-item {
-        display: contents;
-      }
-      .info-label {
-        min-width: 0;
-        white-space: nowrap;
-        text-align: left;
-      }
-      .info-value {
-        min-width: 0;
-        white-space: nowrap;
-        text-align: right;
-      }
-      .tanks {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: flex-end;
-        justify-content: center;
-        gap: 12px;
-        min-height: 0;
-        width: 100%;
-      }
-      .tank {
-        display: flex;
-        flex: 1 1 0;
-        flex-direction: column;
-        align-items: center;
-        min-width: 0;
-        min-height: 0;
-        height: 100%;
-        box-sizing: border-box;
-        padding: 10px;
-        background: color-mix(
-          in srgb,
-          var(--card-background-color, var(--primary-background-color)) 85%,
-          var(--primary-text-color) 15%
-        );
-        border-radius: ${borderRadius};
-        box-shadow:
-          inset 0 3px 6px rgba(255,255,255,.8),
-          inset 0 -6px 10px rgba(0,0,0,.7);
-        overflow: hidden;
-      }
-      .tank-name {
-        flex: 0 0 auto;
-        width: 100%;
-        margin-bottom: 8px;
-        font-size: 1em;
-        text-align: center;
-        color: var(--primary-text-color);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .tank-level {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: flex-end;
-        justify-content: center;
-        position: relative;
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
-        overflow: hidden;
-        box-sizing: border-box;
-        border-radius: ${borderRadius};
-        background: radial-gradient(
-          circle at center,
-          #f5f5f5 0%,
-          #e6e6e6 80%,
-          #c8c8c8 100%
-        );
-        border: 5px solid transparent;
-        box-shadow:
-          inset 0 2px 3px rgba(0,0,0,.25),
-          inset 0 -6px 10px rgba(0,0,0,.9),
-          0 6px 10px rgba(0,0,0,.6);
-      }
-      .tank-fill {
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        width: 100%;
-        box-sizing: border-box;
-        padding-bottom: .2em;
-        background: ${this._getFillGradient()};
-        font-size: .9em;
-        font-weight: bold;
-        color: #fff;
-        text-align: center;
-        text-shadow: 0 0 4px rgba(0,0,0,1);
-        transition: height .4s ease;
-        box-shadow:
-          inset 0 4px 6px rgba(255,255,255,.2),
-          inset 0 -6px 8px rgba(0,0,0,.6);
-        overflow: hidden;
-      }
+      :host{display:block;width:100%;height:100%;min-height:0;box-sizing:border-box;container-type:inline-size;--r:${rect ? "12px" : borderRadius};--r2:${rect ? "8px" : borderRadius};--sr:${rect ? "8px" : "50%"}}
+      ha-card{display:flex;flex-direction:column;width:100%;height:100%;min-height:0;box-sizing:border-box;overflow:hidden}
+      .content{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:10px;padding:10px;box-sizing:border-box;font-family:inherit;font-size:var(--tank-card-font-size,100%);color:var(--primary-text-color)}
+      .title{flex:0 0 auto;text-align:center;font-size:1.7em;font-weight:500;color:var(--primary-text-color)}
+      .info-bar{display:grid;grid-template-columns:minmax(0,1fr);gap:.2em 1.5em;width:100%;flex:0 0 auto;box-sizing:border-box;font-size:1.2em;font-weight:bold;color:var(--primary-text-color)}
+      @container (min-width:20em){.info-bar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+      .info-column{display:grid;grid-template-columns:max-content minmax(0,1fr);row-gap:.2em;column-gap:.5em;align-items:baseline;min-width:0;width:100%;box-sizing:border-box}
+      .info-item{display:contents}
+      .info-label{min-width:0;white-space:nowrap;text-align:left}
+      .info-value{min-width:0;white-space:nowrap;text-align:right}
+      .tanks{display:flex;flex:1 1 auto;align-items:flex-end;justify-content:center;gap:14px;min-height:0;width:100%;padding-bottom:12px;box-sizing:border-box}
+      .tank{position:relative;display:flex;flex:1 1 0;flex-direction:column;align-items:center;min-width:0;min-height:0;height:100%;box-sizing:border-box;padding:10px;border-radius:var(--r);overflow:hidden;
+        background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.38) 10%,rgba(255,255,255,.12) 40%,rgba(0,0,0,.12) 85%,rgba(0,0,0,.4)),
+        color-mix(in srgb,var(--card-background-color,var(--primary-background-color)) 80%,var(--primary-text-color) 20%);
+        box-shadow:inset 0 3px 6px rgba(255,255,255,.8),inset 0 -10px 14px rgba(0,0,0,.6),0 16px 14px -8px rgba(0,0,0,.55),0 3px 0 rgba(0,0,0,.3)}
+      .tank-name{flex:0 0 auto;width:100%;margin-bottom:8px;font-size:1em;font-weight:500;text-align:center;color:var(--primary-text-color);text-shadow:0 1px 1px rgba(0,0,0,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .tank-level{display:flex;flex:1 1 auto;align-items:flex-end;justify-content:center;position:relative;width:100%;min-width:0;min-height:0;overflow:hidden;box-sizing:border-box;border-radius:var(--r2);border:4px solid rgba(0,0,0,.3);
+        background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.04) 18%,rgba(0,0,0,.04) 75%,rgba(0,0,0,.45)),radial-gradient(circle at 40% 30%,#f8f8f8 0%,#e4e4e4 70%,#b8b8b8 100%);
+        box-shadow:inset 0 4px 8px rgba(0,0,0,.45),inset 0 -8px 12px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.55)}
+      .tank-level::before{content:"";position:absolute;left:0;right:0;top:0;height:14%;z-index:3;pointer-events:none;background:radial-gradient(ellipse at 50% 0,rgba(0,0,0,.4),transparent 70%)}
+      .tank-level::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+        background:linear-gradient(90deg,transparent 3%,rgba(255,255,255,.6) 7%,rgba(255,255,255,.1) 13%,transparent 20%,transparent 86%,rgba(255,255,255,.25) 92%,transparent 96%),linear-gradient(180deg,rgba(255,255,255,.22),transparent 25%)}
+      .tank-fill{--glow:${CONTENT_GLOWS[this._contentType] || "transparent"};position:relative;isolation:isolate;display:flex;align-items:flex-end;justify-content:center;width:100%;box-sizing:border-box;padding-bottom:.2em;background:${this._getFillGradient()};font-size:.9em;font-weight:bold;color:#fff;text-align:center;text-shadow:0 0 4px #000,0 0 8px var(--glow);transition:height .4s ease;
+        box-shadow:0 -2px 8px 1px var(--glow),inset 0 0 14px var(--glow),inset 0 -8px 10px rgba(0,0,0,.55);overflow:hidden}
+      .tank-fill{--glow:${CONTENT_GLOWS[this._contentType] || "transparent"};position:relative;isolation:isolate;display:flex;align-items:flex-end;justify-content:center;width:100%;box-sizing:border-box;padding-bottom:.2em;background:${this._getFillGradient()};font-size:.9em;font-weight:bold;color:#fff;text-align:center;text-shadow:0 0 4px #000,0 0 8px var(--glow);transition:height .4s ease;
+        box-shadow:0 -2px 8px 1px var(--glow),inset 0 0 14px var(--glow),inset 0 -8px 10px rgba(0,0,0,.55);overflow:hidden}
+      .tank-fill::before{content:"";position:absolute;left:-3px;right:-3px;top:0;height:.85em;border-radius:var(--sr);z-index:0;background:inherit;filter:brightness(1.4);box-shadow:inset 0 1px 3px rgba(255,255,255,.9),0 0 5px var(--glow);pointer-events:none}
+      .tank-fill::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.25) 14%,transparent 38%,transparent 80%,rgba(0,0,0,.5));pointer-events:none}
+      .tank-fill[style*="height: 0%"]{box-shadow:none}
+      .tank-fill[style*="height: 0%"]::before{display:none}
     `;
 
     const card = createElement("ha-card");
