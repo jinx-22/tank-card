@@ -1,7 +1,7 @@
 /**
  * Tank Card
  * Version: 0.7.0
- * Home Assistant custom card – 3D tanks, HA-aligned + conditional editor
+ * Home Assistant custom card – 3D tanks
  */
 const TANK_CARD_VERSION = "0.7.0";
 console.info(
