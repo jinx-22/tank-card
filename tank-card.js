@@ -420,9 +420,7 @@ class TankCard extends HTMLElement {
       .tank-level::before{content:"";position:absolute;left:0;right:0;top:0;height:14%;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 0,rgba(0,0,0,.4),transparent 70%)}
       .tank-level::after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:inherit;
         background:linear-gradient(90deg,transparent 3%,rgba(255,255,255,.6) 7%,rgba(255,255,255,.1) 13%,transparent 20%,transparent 86%,rgba(255,255,255,.25) 92%,transparent 96%),linear-gradient(180deg,rgba(255,255,255,.22),transparent 25%)}
-      .tank-value{position:absolute;left:0;right:0;bottom:.25em;z-index:30;pointer-events:none;
-        font-size:inherit;font-weight:inherit;color:inherit;text-align:center;text-shadow:inherit;
-        white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .tank-value{position:absolute;left:0;right:0;bottom:.25em;z-index:30;pointer-events:none;font-size:inherit;font-weight:inherit;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 3px #000,0 0 6px rgba(0,0,0,.9),0 2px 3px rgba(0,0,0,.8)}
       .tank-fill{--glow:${glow};position:relative;z-index:5;isolation:isolate;display:flex;align-items:flex-end;justify-content:center;width:100%;box-sizing:border-box;padding-bottom:.2em;background:${gradient};transition:height .4s ease;overflow:hidden}
       .tank-fill::before{content:"";position:absolute;left:-3px;right:-3px;top:0;height:.85em;z-index:6;background:inherit;filter:brightness(${brightness});pointer-events:none;border-radius:50%;box-shadow:inset 0 1px 3px rgba(255,255,255,.9),0 0 5px var(--glow)}
       .tank-level.rect-form .tank-fill{clip-path:polygon(10% 0,90% 0,100% .9em,100% 100%,0 100%,0 .9em)}
