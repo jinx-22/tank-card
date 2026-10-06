@@ -15,14 +15,18 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.6.4**
+**Aktuelle Version: 0.7.0**
 
-## 🆕 0.6.4
+## 🆕 0.7.0
 
-- Editor-Reihenfolge überarbeite6
-- Nicht benötigte Sensorfelder werden abhängig von der Auswahl deaktiviert
-- Editor weiter an die Home-Assistant-Konventionen angepasst
-- Einfachere und übersichtlichere Konfiguration
+- neue 3D-Tankdarstellung
+- metallischer Tankrahmen
+- Licht-/Schatteneffekte
+- materialabhängige Glow-Effekte
+- optimiertes Rendering ohne unnötigen DOM-Neuaufbau
+
+<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" />
+
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
 
@@ -209,20 +213,24 @@ Erstelle ein [GitHub Issue](https://github.com/jinx-22/tank-card/issues).
 
 # 🧡 Support & Donations
 
-## Lightning
-
-<p align="center">
-⚡ <b>Address:</b><br><br>
-<code>usefulplay52@walletofsatoshi.com</code><br><br>
-<img width="280" alt="Wallet of Satoshi" src="https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf" />
-</p>
-
-## Bitcoin
-
 <div align="center">
-<img src="https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b" /><br><br>
-<code>bc1qkz7mtp23cmshxnru96lzgeayu0urlysvqk5vry</code><br><br>
-<img width="220" alt="Bitcoin Donations" src="https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45" />
+
+### <a id="lightning"></a>Lightning
+
+<img width="32" alt="Lightning" src="https://github.com/user-attachments/assets/0bff59d2-7986-46cf-9d39-17fe0dbb128a" />
+
+`usefulplay52@walletofsatoshi.com`
+
+<img height="300" alt="Lightning - Wallet of Satoshi" src="https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf" />
+
+### <a id="bitcoin"></a>Bitcoin
+
+<img width="32" alt="Bitcoin" src="https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b" />
+
+`bc1qkz7mtp23cmshxnru96lzgeayu0urlysvqk5vry`
+
+<img height="300" alt="Bitcoin donation" src="https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45" />
+
 </div>
 
 Vielen Dank für deine Unterstützung — ein kostenloser ⭐ hilft anderen, das Projekt zu entdecken:
