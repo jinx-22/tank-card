@@ -198,7 +198,8 @@ The sensor value (0–100 %) is calculated relative to the total system capacity
 - `blue`
 - `yellow`
 
-<img width="620" height="762" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/b49d3ef9-836f-417c-b29a-ffc1296d459e" />
+Old Version V0.6.4: 
+<img width="50%" height="762" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/b49d3ef9-836f-417c-b29a-ffc1296d459e" />
 
 
 
