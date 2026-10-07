@@ -21,7 +21,6 @@
 
 - neuer übersichtlicher Editor Aufbau
 - alle Werte können entfernt und einzeln aktiviert werden
-- flüssigkeits-Animation hinzugefügt
 - minimale Fehlerbehebung
 
 <img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" />
