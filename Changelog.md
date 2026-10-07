@@ -5,7 +5,19 @@ All notable changes to **Tank Card** are documented here.
 
 ## [0.8.0] - 2026-10-07
 
-coming soon
+### Added
+
+* All values can be removed and individually enabled
+  
+### Changed
+
+* New, clearer editor layout
+
+### Fixed
+
+* Minor bug fixes
+
+<img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
 
 ---
 ## [0.7.0] - 2026-10-06
@@ -18,6 +30,8 @@ coming soon
 * Special trapezoid-shaped fill edge for rectangular tanks.
 * Improved rectangular tank fill surface with dedicated lighting.
 * Additional visual depth through layered inner and outer shadows.
+
+<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" />
 
 ### Changed
 
