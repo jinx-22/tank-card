@@ -23,7 +23,7 @@
 - alle Werte können entfernt und einzeln aktiviert werden
 - minimale Fehlerbehebung
 
-<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" />
+<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" /><img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
 
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
