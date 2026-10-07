@@ -15,17 +15,17 @@
 
 **Tank Card** is a Home Assistant custom card for visualizing tank levels, total capacity, and consumption.
 
-** Current Version: 0.7.0
+** Current Version: 0.8.0
 
-## 🆕 0.7.0
 
-- New 3D tank visualization
-- Metallic tank frame
-- Light and shadow effects
-- Material-dependent glow effects
-- Optimized rendering without unnecessary DOM rebuilding
+## 🆕 0.8.0
 
-<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" />
+* New, clearer editor layout
+* All values can be removed and individually enabled
+* Minor bug fixes
+
+
+<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" /><img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
 
 
 > **Note:** After updating, hard-refresh the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
