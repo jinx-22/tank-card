@@ -15,13 +15,14 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.8.0**
+**Aktuelle Version: 0.9.0**
 
-## 🆕 0.8.0
+## 🆕 0.9.0
 
-- neuer übersichtlicher Editor Aufbau
-- alle Werte können entfernt und einzeln aktiviert werden
-- minimale Fehlerbehebung
+- Editor - Neue Funktionen und Kateogorie - Animationen
+- Editor - Schriftgröße und design in Kateogorie "Anzeige verschoben"
+- Schriftgröße "Anzeigewert je Tank" vergrößert und passt sich bei schmalen Tanks der Tankbreite an
+- optische Füllhöhe korrigiert
 
 <img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" /><img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
 
