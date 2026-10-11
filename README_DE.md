@@ -15,7 +15,11 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.8.0**
+**Aktuelle Version: 0.8.1**
+
+## 🆕 0.8.1
+
+- fix Fülllevel Positionierung
 
 ## 🆕 0.8.0
 
