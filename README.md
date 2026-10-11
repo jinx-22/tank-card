@@ -17,6 +17,9 @@
 
 ** Current Version: 0.8.0
 
+## 🆕 0.8.1
+
+ - fix visual fill level
 
 ## 🆕 0.8.0
 
