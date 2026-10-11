@@ -1,6 +1,6 @@
 /**
  * Tank Card
- * Version: 0.8.1 -WebOS-FIX
+ * Version: 0.8.1 fix fill level
  * Fix: visual fill level (absolute positioning of .tank-fill)
  */
 const TANK_CARD_VERSION = "0.8.1";
