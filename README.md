@@ -15,7 +15,7 @@
 
 **Tank Card** is a Home Assistant custom card for visualizing tank levels, total capacity, and consumption.
 
-** Current Version: 0.8.0
+** Current Version: 0.8.1
 
 ## 🆕 0.8.1
 
