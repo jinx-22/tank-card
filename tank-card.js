@@ -1,14 +1,14 @@
 /**
  * Tank Card
- * Version: 0.8.0
+ * Version: 0.8.1 -WebOS-FIX
+ * Fix: visual fill level (absolute positioning of .tank-fill)
  */
-const TANK_CARD_VERSION = "0.8.0";
+const TANK_CARD_VERSION = "0.8.1";
 console.info(
   `%c Tank Card %c v${TANK_CARD_VERSION}`,
   "font-weight:bold;background:#03a9f4;color:white;padding:2px 6px;border-radius:3px 0 0 3px",
   "background:#555;color:white;padding:2px 6px;border-radius:0 3px 3px 0"
 );
-
 const LANGUAGES = {
   en: {
     ui: {
@@ -129,7 +129,6 @@ const LANGUAGES = {
     }
   }
 };
-
 const CONTENT_GRADIENTS = {
   heating_oil: "linear-gradient(to top,#ff2a55 0%,#d91445 32%,#a40024 68%,#8a0018 100%)",
   gas: "linear-gradient(to top,#c4f6ff 0%,#68e4fa 30%,#18c3e5 62%,#00a8d6 100%)",
@@ -149,7 +148,6 @@ const CONTENT_GRADIENTS = {
   blue: "linear-gradient(to top,#3aa6ff 0%,#2788ee 30%,#1958dc 65%,#1030d0 100%)",
   yellow: "linear-gradient(to top,#fff176 0%,#f4df4d 30%,#e8c51d 65%,#e0b000 100%)"
 };
-
 const CONTENT_GLOWS = {
   heating_oil: "rgba(255,40,80,.75)",
   gas: "rgba(0,200,255,.75)",
@@ -161,13 +159,11 @@ const CONTENT_GLOWS = {
   blue: "rgba(40,120,255,.75)",
   yellow: "rgba(255,235,60,.75)"
 };
-
 const TANK_RADII = {
   rect: { outer: "12px", inner: "8px" },
   pool: { outer: "200px / 15px", inner: "200px / 15px" },
   capsule: { outer: "200px", inner: "200px" }
 };
-
 // Reihenfolge = Reihenfolge im Kopfbereich (bei breiter Karte: Max | Füllstand / Aktuell | Verbrauch)
 const INFO_ITEMS = [
   { id: "max", flag: "show_max", label: "ui.max" },
@@ -175,24 +171,19 @@ const INFO_ITEMS = [
   { id: "fill", flag: "show_fill_level", label: "ui.fill_level" },
   { id: "consumption", flag: "show_consumption", label: "ui.consumption" }
 ];
-
 const VALID_SENSOR_MODES = new Set(["consumption", "fill_level_l", "fill_level_percent"]);
 const VALID_UNITS = new Set(["L", "kg", "m3"]);
 const VALID_FORMS = new Set(["rect", "pool", "capsule"]);
-
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
-
 function normalizeLanguage(language) {
   return String(language || "en").toLowerCase().startsWith("de") ? "de" : "en";
 }
-
 function createElement(tag, className, text) {
   const el = document.createElement(tag);
   if (className) el.className = className;
   if (text !== undefined) el.textContent = text;
   return el;
 }
-
 class TankCard extends HTMLElement {
   constructor() {
     super();
@@ -202,7 +193,6 @@ class TankCard extends HTMLElement {
     this._lastValues = null;
     this.attachShadow({ mode: "open" });
   }
-
   static getStubConfig() {
     return {
       title: "Tank Card",
@@ -225,7 +215,6 @@ class TankCard extends HTMLElement {
       entities: [{ name: "Tank 1" }, { name: "Tank 2" }, { name: "Tank 3" }]
     };
   }
-
   static getConfigForm() {
     const locale = LANGUAGES[normalizeLanguage(document.documentElement?.lang)];
     const options = (group) =>
@@ -245,11 +234,9 @@ class TankCard extends HTMLElement {
       schema
     });
     const bool = (name) => ({ name, selector: { boolean: {} } });
-
     return {
       schema: [
         { name: "title", selector: { text: {} } },
-
         section("section_tank", "mdi:storage-tank", [
           { name: "tank_form", selector: select(locale.options.forms) },
           grid("tank_size", [
@@ -257,7 +244,6 @@ class TankCard extends HTMLElement {
             { name: "tank_capacity", selector: number(1) }
           ])
         ]),
-
         section("section_content", "mdi:water", [
           { name: "content_type", selector: select(locale.options.contents) },
           { name: "sensor_mode", selector: select(locale.options.modes) },
@@ -279,20 +265,16 @@ class TankCard extends HTMLElement {
           },
           { name: "initial_fill", selector: number(0) }
         ]),
-
         section("section_display", "mdi:eye-outline", [
           { name: "unit", selector: select(locale.options.units) },
           grid("display_top", [bool("show_max"), bool("show_current")]),
           grid("display_bottom", [bool("show_fill_level"), bool("show_consumption")]),
           bool("show_unittank")
         ]),
-
         { name: "theme", selector: { theme: {} } },
         { name: "font_size", selector: number(50, 200) }
       ],
-
       computeLabel: (schema) => locale.editor[schema.name] ?? schema.name,
-
       computeHelper: (schema) =>
         ({
           consumption_sensor: locale.helper.consumption_sensor,
@@ -302,7 +284,6 @@ class TankCard extends HTMLElement {
         })[schema.name]
     };
   }
-
   // Akzeptiert Zahl, "120", "120%", "1.2em" und "19px" (16px = 100 %), begrenzt auf 50–200 %.
   static _normalizeFontSize(value) {
     let percent = 100;
@@ -317,7 +298,6 @@ class TankCard extends HTMLElement {
     }
     return `${clamp(Number.isFinite(percent) ? percent : 100, 50, 200)}%`;
   }
-
   set hass(hass) {
     const oldHass = this._hass;
     this._hass = hass || null;
@@ -325,15 +305,12 @@ class TankCard extends HTMLElement {
       this._update();
     }
   }
-
   setConfig(config) {
     if (!config || typeof config !== "object" || Array.isArray(config)) {
       throw new Error("Invalid Tank Card configuration.");
     }
-
     this._config = config;
     this._lastValues = null;
-
     this._tankCount = this._safeInteger(config.tank_count, 3, 1, 20);
     this._tankCapacity = this._safeNumber(config.tank_capacity, 1500, 1);
     this._initialFill = this._safeNumber(
@@ -364,15 +341,12 @@ class TankCard extends HTMLElement {
     this._theme = typeof config.theme === "string" ? config.theme : "";
     this._fontSize = TankCard._normalizeFontSize(config.font_size);
     this._entities = this._buildEntities(config);
-
     this._build();
     this._update();
   }
-
   getCardSize() {
     return 6;
   }
-
   getGridOptions() {
     return {
       rows: 7,
@@ -382,19 +356,15 @@ class TankCard extends HTMLElement {
       max_rows: 8
     };
   }
-
   // ——— Private helpers ———
-
   _safeNumber(value, fallback, minimum = 0) {
     const n = Number(value);
     return Number.isFinite(n) ? Math.max(n, minimum) : fallback;
   }
-
   _safeInteger(value, fallback, minimum, maximum) {
     const n = Number(value);
     return Number.isFinite(n) ? clamp(Math.round(n), minimum, maximum) : fallback;
   }
-
   // name = null → Standardname wird erst beim Rendern lokalisiert
   _buildEntities(config) {
     const configured = Array.isArray(config.entities) ? config.entities : [];
@@ -403,13 +373,11 @@ class TankCard extends HTMLElement {
       return { name: typeof name === "string" && name.trim() ? name : null };
     });
   }
-
   _localize(path) {
     const language = normalizeLanguage(this._hass?.locale?.language);
     const lookup = (locale) => path.split(".").reduce((obj, key) => obj?.[key], locale);
     return lookup(LANGUAGES[language]) ?? lookup(LANGUAGES.en) ?? path;
   }
-
   // null bei fehlender Entität sowie bei "unknown"/"unavailable"/nicht numerisch
   _readNumber(entityId) {
     if (!entityId) return null;
@@ -418,7 +386,6 @@ class TankCard extends HTMLElement {
     const n = Number.parseFloat(state);
     return Number.isFinite(n) ? n : null;
   }
-
   _shouldUpdate(oldHass, newHass) {
     if (!this._config) return true;
     if (!oldHass || !newHass) return true;
@@ -428,14 +395,12 @@ class TankCard extends HTMLElement {
       .filter(Boolean)
       .some((id) => oldHass.states?.[id]?.state !== newHass.states?.[id]?.state);
   }
-
   // Ohne Sensor: Anfangsbestand. Bei ausgefallenem Sensor: letzter gültiger Wert.
   _getValues() {
     const totalCapacity = this._tankCount * this._tankCapacity;
     const sensorId =
       this._sensorMode === "consumption" ? this._consumptionSensor : this._levelSensor;
     const raw = this._readNumber(sensorId);
-
     let result;
     if (raw === null) {
       result =
@@ -455,15 +420,12 @@ class TankCard extends HTMLElement {
           : clamp(raw, 0, totalCapacity);
       result = { currentFill, consumption: Math.max(this._initialFill - currentFill, 0) };
     }
-
     if (raw !== null) this._lastValues = result;
     return { totalCapacity, ...result };
   }
-
   _getFillGradient() {
     return CONTENT_GRADIENTS[this._contentType] || CONTENT_GRADIENTS.heating_oil;
   }
-
   _applySelectedTheme(card) {
     if (!this._theme || !this._hass?.themes?.themes) return;
     const theme = this._hass.themes.themes[this._theme];
@@ -474,7 +436,6 @@ class TankCard extends HTMLElement {
       }
     }
   }
-
   _addInfo(parent, item) {
     const cell = createElement("div", `info-item info-${item.id}`);
     const label = createElement("div", "info-label");
@@ -483,7 +444,6 @@ class TankCard extends HTMLElement {
     parent.appendChild(cell);
     return { key: item.label, label, value };
   }
-
   // Baut DOM + Style einmalig bei setConfig auf. Werte werden danach nur noch in _update() gesetzt,
   // dadurch bleibt die Höhen-Transition der Füllung erhalten.
   _build() {
@@ -491,7 +451,6 @@ class TankCard extends HTMLElement {
     const radii = TANK_RADII[this._tankForm];
     const glow = CONTENT_GLOWS[this._contentType] || "transparent";
     const gradient = this._getFillGradient();
-
     const style = document.createElement("style");
     style.textContent = `
       :host{display:block;width:100%;height:100%;min-height:0;box-sizing:border-box;container-type:inline-size;--r:${radii.outer};--r2:${radii.inner};--glow:${glow}}
@@ -515,18 +474,17 @@ class TankCard extends HTMLElement {
       .tank-level::after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:inherit;
         background:linear-gradient(90deg,transparent 3%,rgba(255,255,255,.6) 7%,rgba(255,255,255,.1) 13%,transparent 20%,transparent 86%,rgba(255,255,255,.25) 92%,transparent 96%),linear-gradient(180deg,rgba(255,255,255,.22),transparent 25%)}
       .tank-value{position:absolute;left:0;right:0;bottom:.25em;z-index:30;pointer-events:none;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 3px #000,0 0 6px rgba(0,0,0,.9),0 2px 3px rgba(0,0,0,.8)}
-      .tank-fill{position:relative;z-index:5;isolation:isolate;width:100%;box-sizing:border-box;background:${gradient};transition:height .4s ease;overflow:hidden}
+      /* FIX: absolute positioning from bottom – percentage height no longer depends on flex layout */
+      .tank-fill{position:absolute;left:0;right:0;bottom:0;z-index:5;isolation:isolate;width:100%;box-sizing:border-box;background:${gradient};transition:height .4s ease;overflow:hidden}
       .tank-fill::before{content:"";position:absolute;left:-3px;right:-3px;top:0;height:.85em;z-index:6;background:inherit;filter:brightness(1.4);pointer-events:none;border-radius:50%;box-shadow:inset 0 1px 3px rgba(255,255,255,.9),0 0 5px var(--glow)}
       .tank-level.rect-form .tank-fill{clip-path:polygon(10% 0,90% 0,100% .9em,100% 100%,0 100%,0 .9em)}
       .tank-level.rect-form .tank-fill::before{left:0;right:0;height:.9em;border-radius:0;
         background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.04) 18%,rgba(0,0,0,.04) 75%,rgba(0,0,0,.45)),${gradient}}
     `;
-
     const card = createElement("ha-card", "tank-card");
     const content = createElement("div", "content");
     content.style.setProperty("--tank-card-font-size", this._fontSize);
     content.appendChild(createElement("div", "title", this._title));
-
     // Nur aktivierte Werte werden gebaut; sind alle aus, entfällt der Kopfbereich komplett.
     const info = {};
     const visibleItems = INFO_ITEMS.filter((item) => this._show[item.id]);
@@ -535,7 +493,6 @@ class TankCard extends HTMLElement {
       for (const item of visibleItems) info[item.id] = this._addInfo(infoBar, item);
       content.appendChild(infoBar);
     }
-
     const tanksEl = createElement("div", "tanks");
     const tanks = this._entities.map(() => {
       const tank = createElement("div", "tank");
@@ -548,38 +505,30 @@ class TankCard extends HTMLElement {
       tanksEl.appendChild(tank);
       return { name, fill, value };
     });
-
     content.appendChild(tanksEl);
     card.appendChild(content);
-
     this._els = { card, info, tanks };
     this.shadowRoot.replaceChildren(style, card);
   }
-
   _update() {
     const els = this._els;
     if (!els || !this._config) return;
-
     const { totalCapacity, currentFill, consumption } = this._getValues();
     const percentage =
       totalCapacity > 0 ? clamp((currentFill / totalCapacity) * 100, 0, 100) : 0;
     const amountPerTank = currentFill / this._tankCount;
     const unit = this._unit;
-
     const infoValues = {
       max: `${totalCapacity.toFixed(0)} ${unit}`,
       level: `${currentFill.toFixed(0)} ${unit}`,
       fill: `${percentage.toFixed(0)}%`,
       consumption: `${consumption.toFixed(0)} ${unit}`
     };
-
     for (const [id, item] of Object.entries(els.info)) {
       item.label.textContent = this._localize(item.key);
       item.value.textContent = infoValues[id];
     }
-
     this._applySelectedTheme(els.card);
-
     els.tanks.forEach((tank, index) => {
       tank.name.textContent =
         this._entities[index].name ?? `${this._localize("ui.tank")} ${index + 1}`;
@@ -590,11 +539,9 @@ class TankCard extends HTMLElement {
     });
   }
 }
-
 if (!customElements.get("tank-card")) {
   customElements.define("tank-card", TankCard);
 }
-
 window.customCards = window.customCards || [];
 if (!window.customCards.some((card) => card.type === "tank-card")) {
   window.customCards.push({
