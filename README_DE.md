@@ -19,12 +19,21 @@
 
 ## 🆕 0.9.0
 
-- Editor - Neue Funktionen und Kateogorie - Animationen
-- Editor - Schriftgröße und design in Kateogorie "Anzeige verschoben"
-- Schriftgröße "Anzeigewert je Tank" vergrößert und passt sich bei schmalen Tanks der Tankbreite an
+- Glas- und Metalltank (`tank_style`)
+- Gas-Tank mit Standfüßen und Kuppel (Kapsel + Metall, ein Tank)
+- Flüssigkeitsdarstellung wählbar: bisherige oder neue Optik (`liquid_style`)
+- Holzpellets und Hackschnitzel neue Darstellung
+- eigene Farbe über `content_type: custom` und `custom_color`
+- Wellen-Animation und aufsteigende Blasen
+- Titel und Tank-Beschriftung einzeln ein-/ausblendbar
+- gemeinsame Tank-Beschriftung (`tank_label`) mit automatischer Nummerierung
+- Tippen auf die Karte öffnet die Sensor-Details
+- Editor: neue Kategorie Animation, Schriftgröße und Design unter Anzeige
+- Schriftgröße des Anzeigewerts je Tank vergrößert und passt sich der Tankbreite an
 - optische Füllhöhe korrigiert
 
-<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" /><img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
+<img width="40%" height="auto" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
+<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
@@ -47,7 +56,9 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 - Anzeige von Füllstand und Gesamtkapazität
 - Verbrauchs- und Füllstandssensoren (absolut oder prozentual)
 - Tankformen `rect`, `pool` und `capsule`
+- Tankart Glas oder Metall
 - Material- und farbabhängige Füllverläufe / Muster
+- Wellen-Animation und aufsteigende Blasen (bei Flüssigkeiten)
 - Einheiten `L`, `kg` und `m³`
 - Konfigurierbare Schriftgröße (50–200 %)
 - Optionales Home-Assistant-Theme
@@ -95,11 +106,17 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
     consumption_sensor: sensor.heating_oil_consumption_total
     level_sensor: ""
     content_type: heating_oil
+    liquid_style: classic
     unit: L
     tank_form: rect
+    tank_style: metal
     show_unittank: true
+    show_title: true
+    show_tank_label: true
+    tank_label: Tank
+    animation: false
+    bubbles: false
     theme: ""
-    font_family: inherit
     font_size: 100
     entities:
       - name: Tank 1
@@ -114,18 +131,32 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 |---|---|---|---|
 | `type` | `custom:tank-card` | string | Kartentyp |
 | `title` | `Tank Card` | string | Kartentitel |
+| `show_title` | `true` | boolean | Titel anzeigen |
 | `tank_count` | `3` | number | Anzahl der Tanks (1–20) |
 | `tank_capacity` | `1500` | number | Kapazität pro Tank |
-| `initial_fill` | `tank_count × tank_capacity` | number | Anfangsfüllstand des Gesamtsystems |
+| `initial_fill` | `tank_count × tank_capacity` | number | Anfangsfüllstand des Gesamtsystems (leer = voll) |
 | `sensor_mode` | `consumption` | string | `consumption`, `fill_level_l` oder `fill_level_percent` |
 | `consumption_sensor` | `""` | string | Verbrauchssensor (nur bei `consumption`) |
 | `level_sensor` | `""` | string | Füllstandssensor (bei beiden Level-Modi) |
 | `unit` | `L` | string | `L`, `kg` oder `m3` |
 | `tank_form` | `rect` | string | `rect`, `pool` oder `capsule` |
+| `tank_style` | `metal` | string | `metal` oder `glass` |
+| `gas_tank` | `false` | boolean | Standfüße und Kuppel (nur Metall + Kapsel + 1 Tank) |
 | `show_unittank` | `true` | boolean | Menge pro Tank im Füllbalken anzeigen |
+| `show_tank_label` | `true` | boolean | Tank-Beschriftung anzeigen |
+| `tank_label` | `Tank` | string | Gemeinsamer Name der Tanks (Nummerierung automatisch) |
+| `show_max` | `true` | boolean | „Max:“ anzeigen |
+| `show_current` | `true` | boolean | „Aktuell:“ anzeigen |
+| `show_fill_level` | `true` | boolean | „Füllstand:“ anzeigen |
+| `show_consumption` | `true` | boolean | „Verbrauch:“ anzeigen |
 | `content_type` | `heating_oil` | string | Material / Farbe (siehe unten) |
+| `custom_color` | `[33, 150, 243]` | list / string | RGB oder Hex (nur bei `content_type: custom`) |
+| `liquid_style` | `classic` | string | `classic` (bisherige Darstellung) oder `new` |
+| `animation` | `false` | boolean | Wellen-Animation (nur Flüssigkeiten) |
+| `animation_interval` | `30` | number | Intervall der Welle in Sekunden (5–60) |
+| `bubbles` | `false` | boolean | Aufsteigende Blasen (nur Flüssigkeiten) |
+| `bubble_amount` | `3` | number | Menge der Blasen (1–8) |
 | `theme` | `""` | string | Optionales HA-Theme |
-| `font_family` | `inherit` | string | Schriftart |
 | `font_size` | `100` | number / string | Schriftgröße (Zahl = %, auch `%` / `em` / `px`; Anzeige 50–200 %) |
 | `entities` | `[]` | list | Liste der Tanks mit `name` |
 
@@ -171,6 +202,15 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 - `pool` – zylindrischer / abgerundeter Tank
 - `capsule` – Kapsel-Tank
 
+**Tankart**
+
+- `metal` – Metalltank
+- `glass` – Glastank
+
+**Gas-Tank**
+
+- `gas_tank: true` – Standfüße und Kuppel (nur bei `tank_style: metal`, `tank_form: capsule` und genau einem Tank)
+
 ---
 
 # 🧪 Unterstützte Materialien & Farben
@@ -183,14 +223,14 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 - `gas` – Gas
 - `pellets` – Pellets
 - `wood_chips` – Hackschnitzel
+- `custom` – eigene Farbe über `custom_color`
 
-**Zusätzliche Farboptionen (neu in 0.5.0 dokumentiert)**
+**Flüssigkeitsdarstellung**
 
-- `orange`
-- `red`
-- `brown`
-- `blue`
-- `yellow`
+- `classic` – bisherige Darstellung (hell unten)
+- `new` – neue Darstellung (hell oben)
+
+> Bei Pellets und Hackschnitzel entfallen Welle und Blasen (Schüttgut).
 
 ---
 
