@@ -15,28 +15,34 @@
 
 **Tank Card** is a Home Assistant custom card for visualizing tank levels, total capacity, and consumption.
 
-** Current Version: 0.8.0
+**Current Version: 0.9.0**
+
+## 🆕 0.9.0
+
+- Glass and metal tank 
+- Gas tank with legs and dome (capsule + metal, single tank)
+- Liquid style selectable: previous or new look
+- New look for wood pellets and wood chips
+- Custom color via `content_type: custom` and `custom_color`
+- Wave animation and rising bubbles
+- Title and tank label individually show/hide
+- Shared tank label with automatic numbering
+- Tap on the card opens the sensor details
+- Editor: new Animation category, font size and design moved under Display
+- Font size of the per-tank value increased and adapts to tank width on narrow tanks
+- Optical fill height corrected
+
+<img width="40%" height="auto" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
+<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 
-## 🆕 0.8.0
-
-* New, clearer editor layout
-* All values can be removed and individually enabled
-* Minor bug fixes
-
-
-<img width="50%" height="auto" alt="3d-Tank-card" src="https://github.com/user-attachments/assets/9cdca235-e0f7-4d98-81be-07d19b7ebb4d" /><img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
-
-
-> **Note:** After updating, hard-refresh the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
+> **Note:** After updating, hard-reload the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
 
 ---
 
 ## 📖 About Tank Card
 
-**Tank Card** is a Home Assistant custom card for visualizing tank levels, total capacity, and consumption.
-
-It supports consumption sensors as well as level sensors with absolute values or percentages. Suitable for heating oil, water, diesel, gas, pellets, wood chips, and other liquids or bulk materials — as well as free color displays.
+Supports consumption sensors as well as level sensors with absolute values or percentages. Suitable for heating oil, water, diesel, gas, pellets, wood chips, and other liquids or bulk materials — as well as free color displays.
 
 The calculation depends on the selected sensor mode:
 
@@ -50,20 +56,22 @@ The calculation depends on the selected sensor mode:
 - Display of tank level and total capacity
 - Consumption and level sensors (absolute or percentage)
 - Tank shapes `rect`, `pool`, and `capsule`
+- Tank type glass or metal
 - Material- and color-dependent fill gradients / patterns
+- Wave animation and rising bubbles (for liquids)
 - Units `L`, `kg`, and `m³`
-- Configurable font family and font size (50–200 %)
+- Configurable font size (50–200 %)
 - Optional Home Assistant theme
 - Responsive layout (container queries)
-- Home Assistant visual editor with helper texts
-- English and German (follows the HA language)
-- Home Assistant-compliant card configuration
+- Visual Home Assistant editor
+- English and German (follows HA language)
+- Home Assistant–compliant card configuration
 
 ---
 
 # 📦 Installation
 
-## Easy installation → [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
+## Easy install → [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
 
 ## HACS
 
@@ -71,43 +79,51 @@ The calculation depends on the selected sensor mode:
 2. Select **Frontend**
 3. Search for **Tank Card**
 4. Install the card
-5. Reload Home Assistant or your browser
+5. Reload Home Assistant or the browser
 
 ## Manual
 
 1. Download `tank-card.js`
 2. Copy it to `/config/www/community/tank-card/`
-3. In Home Assistant, open **Settings → Dashboards → Resources** and add:
+3. Under **Settings → Dashboards → Resources** add the following resource:
 
-   `/local/community/tank-card/tank-card.js`
+`/local/community/tank-card/tank-card.js`
 
-   Resource type: **JavaScript Module**
+Type: **JavaScript Module**
 
-Afterwards, reload your browser, for example with **Ctrl + F5**.
+Afterwards, reload the browser, e.g. with **Ctrl + F5**.
 
 ---
 
 # ⚙️ Example Configuration
 
-    type: custom:tank-card
-    title: Tank Card
-    tank_count: 3
-    tank_capacity: 1500
-    initial_fill: 4500
-    sensor_mode: consumption
-    consumption_sensor: sensor.heating_oil_consumption_total
-    level_sensor: ""
-    content_type: heating_oil
-    unit: L
-    tank_form: rect
-    show_unittank: true
-    theme: ""
-    font_family: inherit
-    font_size: 100
-    entities:
-      - name: Tank 1
-      - name: Tank 2
-      - name: Tank 3
+```yaml
+type: custom:tank-card
+title: Tank Card
+tank_count: 3
+tank_capacity: 1500
+initial_fill: 4500
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+level_sensor: ""
+content_type: heating_oil
+liquid_style: classic
+unit: L
+tank_form: rect
+tank_style: metal
+show_unittank: true
+show_title: true
+show_tank_label: true
+tank_label: Tank
+animation: false
+bubbles: false
+theme: ""
+font_size: 100
+entities:
+  - name: Tank 1
+  - name: Tank 2
+  - name: Tank 3
+```
 
 ---
 
@@ -117,54 +133,71 @@ Afterwards, reload your browser, for example with **Ctrl + F5**.
 |---|---|---|---|
 | `type` | `custom:tank-card` | string | Card type |
 | `title` | `Tank Card` | string | Card title |
+| `show_title` | `true` | boolean | Show title |
 | `tank_count` | `3` | number | Number of tanks (1–20) |
 | `tank_capacity` | `1500` | number | Capacity per tank |
-| `initial_fill` | `tank_count × tank_capacity` | number | Initial fill level of the entire system |
+| `initial_fill` | `tank_count × tank_capacity` | number | Initial fill of the whole system (empty = full) |
 | `sensor_mode` | `consumption` | string | `consumption`, `fill_level_l`, or `fill_level_percent` |
 | `consumption_sensor` | `""` | string | Consumption sensor (only for `consumption`) |
 | `level_sensor` | `""` | string | Level sensor (for both level modes) |
 | `unit` | `L` | string | `L`, `kg`, or `m3` |
 | `tank_form` | `rect` | string | `rect`, `pool`, or `capsule` |
+| `tank_style` | `metal` | string | `metal` or `glass` |
+| `gas_tank` | `false` | boolean | Legs and dome (only metal + capsule + 1 tank) |
 | `show_unittank` | `true` | boolean | Show amount per tank in the fill bar |
+| `show_tank_label` | `true` | boolean | Show tank label |
+| `tank_label` | `Tank` | string | Shared name of the tanks (numbering automatic) |
+| `show_max` | `true` | boolean | Show “Max:” |
+| `show_current` | `true` | boolean | Show “Current:” |
+| `show_fill_level` | `true` | boolean | Show “Level:” |
+| `show_consumption` | `true` | boolean | Show “Consumption:” |
 | `content_type` | `heating_oil` | string | Material / color (see below) |
+| `custom_color` | `[33, 150, 243]` | list / string | RGB or Hex (only with `content_type: custom`) |
+| `liquid_style` | `classic` | string | `classic` (previous look) or `new` |
+| `animation` | `false` | boolean | Wave animation (liquids only) |
+| `animation_interval` | `30` | number | Wave interval in seconds (5–60) |
+| `bubbles` | `false` | boolean | Rising bubbles (liquids only) |
+| `bubble_amount` | `3` | number | Amount of bubbles (1–8) |
 | `theme` | `""` | string | Optional HA theme |
-| `font_family` | `inherit` | string | Font family |
-| `font_size` | `100` | number / string | Font size (number = %, also `%` / `em` / `px`; display limited to 50–200 %) |
+| `font_size` | `100` | number / string | Font size (number = %, also `%` / `em` / `px`; display 50–200 %) |
 | `entities` | `[]` | list | List of tanks with `name` |
 
 > **Removed since v0.4.0:** `bg_color`  
-> Background styling is handled through the Home Assistant theme.
-
-<img width="797" height="672" alt="tankUnbenannt" src="https://github.com/user-attachments/assets/93ad16d6-bd15-4ed5-afac-4c9d66b0a496" />
-
+> Background styling is handled by the Home Assistant theme.
 
 ---
 
 # 📊 Sensor Modes
 
-### Consumption Sensor
+### Consumption sensor
 
-    sensor_mode: consumption
-    consumption_sensor: sensor.heating_oil_consumption_total
+```yaml
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+```
 
 Current level:
 
 `current_level = initial_fill - consumption`  
 (clamped to 0 … total capacity)
 
-### Absolute Level
+### Absolute level
 
-    sensor_mode: fill_level_l
-    level_sensor: sensor.heating_oil_level
+```yaml
+sensor_mode: fill_level_l
+level_sensor: sensor.heating_oil_level
+```
 
 The sensor value is used directly as the current tank level (clamped to 0 … total capacity).
 
-### Percentage Level
+### Percentage level
 
-    sensor_mode: fill_level_percent
-    level_sensor: sensor.heating_oil_level_percent
+```yaml
+sensor_mode: fill_level_percent
+level_sensor: sensor.heating_oil_level_percent
+```
 
-The sensor value (0–100 %) is calculated relative to the total system capacity:
+The sensor value (0–100 %) is applied to the total capacity:
 
 `total_capacity = tank_count × tank_capacity`  
 `current_level = total_capacity × percentage / 100`
@@ -174,8 +207,17 @@ The sensor value (0–100 %) is calculated relative to the total system capacity
 # 🛢️ Tank Shapes
 
 - `rect` – rectangular tank
-- `cylinder` – cylindrical / rounded tank
-- `capsule` – capsule-shaped tank
+- `pool` – cylindrical / rounded tank
+- `capsule` – capsule tank
+
+**Tank type**
+
+- `metal` – metal tank
+- `glass` – glass tank
+
+**Gas tank**
+
+- `gas_tank: true` – legs and dome (only with `tank_style: metal`, `tank_form: capsule`, and exactly one tank)
 
 ---
 
@@ -189,19 +231,14 @@ The sensor value (0–100 %) is calculated relative to the total system capacity
 - `gas` – gas
 - `pellets` – pellets
 - `wood_chips` – wood chips
+- `custom` – custom color via `custom_color`
 
-**Additional color options (documented in 0.5.0)**
+**Liquid style**
 
-- `orange`
-- `red`
-- `brown`
-- `blue`
-- `yellow`
+- `classic` – previous look (bright at the bottom)
+- `new` – new look (bright at the top)
 
-Old Version V0.6.4: 
-<img width="50%" height="auto" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/b49d3ef9-836f-417c-b29a-ffc1296d459e" />
-
-
+> For pellets and wood chips, wave and bubbles are disabled (bulk material).
 
 ---
 
@@ -243,7 +280,7 @@ Create a [GitHub Issue](https://github.com/jinx-22/tank-card/issues).
 
 </div>
 
-Thank you for your support — even a free ⭐ helps others discover the project:
+Thank you for your support — a free ⭐ helps others discover the project:
 
 [![stars](https://img.shields.io/github/stars/jinx-22/tank-card)](https://github.com/jinx-22/tank-card/stargazers)
 
