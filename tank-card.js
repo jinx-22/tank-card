@@ -1,7 +1,5 @@
-/** Tank Card – Version 0.9.5 */
 const VERSION = "0.9.2";
 console.info("%c Tank Card %c v" + VERSION, "font-weight:bold;background:#03a9f4;color:#fff;padding:2px 6px;border-radius:3px 0 0 3px", "background:#555;color:#fff;padding:2px 6px;border-radius:0 3px 3px 0");
-
 const TXT = {
   en: {
     u_max: "Max:", u_level: "Current:", u_fill: "Level:", u_cons: "Consumption:", u_tank: "Tank",
@@ -10,7 +8,7 @@ const TXT = {
     sensor_mode: "Sensor mode", consumption_sensor: "Consumption sensor", level_sensor: "Level sensor", initial_fill: "Initial fill", unit: "Unit",
     show_max: "Show “Max:”", show_current: "Show “Current:”", show_fill_level: "Show “Level:”", show_consumption: "Show “Consumption:”",
     show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval (seconds)", bubbles: "Rising bubbles",
-    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", tank_style: "Tank type", gas_tank: "Gas tank",
+    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", card_height: "Set card height manually", tank_style: "Tank type", gas_tank: "Gas tank",
     h_gas_tank: "Adds legs and a dome to the capsule.",
     h_tank_label: "Name of the tanks, e.g. Water barrel or Gas bottle. The numbering is added automatically. Empty = Tank.",
     h_consumption_sensor: "Sensor used in consumption mode. Tap on the card opens its details.",
@@ -18,6 +16,7 @@ const TXT = {
     h_initial_fill: "Total amount of all tanks at the start (max. total capacity). Empty = full.",
     h_animation_interval: "Time between two waves (5–60 seconds).", h_bubble_amount: "1 = a few bubbles, 8 = very many bubbles.",
     h_font_size: "Font size in percent (50–200).",
+    h_card_height: "Minimum card height in pixels, mainly for the masonry view. 0 = automatic. In the sections view it sets the default number of rows, the layout tab takes precedence.",
     s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below (%)", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below (%)", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
     h_warn_1_level: "Warning when the level falls below this value (default 20 %).", h_warn_2_level: "Warning when the level falls below this value (default 10 %).",
     h_warn_notify: "Creates a notification in Home Assistant (bell in the sidebar, also visible on mobile) when a level is reached. Refilling removes it. Needs a sensor.",
@@ -38,7 +37,7 @@ const TXT = {
     sensor_mode: "Sensorart", consumption_sensor: "Verbrauchssensor", level_sensor: "Füllstandssensor", initial_fill: "Anfangsbestand", unit: "Einheit",
     show_max: "„Max:“ anzeigen", show_current: "„Aktuell:“ anzeigen", show_fill_level: "„Füllstand:“ anzeigen", show_consumption: "„Verbrauch:“ anzeigen",
     show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle (Sekunden)", bubbles: "Aufsteigende Blasen",
-    bubble_amount: "Menge der Blasen", theme: "Theme", font_size: "Schriftgröße", tank_style: "Tankart", gas_tank: "Gas-Tank",
+    bubble_amount: "Menge der Blasen", theme: "Theme", font_size: "Schriftgröße", card_height: "Kartenhöhe manuell einstellen", tank_style: "Tankart", gas_tank: "Gas-Tank",
     h_gas_tank: "Fügt der Kapsel Standfüße und eine Kuppel hinzu.",
     h_tank_label: "Name der Tanks, z. B. Wasserfass oder Gasflasche. Die Nummerierung kommt automatisch. Leer = Tank.",
     h_consumption_sensor: "Sensor für den Modus Verbrauchssensor. Tippen auf die Karte öffnet dessen Details.",
@@ -46,6 +45,7 @@ const TXT = {
     h_initial_fill: "Gesamtmenge aller Tanks zu Beginn (max. Gesamtkapazität). Leer = voll.",
     h_animation_interval: "Zeit zwischen zwei Wellen (5–60 Sekunden).", h_bubble_amount: "1 = wenige Blasen, 8 = sehr viele Blasen.",
     h_font_size: "Schriftgröße in Prozent (50–200).",
+    h_card_height: "Mindesthöhe der Karte in Pixel, vor allem für die Masonry-Ansicht. 0 = automatisch. In der Sections-Ansicht bestimmt der Wert die Standard-Zeilenzahl, der Layout-Reiter hat Vorrang.",
     s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter (%)", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter (%)", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
     h_warn_1_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 20 %).", h_warn_2_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 10 %).",
     h_warn_notify: "Erstellt in Home Assistant eine Benachrichtigung (Glocke in der Seitenleiste, auch auf dem Handy sichtbar), sobald eine Stufe erreicht wird. Nach dem Nachfüllen wird sie entfernt. Benötigt einen Sensor.",
@@ -60,7 +60,6 @@ const TXT = {
     o_glass: "Glastank", o_metal: "Metalltank"
   }
 };
-
 const LIQUIDS = ["classic", "new"];
 const MODES = ["consumption", "fill_level_l", "fill_level_percent"];
 const UNITS = ["L", "kg", "m3"];
@@ -87,17 +86,12 @@ const INFO = [
 const DEF = {
   title: "Tank Card", tank_form: "rect", tank_style: "metal", gas_tank: false, tank_count: 3, tank_capacity: 1500, content_type: "heating_oil", custom_color: [33, 150, 243], liquid_style: "classic", sensor_mode: "consumption", unit: "L",
   show_max: true, show_current: true, show_fill_level: true, show_consumption: true, show_unittank: true, show_title: true, show_tank_label: true, tank_label: "Tank",
-  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100,
+  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100, card_height: 0,
   warn_1: false, warn_1_level: 20, warn_2: false, warn_2_level: 10, warn_notify: true, warn_mobile: false, warn_glow: false
 };
-
-// Lichtkugel der Kapsel: size = Größe (Anteil der kurzen Tankseite), shift = Verschiebung (negativ = links)
 const WARN_HYST = .5;
 const BALL = { size: .17, shift: -.2 };
-
-// Pellets / Hackschnitzel: Kachelgröße in em (kleiner = kleinere Teile). Diese Inhalte haben keine Welle/Blasen.
 const PILE = { pellets: 6.7, wood_chips: 9 };
-
 const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 const num = (v, d, min = -Infinity, max = Infinity) => {
   if (v === "" || v == null) return d;
@@ -132,8 +126,6 @@ const rgbOf = (v) => {
 const shade = (rgb, f) => "#" + rgb.map((c) => Math.round(f >= 0 ? c + (255 - c) * f : c * (1 + f)).toString(16).padStart(2, "0")).join("");
 const customPal = (v) => { const c = rgbOf(v); return [shade(c, .3), shade(c, -.45)]; };
 const customClassic = (v) => { const c = rgbOf(v); return `linear-gradient(to top,${shade(c, .25)} 0%,${shade(c, 0)} 32%,${shade(c, -.25)} 68%,${shade(c, -.45)} 100%)`; };
-
-// Pellets und Hackschnitzel als nahtlose SVG-Kachel (Licht von links oben)
 const solid = (() => {
   const SZ = { pellets: 160, wood_chips: 120 }, cache = {};
   const prng = (a) => () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -141,7 +133,6 @@ const solid = (() => {
   const pick = (r, w) => { let s = 0; for (let i = 0; i < w.length; i++) { s += w[i]; if (r < s) return i; } return w.length - 1; };
   const grad = (id, st) => `<linearGradient id='${id}' x1='0' y1='0' x2='0' y2='1'>${st.map((c, i) => `<stop offset='${st.length === 2 ? i : [0, .26, .62, 1][i]}' stop-color='${c}'/>`).join("")}</linearGradient>`;
   const NOISE = "<filter id='n' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .08 0 0 0 0 .04 0 0 0 0 .01 0 0 0 .9 -.35'/></filter>";
-
   const scatter = (rnd, T, base, cells, ext, use) => {
     const rect = (f, o) => `<rect width='${T}' height='${T}' fill='${f}'${o ? ` opacity='${o}'` : ""}/>`;
     const layer = () => {
@@ -162,7 +153,6 @@ const solid = (() => {
     };
     return rect(base) + layer() + rect("#120802", .38) + layer() + `<rect width='${T}' height='${T}' filter='url(#n)' opacity='.45'/>`;
   };
-
   const pellets = () => {
     const rnd = prng(11), D = 6.6, h = D / 2, LEN = [7, 10, 14, 18, 23, 28];
     let defs = NOISE + [["#5a3a1c", "#d0a46c", "#a97b44", "#4a2c13"], ["#6a4624", "#dcb67c", "#b88a52", "#59391b"], ["#4a2d14", "#b98650", "#8c5d30", "#3a2110"], ["#35200e", "#80532a", "#5a3519", "#241207"]].map((s, i) => grad("p" + i, s)).join("");
@@ -174,7 +164,6 @@ const solid = (() => {
     });
     return `<defs>${defs}</defs>` + scatter(rnd, SZ.pellets, "#3a2210", 13, 18, (x, y, a, r1, r2) => `<use href='#s${pick(r1, [.1, .17, .3, .22, .13, .08])}' transform='translate(${x} ${y})rotate(${a})scale(${f1(.88 + ((r1 * 97) % 1) * .24)})' fill='url(#p${pick(r2, [.35, .25, .3, .1])})' opacity='${(.86 + ((r2 * 53) % 1) * .14).toFixed(2)}'/>`);
   };
-
   const chips = () => {
     const rnd = prng(23), pt = (p) => p.map(f1).join(",");
     let defs = NOISE + [["#ecd5a0", "#c09a5e"], ["#dcb877", "#ae8546"], ["#cb9c58", "#966a33"], ["#a8763e", "#744a1f"], ["#f2e3b8", "#d2b476"], ["#c0834a", "#8a5226"]].map((s, i) => grad("c" + i, s)).join("");
@@ -196,7 +185,6 @@ const solid = (() => {
       return `<use href='#g${Math.floor(r1 * 11.99)}' transform='translate(${x} ${y})rotate(${a})scale(${f1(m)} ${z})' fill='url(#c${pick(r2, [.24, .24, .2, .1, .12, .1])})'/>`;
     });
   };
-
   const BLOTCH = [[24, 62, 45, 55, "0,0,0,.24"], [72, 34, 40, 50, "255,230,190,.12"], [90, 78, 32, 42, "0,0,0,.2"], [48, 18, 30, 38, "255,230,190,.1"], [8, 22, 28, 36, "0,0,0,.16"]]
     .map(([x, y, w, h, c]) => `radial-gradient(ellipse ${w}% ${h}% at ${x}% ${y}%,rgba(${c}),rgba(${c.split(",").slice(0, 3)},0) 72%)`).join(",");
   return (kind) => {
@@ -208,9 +196,6 @@ const solid = (() => {
     return cache[kind];
   };
 })();
-
-// CSS-Variablen: --h Deckelhöhe, --sh Oberflächenhöhe, --o Abstand Füllhöhe→Oberflächenmitte, --k Höhenkorrektur,
-// --ov Überstand der Oberfläche, --b Rahmendicke, --f Flüssigkeitsfarbe, --g Glow-Farbe
 const CSS = `
 :host{display:block;height:100%;min-height:240px;container-type:inline-size}
 ha-card{height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,100%);color:var(--primary-text-color);background:radial-gradient(120% 70% at 50% 0,color-mix(in srgb,var(--card-background-color,#1c1c1c) 90%,#fff),var(--card-background-color,#1c1c1c))}
@@ -278,21 +263,16 @@ ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-o
 @keyframes wfog{0%,100%{opacity:0}50%{opacity:1}}
 @keyframes wglow{0%,100%{filter:drop-shadow(0 0 0 rgba(var(--wc),0))}50%{filter:drop-shadow(0 0 .7em rgba(var(--wc),.9))}}
 @media(prefers-reduced-motion:reduce){.l::before,.bub span,.tanks::before,.t{animation:none!important}.warn1 .tanks::before,.warn2 .tanks::before{opacity:.6}}`;
-
 const BUBBLE_CSS = `
 .bub{position:absolute;inset:0;overflow:hidden;container-type:size;pointer-events:none}
 .bub span{position:absolute;left:var(--x);bottom:calc(-1*var(--s));width:var(--s);height:var(--s);border-radius:50%;opacity:0;animation:b var(--t) linear var(--d) infinite;
   background:radial-gradient(circle at 32% 28%,#fff,rgba(255,255,255,.3) 45%,rgba(255,255,255,.12));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
 @keyframes b{0%{transform:translate(0,0);opacity:0}10%,90%{opacity:.85}100%{transform:translate(var(--w),calc(-100cqh - 1em));opacity:0}}
 .e .bub{display:none}`;
-
-// Blasen pro Tank je Stufe 1–8 als [kleine, mittlere]
 const BUBBLE_COUNT = [[4, 1], [6, 2], [9, 3], [13, 5], [18, 7], [24, 10], [32, 14], [40, 16]];
-
 const waveCss = (s) => `
 @keyframes w{0%{background-position:100% 0}${Math.min(3.2 / s * 100, 40).toFixed(2)}%{background-position:0 0}100%{background-position:0 0}}
 .anim .l::before{animation:w ${s}s linear var(--wd) infinite}`;
-
 class TankCard extends HTMLElement {
   constructor() {
     super();
@@ -302,19 +282,17 @@ class TankCard extends HTMLElement {
     this._nb = false;
     this.attachShadow({ mode: "open" });
   }
-
   static getConfigElement() { return document.createElement("tank-card-editor"); }
-
   static getStubConfig() {
     return { ...DEF, initial_fill: 2250, consumption_sensor: "", level_sensor: "", theme: "" };
   }
-
-  getCardSize() { return 6; }
-  getGridOptions() { return { rows: 7, columns: 12, min_rows: 5, min_columns: 12, max_rows: 24 }; }
-
+  getCardSize() { return this._o?.height ? Math.max(Math.round(this._o.height / 50), 1) : 6; }
+  getGridOptions() {
+    const h = this._o?.height, rows = h ? Math.max(Math.ceil((h + 8) / 64), 1) : 7;
+    return { rows, columns: 12, min_rows: Math.min(5, rows), min_columns: 12, max_rows: 24 };
+  }
   connectedCallback() { this._observe(); }
   disconnectedCallback() { this._ro?.disconnect(); }
-
   set hass(h) {
     const old = this._hass, o = this._o;
     this._hass = h || null;
@@ -322,7 +300,6 @@ class TankCard extends HTMLElement {
         old.themes?.darkMode !== h.themes?.darkMode || old.selectedTheme !== h.selectedTheme ||
         (o.id && old.states?.[o.id]?.state !== h.states?.[o.id]?.state)) this._update();
   }
-
   setConfig(c) {
     if (!c || typeof c !== "object" || Array.isArray(c)) throw new Error("Invalid Tank Card configuration.");
     const e = (k) => (ENUM[k].includes(c[k]) ? c[k] : DEF[k]);
@@ -334,16 +311,17 @@ class TankCard extends HTMLElement {
     const wl = (k) => ({ on: c["warn_" + k] === true, lvl: num(c["warn_" + k + "_level"], DEF["warn_" + k + "_level"], 1, 99) });
     const w1 = wl(1), w2 = wl(2);
     if (w1.on && w2.on) w2.lvl = Math.min(w2.lvl, w1.lvl - 1);
+    const ch = Math.round(num(c.card_height, DEF.card_height, 0, 1000));
     this._last = null;
     this._st = 0;
     this._o = {
-      n, total, content, fill: Math.min(num(c.initial_fill, total, 0), total),
+      n, total, fill: Math.min(num(c.initial_fill, total, 0), total),
       pal: content === "custom" ? customPal(c.custom_color) : COLORS[content],
       solid: solid(content),
       classic: e("liquid_style") === "classic",
       fc: content === "custom" ? customClassic(c.custom_color) : CLASSIC[content],
       glow: content === "custom" ? `rgba(${rgbOf(c.custom_color).join(",")},.75)` : GLOWS[content],
-      mode, cs, ls, id,
+      mode, id,
       warn: [w1, w2], notify: c.warn_notify !== false, mobile: c.warn_mobile === true, wglow: c.warn_glow === true,
       nid: id ? "tank_card_" + id.replace(/\W+/g, "_") : "",
       title: typeof c.title === "string" && c.title ? c.title : DEF.title,
@@ -355,6 +333,7 @@ class TankCard extends HTMLElement {
       bubbles: anim && c.bubbles === true, amount: Math.round(num(c.bubble_amount, DEF.bubble_amount, 1, 8)),
       form, style, gas: style === "metal" && form === "capsule" && n === 1 && c.gas_tank === true,
       theme: typeof c.theme === "string" ? c.theme : "", font: fontPct(c.font_size),
+      height: ch, minH: typeof c.grid_options?.rows === "number" ? 0 : ch,
       names: Array.from({ length: n }, (_, i) => { const x = c.entities?.[i]?.name, t = typeof x === "string" ? x.trim() : ""; return t && t !== `Tank ${i + 1}` ? t : null; })
     };
     this._build();
@@ -362,7 +341,6 @@ class TankCard extends HTMLElement {
     const o = this._o;
     if (o.nid) this._read().then((m) => { if (o === this._o && !this._st && m.s && o.warn[m.s - 1]?.on) { this._st = m.s; this._update(); } });
   }
-
   _values() {
     const o = this._o, id = o.id;
     const s = id ? this._hass?.states?.[id]?.state : undefined;
@@ -382,14 +360,12 @@ class TankCard extends HTMLElement {
     if (ok) this._last = r;
     return { total: o.total, ...r, ok };
   }
-
   _stage(pct) {
     const [w1, w2] = this._o.warn, prev = this._st;
     let s = w2.on && pct < w2.lvl ? 2 : w1.on && pct < w1.lvl ? 1 : 0;
     if (s < prev && pct < (prev === 2 ? w2 : w1).lvl + WARN_HYST) s = prev;
     return (this._st = s);
   }
-
   async _read() {
     const norm = (v) => (v && typeof v === "object" ? { s: Number(v.s) || 0, t: v.t && typeof v.t === "object" ? v.t : {} } : { s: Number(v) || 0, t: {} });
     try {
@@ -398,12 +374,10 @@ class TankCard extends HTMLElement {
     } catch {}
     try { return norm(JSON.parse(localStorage.getItem("tank-card:" + this._o.nid))); } catch { return { s: 0, t: {} }; }
   }
-
   async _write(m) {
     try { localStorage.setItem("tank-card:" + this._o.nid, JSON.stringify(m)); } catch {}
     try { await this._hass?.callWS?.({ type: "frontend/set_user_data", key: "tank_card_" + this._o.nid, value: m }); } catch {}
   }
-
   async _notify(stage, pct, cur, total, lg) {
     const o = this._o, h = this._hass;
     if ((!o.notify && !o.mobile) || !o.nid || !h?.callService || this._nb) return;
@@ -442,7 +416,6 @@ class TankCard extends HTMLElement {
       }
     } finally { this._nb = false; }
   }
-
   _bubbles() {
     const layer = el("div", "bub"), r = Math.random;
     const [small, mid] = BUBBLE_COUNT[this._o.amount - 1];
@@ -453,7 +426,6 @@ class TankCard extends HTMLElement {
     }
     return layer;
   }
-
   _observe() {
     this._ro?.disconnect();
     const w = this._o?.form === "capsule" && this._els?.tanks[0]?.w;
@@ -461,7 +433,6 @@ class TankCard extends HTMLElement {
     this._ro = new ResizeObserver(() => this._ball());
     this._ro.observe(w);
   }
-
   _ball() {
     const t = this._els?.tanks[0], w = t?.w, v = t?.v;
     if (!w || !v || !w.clientWidth || !w.clientHeight) return;
@@ -480,18 +451,16 @@ class TankCard extends HTMLElement {
     px("--bx", Math.max(.12, (wide ? .6 : .3) + BALL.shift) * s);
     px("--by", (wide ? .3 : .6) * s);
   }
-
   _build() {
     const o = this._o, [a, b] = o.pal || [];
     const style = el("style");
     style.textContent = CSS + (o.wave ? waveCss(o.interval) : "") + (o.bubbles ? BUBBLE_CSS : "");
-
     const bright = o.classic && !o.solid;
     const card = el("ha-card", `${o.form} ${o.style}${o.solid ? " solid" : ""}${bright ? " bright" : ""}${o.wave ? " anim" : ""}`);
     card.style.setProperty("--fs", o.font + "%");
+    card.style.minHeight = this.style.minHeight = o.minH ? o.minH + "px" : "";
     card.style.setProperty("--f", o.solid || (bright ? o.fc : `linear-gradient(to bottom,${a},${b})`));
     card.style.setProperty("--g", (bright ? o.glow : a) || "transparent");
-
     if (o.id) {
       const tap = () => this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: o.id } }));
       card.style.cursor = "pointer";
@@ -500,9 +469,7 @@ class TankCard extends HTMLElement {
       card.addEventListener("click", tap);
       card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tap(); } });
     }
-
     if (o.showTitle) card.append(el("div", "title", o.title));
-
     const info = {}, bar = el("div", "info");
     for (const i of INFO) {
       if (!o.show[i.id]) continue;
@@ -515,7 +482,6 @@ class TankCard extends HTMLElement {
       bar.style.setProperty("--cols", Math.max(bar.children.length, 2));
       card.append(bar);
     }
-
     const tanksEl = el("div", "tanks"), tanks = [];
     tanksEl.style.setProperty("--n", o.n);
     for (let i = 0; i < o.n; i++) {
@@ -533,13 +499,11 @@ class TankCard extends HTMLElement {
       tanks.push({ nm, v, w, val });
     }
     card.append(tanksEl);
-
     this._tv = [];
     this._els = { card, info, bar: bar.children.length ? bar : null, tanks };
     this.shadowRoot.replaceChildren(style, card);
     this._observe();
   }
-
   _update() {
     if (!this._els) return;
     const o = this._o, lg = lang(this._hass), u = o.unit;
@@ -550,7 +514,6 @@ class TankCard extends HTMLElement {
     this._els.card.classList.toggle("warn2", o.wglow && stage === 2);
     if (ok && o.id) this._notify(stage, pct, cur, total, lg);
     const fm = { max: fmt(total, u, lg), level: fmt(cur, u, lg), fill: `${pct.toFixed(0)}%`, cons: fmt(cons, u, lg) };
-
     for (const [id, x] of Object.entries(this._els.info)) {
       x.l.textContent = tr(lg, x.k);
       x.v.textContent = fm[id];
@@ -559,7 +522,6 @@ class TankCard extends HTMLElement {
       const n = Math.max(...Object.values(this._els.info).map((x) => x.l.textContent.length + x.v.textContent.length));
       this._els.bar.style.setProperty("--chars", n);
     }
-
     const theme = o.theme && this._hass?.themes?.themes?.[o.theme], cs = this._els.card.style;
     this._tv.forEach((k) => cs.removeProperty(k));
     this._tv = [];
@@ -567,7 +529,6 @@ class TankCard extends HTMLElement {
       const th = { ...theme, ...theme.modes?.[this._hass.themes.darkMode ? "dark" : "light"] };
       for (const [k, v] of Object.entries(th)) if (k.startsWith("--") && typeof v === "string") { cs.setProperty(k, v); this._tv.push(k); }
     }
-
     const vt = o.perTank ? fmt(cur / o.n, u, lg) : "";
     cs.setProperty("--vc", vt.length || 6);
     const names = this._els.tanks.map((_, i) => o.names[i] ?? `${o.label ?? tr(lg, "u_tank")} ${i + 1}`);
@@ -580,7 +541,6 @@ class TankCard extends HTMLElement {
     });
   }
 }
-
 class TankCardEditor extends HTMLElement {
   constructor() {
     super();
@@ -590,9 +550,7 @@ class TankCardEditor extends HTMLElement {
     this._empty = new Set();
     this.attachShadow({ mode: "open" });
   }
-
   disconnectedCallback() { clearTimeout(this._t); cancelAnimationFrame(this._raf); this._t = null; }
-
   set hass(h) {
     const changed = lang(this._hass) !== lang(h);
     this._hass = h;
@@ -600,19 +558,16 @@ class TankCardEditor extends HTMLElement {
     if (changed) this._sync();
     else this._f.forEach((x) => (x.form.hass = h));
   }
-
   setConfig(c) {
     this._c = { ...(c || {}) };
     for (const k of [...this._empty]) if (!BLANK(this._c[k])) this._empty.delete(k);
     if (!this._f) this._build();
     this._sync();
   }
-
   _total(d) {
     const n = Number(d.tank_count), c = Number(d.tank_capacity);
     return Number.isFinite(n) && Number.isFinite(c) && n >= 1 && c > 0 ? totalOf(clamp(Math.round(n), 1, 20), c) : null;
   }
-
   _data() {
     const d = { ...DEF, ...this._c };
     for (const k in ENUM) if (!ENUM[k].includes(d[k])) d[k] = DEF[k];
@@ -625,7 +580,6 @@ class TankCardEditor extends HTMLElement {
     for (const k of this._empty) if (BLANK(this._c[k])) d[k] = undefined;
     return d;
   }
-
   _schema(id, d, lg) {
     const S = (name, vs) => ({ name, selector: { select: { options: vs.map((v) => ({ value: v, label: tr(lg, "o_" + v) })) } } });
     const nb = (min, max, step = 1) => ({ number: { min, ...(max !== undefined && { max }), step, mode: "box" } });
@@ -652,6 +606,7 @@ class TankCardEditor extends HTMLElement {
       display: [
         S("unit", UNITS), b("show_title"), g("display_top", [b("show_max"), b("show_current")]),
         g("display_bottom", [b("show_fill_level"), b("show_consumption")]), b("show_tank_label"), b("show_unittank"),
+        { name: "card_height", selector: sl(0, 1000, 10, "px") },
         { name: "theme", selector: { theme: {} } }, { name: "font_size", selector: sl(50, 200, 5, "%") }
       ],
       animation: [
@@ -666,7 +621,6 @@ class TankCardEditor extends HTMLElement {
       ]
     }[id];
   }
-
   _scroller() {
     let n = this;
     while (n) {
@@ -678,14 +632,12 @@ class TankCardEditor extends HTMLElement {
     }
     return document.scrollingElement;
   }
-
   _build() {
     const st = el("style");
     st.textContent = "ha-form{display:block;margin:8px 0}.note{margin:8px 0;font-size:.9em;color:var(--secondary-text-color)}ha-expansion-panel{display:block;margin:8px 0;--expansion-panel-content-padding:0 12px 12px}ha-expansion-panel[hidden]{display:none}";
     const root = el("div");
     this._f = [];
     this._p = [];
-
     const add = (parent, id) => {
       const form = document.createElement("ha-form");
       form.computeLabel = (s) => tr(lang(this._hass), s.name);
@@ -695,7 +647,6 @@ class TankCardEditor extends HTMLElement {
       parent.append(form);
       this._f.push({ id, form });
     };
-
     add(root, "top");
     for (const id of ["tank", "content", "display", "animation", "warn"]) {
       const p = document.createElement("ha-expansion-panel");
@@ -722,7 +673,6 @@ class TankCardEditor extends HTMLElement {
     }
     this.shadowRoot.replaceChildren(st, root);
   }
-
   _sync() {
     const lg = lang(this._hass), d = this._data();
     this._shown = d.initial_fill;
@@ -734,7 +684,6 @@ class TankCardEditor extends HTMLElement {
     });
     if (this._info) this._info.textContent = tr(lg, "i_warn_t") + ": " + tr(lg, "i_warn");
   }
-
   _live(e) {
     const inp = e.composedPath().find((n) => n instanceof HTMLInputElement && n.type === "color");
     if (!inp) return;
@@ -743,7 +692,6 @@ class TankCardEditor extends HTMLElement {
     cancelAnimationFrame(this._raf);
     this._raf = requestAnimationFrame(() => this._changed({ ...this._data(), custom_color: rgb }));
   }
-
   _changed(value) {
     if (!value || typeof value !== "object") return;
     const next = { ...value }, reset = [];
@@ -752,6 +700,12 @@ class TankCardEditor extends HTMLElement {
       else { if (k in value) this._empty.add(k); delete next[k]; }
     }
     for (const k in ENUM) if (BLANK(next[k])) { reset.push(k); delete next[k]; }
+    const prevH = this._c.card_height ?? DEF.card_height;
+    if (next.card_height !== undefined && next.card_height !== prevH && next.grid_options && "rows" in next.grid_options) {
+      const { rows, ...rest } = next.grid_options;
+      if (Object.keys(rest).length) next.grid_options = rest;
+      else delete next.grid_options;
+    }
     if ((next.warn_1 === true && this._c.warn_1 !== true) || (next.warn_2 === true && this._c.warn_2 !== true)) next.warn_glow = true;
     const fill = next.initial_fill, stored = this._c.initial_fill;
     if (fill !== undefined) {
@@ -776,10 +730,8 @@ class TankCardEditor extends HTMLElement {
     }
   }
 }
-
 if (!customElements.get("tank-card")) customElements.define("tank-card", TankCard);
 if (!customElements.get("tank-card-editor")) customElements.define("tank-card-editor", TankCardEditor);
-
 window.customCards = window.customCards || [];
 if (!window.customCards.some((c) => c.type === "tank-card")) {
   window.customCards.push({
