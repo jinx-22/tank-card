@@ -1,5 +1,5 @@
-/** Tank Card – Version 0.9.0 */
-const VERSION = "0.9.0";
+/** Tank Card – Version 0.9.5 */
+const VERSION = "0.9.2";
 console.info("%c Tank Card %c v" + VERSION, "font-weight:bold;background:#03a9f4;color:#fff;padding:2px 6px;border-radius:3px 0 0 3px", "background:#555;color:#fff;padding:2px 6px;border-radius:0 3px 3px 0");
 
 const TXT = {
@@ -18,6 +18,13 @@ const TXT = {
     h_initial_fill: "Total amount of all tanks at the start (max. total capacity). Empty = full.",
     h_animation_interval: "Time between two waves (5–60 seconds).", h_bubble_amount: "1 = a few bubbles, 8 = very many bubbles.",
     h_font_size: "Font size in percent (50–200).",
+    s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below (%)", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below (%)", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
+    h_warn_1_level: "Warning when the level falls below this value (default 20 %).", h_warn_2_level: "Warning when the level falls below this value (default 10 %).",
+    h_warn_notify: "Creates a notification in Home Assistant (bell in the sidebar, also visible on mobile) when a level is reached. Refilling removes it. Needs a sensor.",
+    h_warn_mobile: "Additionally sends the message as a push notification to all devices with the Home Assistant Companion app. Refilling removes it. Needs a sensor. Off by default.",
+    h_warn_glow: "Level 1: orange glow, level 2: red glow, with a fading fog behind the tanks.",
+    i_warn_t: "Info", i_warn: "When a switch is turned on, the matching animation is turned on automatically under “Animation”! The animation can also be turned off again under “Animation”!",
+    n_title: "Tank warning – level {s}", n_channel: "Tank warning", n_msg: "{t}: warning level {s} – level below {l} %. Now {p} % ({c} of {m}).",
     o_consumption: "Consumption sensor", o_fill_level_l: "Level sensor (kg, m³, L)", o_fill_level_percent: "Level sensor (%)",
     o_heating_oil: "Heating oil", o_gas: "Gas", o_pellets: "Pellets", o_wood_chips: "Wood chips", o_water: "Water", o_diesel: "Diesel",
     o_custom: "Custom", o_classic: "Previous style", o_new: "New style",
@@ -39,6 +46,13 @@ const TXT = {
     h_initial_fill: "Gesamtmenge aller Tanks zu Beginn (max. Gesamtkapazität). Leer = voll.",
     h_animation_interval: "Zeit zwischen zwei Wellen (5–60 Sekunden).", h_bubble_amount: "1 = wenige Blasen, 8 = sehr viele Blasen.",
     h_font_size: "Schriftgröße in Prozent (50–200).",
+    s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter (%)", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter (%)", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
+    h_warn_1_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 20 %).", h_warn_2_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 10 %).",
+    h_warn_notify: "Erstellt in Home Assistant eine Benachrichtigung (Glocke in der Seitenleiste, auch auf dem Handy sichtbar), sobald eine Stufe erreicht wird. Nach dem Nachfüllen wird sie entfernt. Benötigt einen Sensor.",
+    h_warn_mobile: "Sendet die Meldung zusätzlich als Push-Nachricht an alle Geräte mit der Home-Assistant-Companion-App. Nach dem Nachfüllen wird sie entfernt. Benötigt einen Sensor. Standardmäßig aus.",
+    h_warn_glow: "Stufe 1: oranges Leuchten, Stufe 2: rotes Leuchten, mit einem ein- und ausblendenden Nebel hinter den Tanks.",
+    i_warn_t: "Info", i_warn: "Wenn ein Schalter aktiviert wird, wird die dazugehörige Animation automatisch unter „Animation“ aktiviert! Die Animation kann unter „Animation“ auch wieder deaktiviert werden!",
+    n_title: "Tank-Warnung – Stufe {s}", n_channel: "Tank-Warnung", n_msg: "{t}: Warnstufe {s} – Füllstand unter {l} %. Aktuell {p} % ({c} von {m}).",
     o_consumption: "Verbrauchssensor", o_fill_level_l: "Füllstandssensor (kg, m³, L)", o_fill_level_percent: "Füllstandssensor (%)",
     o_heating_oil: "Heizöl", o_gas: "Gas", o_pellets: "Pellets", o_wood_chips: "Hackschnitzel", o_water: "Wasser", o_diesel: "Diesel",
     o_custom: "Benutzerdefiniert", o_classic: "Bisherige Darstellung", o_new: "Neue Darstellung",
@@ -73,10 +87,12 @@ const INFO = [
 const DEF = {
   title: "Tank Card", tank_form: "rect", tank_style: "metal", gas_tank: false, tank_count: 3, tank_capacity: 1500, content_type: "heating_oil", custom_color: [33, 150, 243], liquid_style: "classic", sensor_mode: "consumption", unit: "L",
   show_max: true, show_current: true, show_fill_level: true, show_consumption: true, show_unittank: true, show_title: true, show_tank_label: true, tank_label: "Tank",
-  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100
+  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100,
+  warn_1: false, warn_1_level: 20, warn_2: false, warn_2_level: 10, warn_notify: true, warn_mobile: false, warn_glow: false
 };
 
 // Lichtkugel der Kapsel: size = Größe (Anteil der kurzen Tankseite), shift = Verschiebung (negativ = links)
+const WARN_HYST = .5;
 const BALL = { size: .17, shift: -.2 };
 
 // Pellets / Hackschnitzel: Kachelgröße in em (kleiner = kleinere Teile). Diese Inhalte haben keine Welle/Blasen.
@@ -216,8 +232,8 @@ ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-o
 .chip{display:flex;justify-content:space-between;gap:.5em;padding:.35em .8em;border-radius:.9em;font-weight:600;white-space:nowrap;container-type:inline-size;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.25)}
 .chip span{font-size:clamp(.5em,calc((100cqw - .5em)/(var(--chars,16)*.6)),1em)}
 .chip span:first-child{opacity:.7;font-weight:500;flex:none}
-.tanks{flex:1;display:flex;column-gap:clamp(3px,calc(8% / var(--n,3)),24px);min-height:150px;padding:0 1%}
-.t{position:relative;isolation:isolate;flex:1;min-width:0;display:flex;flex-direction:column;padding-bottom:16px;container-type:inline-size}
+.tanks{position:relative;flex:1;display:flex;column-gap:clamp(3px,calc(8% / var(--n,3)),24px);min-height:150px;padding:0 1%}
+.t{position:relative;z-index:1;isolation:isolate;flex:1;min-width:0;display:flex;flex-direction:column;padding-bottom:16px;container-type:inline-size}
 .t::after{content:"";position:absolute;z-index:-1;left:-6%;right:-6%;bottom:0;height:24px;background:radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.55),transparent 70%);filter:blur(2px)}
 .n{text-align:center;font-weight:500;line-height:1.2;font-size:max(.3em,min(1.1em,calc(72cqw/(var(--lc,8)*.62))));margin-bottom:.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v{position:relative;z-index:1;flex:1;min-height:100px;overflow:hidden;border-radius:var(--rad);background:linear-gradient(90deg,rgba(255,255,255,.2),rgba(255,255,255,.03) 28%,rgba(255,255,255,.03) 70%,rgba(0,0,0,.25)),rgba(120,130,140,.18);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35),inset 0 -14px 22px rgba(0,0,0,.4),inset 0 10px 18px rgba(255,255,255,.1)}
@@ -253,7 +269,15 @@ ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-o
 .dome{position:relative;z-index:2;align-self:flex-start;left:35%;transform:translateX(-50%);width:clamp(50px,calc(50px + (100cqw - 200px)*.025),72px);height:clamp(11px,calc(max(16px,6cqw) - max(0px,110px - 100cqw)*.15),24px);margin:0 0 -4px;box-sizing:border-box;border:1px solid rgba(55,55,55,.8);border-radius:50% 50% 6px 6px/100% 100% 30% 30%;background:radial-gradient(ellipse at 50% 18%,rgba(255,255,255,.95),rgba(255,255,255,.5) 18%,rgba(255,255,255,0) 42%),linear-gradient(180deg,#eee,#cfcfcf 25%,#9a9a9a 55%,#dcdcdc 75%,#666);box-shadow:inset 0 2px 2px rgba(255,255,255,.9),inset 0 -6px 7px rgba(0,0,0,.45),0 3px 5px rgba(0,0,0,.5)}
 .feet{position:relative;z-index:0;display:flex;justify-content:space-between;height:16px;margin-top:-6px;padding:0 20%}
 .feet i{width:clamp(18px,18cqw,34px);clip-path:polygon(12% 0,88% 0,100% 100%,0 100%);background:linear-gradient(90deg,#444,#888 20%,#d8d8d8 50%,#f2f2f2 68%,#777 88%,#3f3f3f)}
-@media(prefers-reduced-motion:reduce){.l::before,.bub span{animation:none!important}}`;
+.warn1{--wc:255,152,0}
+.warn2{--wc:255,40,40}
+.tanks::before{content:"";position:absolute;z-index:0;inset:-12% -5%;pointer-events:none;border-radius:50%;opacity:0;background:radial-gradient(ellipse 60% 62% at 50% 55%,rgba(var(--wc,255,40,40),.55),transparent 72%);filter:blur(12px)}
+.warn1 .tanks::before,.warn2 .tanks::before{animation:wfog 3.4s ease-in-out infinite}
+.warn1 .t,.warn2 .t{animation:wglow 3.4s ease-in-out infinite}
+.warn2 .tanks::before,.warn2 .t{animation-duration:2.2s}
+@keyframes wfog{0%,100%{opacity:0}50%{opacity:1}}
+@keyframes wglow{0%,100%{filter:drop-shadow(0 0 0 rgba(var(--wc),0))}50%{filter:drop-shadow(0 0 .7em rgba(var(--wc),.9))}}
+@media(prefers-reduced-motion:reduce){.l::before,.bub span,.tanks::before,.t{animation:none!important}.warn1 .tanks::before,.warn2 .tanks::before{opacity:.6}}`;
 
 const BUBBLE_CSS = `
 .bub{position:absolute;inset:0;overflow:hidden;container-type:size;pointer-events:none}
@@ -274,6 +298,8 @@ class TankCard extends HTMLElement {
     super();
     this._hass = this._o = this._els = this._last = this._ro = null;
     this._tv = [];
+    this._st = 0;
+    this._nb = false;
     this.attachShadow({ mode: "open" });
   }
 
@@ -304,7 +330,12 @@ class TankCard extends HTMLElement {
     const content = e("content_type"), form = e("tank_form"), style = e("tank_style"), mode = e("sensor_mode");
     const cs = typeof c.consumption_sensor === "string" ? c.consumption_sensor : "", ls = typeof c.level_sensor === "string" ? c.level_sensor : "";
     const anim = !PILE[content];
+    const id = mode === "consumption" ? cs : ls;
+    const wl = (k) => ({ on: c["warn_" + k] === true, lvl: num(c["warn_" + k + "_level"], DEF["warn_" + k + "_level"], 1, 99) });
+    const w1 = wl(1), w2 = wl(2);
+    if (w1.on && w2.on) w2.lvl = Math.min(w2.lvl, w1.lvl - 1);
     this._last = null;
+    this._st = 0;
     this._o = {
       n, total, content, fill: Math.min(num(c.initial_fill, total, 0), total),
       pal: content === "custom" ? customPal(c.custom_color) : COLORS[content],
@@ -312,7 +343,9 @@ class TankCard extends HTMLElement {
       classic: e("liquid_style") === "classic",
       fc: content === "custom" ? customClassic(c.custom_color) : CLASSIC[content],
       glow: content === "custom" ? `rgba(${rgbOf(c.custom_color).join(",")},.75)` : GLOWS[content],
-      mode, cs, ls, id: mode === "consumption" ? cs : ls,
+      mode, cs, ls, id,
+      warn: [w1, w2], notify: c.warn_notify !== false, mobile: c.warn_mobile === true, wglow: c.warn_glow === true,
+      nid: id ? "tank_card_" + id.replace(/\W+/g, "_") : "",
       title: typeof c.title === "string" && c.title ? c.title : DEF.title,
       unit: e("unit"), perTank: c.show_unittank !== false,
       showTitle: c.show_title !== false, showLabel: c.show_tank_label !== false,
@@ -326,6 +359,8 @@ class TankCard extends HTMLElement {
     };
     this._build();
     this._update();
+    const o = this._o;
+    if (o.nid) this._read().then((m) => { if (o === this._o && !this._st && m.s && o.warn[m.s - 1]?.on) { this._st = m.s; this._update(); } });
   }
 
   _values() {
@@ -345,7 +380,67 @@ class TankCard extends HTMLElement {
       r = { cur, cons: Math.max(o.fill - cur, 0) };
     }
     if (ok) this._last = r;
-    return { total: o.total, ...r };
+    return { total: o.total, ...r, ok };
+  }
+
+  _stage(pct) {
+    const [w1, w2] = this._o.warn, prev = this._st;
+    let s = w2.on && pct < w2.lvl ? 2 : w1.on && pct < w1.lvl ? 1 : 0;
+    if (s < prev && pct < (prev === 2 ? w2 : w1).lvl + WARN_HYST) s = prev;
+    return (this._st = s);
+  }
+
+  async _read() {
+    const norm = (v) => (v && typeof v === "object" ? { s: Number(v.s) || 0, t: v.t && typeof v.t === "object" ? v.t : {} } : { s: Number(v) || 0, t: {} });
+    try {
+      const r = await this._hass?.callWS?.({ type: "frontend/get_user_data", key: "tank_card_" + this._o.nid });
+      if (r?.value != null) return norm(r.value);
+    } catch {}
+    try { return norm(JSON.parse(localStorage.getItem("tank-card:" + this._o.nid))); } catch { return { s: 0, t: {} }; }
+  }
+
+  async _write(m) {
+    try { localStorage.setItem("tank-card:" + this._o.nid, JSON.stringify(m)); } catch {}
+    try { await this._hass?.callWS?.({ type: "frontend/set_user_data", key: "tank_card_" + this._o.nid, value: m }); } catch {}
+  }
+
+  async _notify(stage, pct, cur, total, lg) {
+    const o = this._o, h = this._hass;
+    if ((!o.notify && !o.mobile) || !o.nid || !h?.callService || this._nb) return;
+    this._nb = true;
+    try {
+      const m = await this._read();
+      if (o !== this._o || stage === m.s) return;
+      if (stage > 0 && (stage < m.s || Date.now() - (Number(m.t[stage]) || 0) < 864e5)) { m.s = stage; await this._write(m); return; }
+      const call = (d, s, data) => { try { return Promise.resolve(h.callService(d, s, data)); } catch (e) { return Promise.reject(e); } };
+      const phones = o.mobile ? Object.keys(h.services?.notify || {}).filter((k) => k.startsWith("mobile_app_")) : [];
+      const ids = [1, 2].map((s) => `${o.nid}_s${s}`);
+      const bell = [], push = [];
+      if (stage === 0) {
+        if (o.notify) [o.nid, ...ids].forEach((id) => bell.push(() => call("persistent_notification", "dismiss", { notification_id: id })));
+        phones.forEach((p) => ids.forEach((tag) => push.push(() => call("notify", p, { message: "clear_notification", data: { tag } }))));
+      } else {
+        const u = o.unit;
+        const title = tr(lg, "n_title").replace("{s}", stage);
+        const message = tr(lg, "n_msg").replace("{t}", o.title).replace("{s}", stage).replace("{l}", o.warn[stage - 1].lvl).replace("{p}", pct.toFixed(0)).replace("{c}", fmt(cur, u, lg)).replace("{m}", fmt(total, u, lg));
+        const tag = ids[stage - 1];
+        const path = window.location.pathname, url = path && !path.startsWith("/config") ? path : "";
+        if (o.notify) bell.push(() => call("persistent_notification", "create", { title, message, notification_id: tag }));
+        phones.forEach((p) => push.push(() => call("notify", p, { title, message, data: { tag, channel: tr(lg, "n_channel"), ttl: 0, priority: "high", ...(url && { url, clickAction: url }) } })));
+      }
+      if (!bell.length && !push.length) { m.s = stage; await this._write(m); return; }
+      const prev = { s: m.s, t: m.t[stage] };
+      m.s = stage;
+      if (stage > 0) m.t[stage] = Date.now();
+      await this._write(m);
+      const r = [...await Promise.allSettled(bell.map((f) => f())), ...await Promise.allSettled(push.map((f) => f()))];
+      if (stage > 0 && !r.some((x) => x.status === "fulfilled")) {
+        m.s = prev.s;
+        if (prev.t === undefined) delete m.t[stage]; else m.t[stage] = prev.t;
+        await this._write(m);
+        console.warn("Tank Card: notification failed", r.map((x) => x.reason));
+      }
+    } finally { this._nb = false; }
   }
 
   _bubbles() {
@@ -448,8 +543,12 @@ class TankCard extends HTMLElement {
   _update() {
     if (!this._els) return;
     const o = this._o, lg = lang(this._hass), u = o.unit;
-    const { total, cur, cons } = this._values();
+    const { total, cur, cons, ok } = this._values();
     const pct = total > 0 ? clamp(cur / total * 100, 0, 100) : 0;
+    const stage = this._stage(pct);
+    this._els.card.classList.toggle("warn1", o.wglow && stage === 1);
+    this._els.card.classList.toggle("warn2", o.wglow && stage === 2);
+    if (ok && o.id) this._notify(stage, pct, cur, total, lg);
     const fm = { max: fmt(total, u, lg), level: fmt(cur, u, lg), fill: `${pct.toFixed(0)}%`, cons: fmt(cons, u, lg) };
 
     for (const [id, x] of Object.entries(this._els.info)) {
@@ -485,7 +584,7 @@ class TankCard extends HTMLElement {
 class TankCardEditor extends HTMLElement {
   constructor() {
     super();
-    this._hass = this._f = this._p = this._t = this._raf = null;
+    this._hass = this._f = this._p = this._t = this._raf = this._info = null;
     this._c = {};
     this._shown = undefined;
     this._empty = new Set();
@@ -556,8 +655,14 @@ class TankCardEditor extends HTMLElement {
         { name: "theme", selector: { theme: {} } }, { name: "font_size", selector: sl(50, 200, 5, "%") }
       ],
       animation: [
-        b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1, "s") }] : []),
-        b("bubbles"), ...(d.bubbles ? [{ name: "bubble_amount", selector: sl(1, 8, 1) }] : [])
+        ...(PILE[d.content_type] ? [] : [b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1, "s") }] : []), b("bubbles"), ...(d.bubbles ? [{ name: "bubble_amount", selector: sl(1, 8, 1) }] : [])]),
+        ...(d.warn_1 === true || d.warn_2 === true ? [b("warn_glow")] : [])
+      ],
+      warn: [
+        g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: nb(1, 99) }]),
+        g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: nb(1, 99) }]),
+        b("warn_notify"),
+        b("warn_mobile")
       ]
     }[id];
   }
@@ -576,7 +681,7 @@ class TankCardEditor extends HTMLElement {
 
   _build() {
     const st = el("style");
-    st.textContent = "ha-form{display:block;margin:8px 0}ha-expansion-panel{display:block;margin:8px 0;--expansion-panel-content-padding:0 12px 12px}ha-expansion-panel[hidden]{display:none}";
+    st.textContent = "ha-form{display:block;margin:8px 0}.note{margin:8px 0;font-size:.9em;color:var(--secondary-text-color)}ha-expansion-panel{display:block;margin:8px 0;--expansion-panel-content-padding:0 12px 12px}ha-expansion-panel[hidden]{display:none}";
     const root = el("div");
     this._f = [];
     this._p = [];
@@ -592,7 +697,7 @@ class TankCardEditor extends HTMLElement {
     };
 
     add(root, "top");
-    for (const id of ["tank", "content", "display", "animation"]) {
+    for (const id of ["tank", "content", "display", "animation", "warn"]) {
       const p = document.createElement("ha-expansion-panel");
       p.outlined = true;
       p.expanded = false;
@@ -608,6 +713,10 @@ class TankCardEditor extends HTMLElement {
         fix();
       });
       this._p.push({ id, p });
+      if (id === "warn") {
+        this._info = el("div", "note");
+        p.append(this._info);
+      }
       add(p, id);
       root.append(p);
     }
@@ -618,11 +727,12 @@ class TankCardEditor extends HTMLElement {
     const lg = lang(this._hass), d = this._data();
     this._shown = d.initial_fill;
     this._f.forEach(({ id, form }) => { form.hass = this._hass; form.data = d; form.schema = this._schema(id, d, lg); });
-    const ok = !PILE[d.content_type];
     this._p.forEach(({ id, p }) => {
       p.header = tr(lg, "s_" + id);
-      if (id === "animation") { p.hidden = !ok; if (!ok) p.expanded = false; }
+      p.hidden = !this._schema(id, d, lg).length;
+      if (p.hidden) p.expanded = false;
     });
+    if (this._info) this._info.textContent = tr(lg, "i_warn_t") + ": " + tr(lg, "i_warn");
   }
 
   _live(e) {
@@ -637,11 +747,12 @@ class TankCardEditor extends HTMLElement {
   _changed(value) {
     if (!value || typeof value !== "object") return;
     const next = { ...value }, reset = [];
-    for (const k of ["title", "tank_label", "tank_count", "tank_capacity", "initial_fill"]) {
+    for (const k of ["title", "tank_label", "tank_count", "tank_capacity", "initial_fill", "warn_1_level", "warn_2_level"]) {
       if (!BLANK(next[k])) this._empty.delete(k);
       else { if (k in value) this._empty.add(k); delete next[k]; }
     }
     for (const k in ENUM) if (BLANK(next[k])) { reset.push(k); delete next[k]; }
+    if ((next.warn_1 === true && this._c.warn_1 !== true) || (next.warn_2 === true && this._c.warn_2 !== true)) next.warn_glow = true;
     const fill = next.initial_fill, stored = this._c.initial_fill;
     if (fill !== undefined) {
       if (fill === this._shown) {
