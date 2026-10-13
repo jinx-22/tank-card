@@ -1,6 +1,49 @@
 # Changelog
 
 All notable changes to **Tank Card** are documented here.
+
+---
+
+## [0.9.0] - 2026-10-08
+
+### Added
+
+* Glass and metal tank styles (`tank_style`: `metal` / `glass`).
+* Gas tank mode with legs and dome (`gas_tank`, only for metal capsule with a single tank).
+* Selectable liquid style: previous look or new look (`liquid_style`: `classic` / `new`).
+* New visual representation for wood pellets and wood chips (seamless SVG tile patterns).
+* Custom color via `content_type: custom` and `custom_color` (RGB or Hex).
+* Wave animation on the liquid surface (`animation`, `animation_interval`).
+* Rising bubbles in the liquid (`bubbles`, `bubble_amount`).
+* Individual show/hide for title and tank label (`show_title`, `show_tank_label`).
+* Shared tank label with automatic numbering (`tank_label`).
+* Tap on the card opens the linked sensor’s more-info dialog.
+* Editor: new **Animation** category; font size and design options under **Display**.
+
+### Changed
+
+* Font size of the per-tank value increased; adapts to tank width on narrow tanks.
+* Optical fill height corrected (absolute positioning of the fill layer).
+* Editor layout reorganized (Tank / Content / Display / Animation).
+* Pellets and wood chips no longer use wave or bubble animations (bulk material).
+
+### Fixed
+
+* Fill-level visualization reliability across browsers (including Safari / iOS).
+* Fill height calculation and surface alignment for glass and metal tanks.
+
+<img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
+<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+
+---
+
+## [0.8.1] - 2026-10-11
+
+### Fixed
+
+* Fill level positioning – visual fill no longer collapsed on some browsers (Safari / iOS / webOS).
+* Tank fill uses absolute positioning from the bottom so percentage height works reliably.
+
 ---
 
 ## [0.8.0] - 2026-10-07
@@ -8,7 +51,7 @@ All notable changes to **Tank Card** are documented here.
 ### Added
 
 * All values can be removed and individually enabled
-  
+
 ### Changed
 
 * New, clearer editor layout
@@ -20,6 +63,7 @@ All notable changes to **Tank Card** are documented here.
 <img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
 
 ---
+
 ## [0.7.0] - 2026-10-06
 
 ### Added
@@ -63,7 +107,6 @@ All notable changes to **Tank Card** are documented here.
 * Added `CONTENT_GLOWS` for material-specific fill glow colors.
 * Added dedicated pseudo-elements for tank-level lighting and fill-surface effects.
 * Added optimized update detection for relevant Home Assistant sensors, language and themes.
-
 
 ---
 
