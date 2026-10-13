@@ -32,8 +32,8 @@
 - Font size of the per-tank value increased and adapts to tank width on narrow tanks
 - Optical fill height corrected
 
-<img width="40%" height="auto" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
-<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+<img width="60%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/eae75993-cd21-4484-98b5-5f8c3b40bb23" />
+<img width="30%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 
 > **Note:** After updating, hard-reload the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
