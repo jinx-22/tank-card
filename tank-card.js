@@ -311,7 +311,7 @@ class TankCard extends HTMLElement {
     const wl = (k) => ({ on: c["warn_" + k] === true, lvl: num(c["warn_" + k + "_level"], DEF["warn_" + k + "_level"], 1, 99) });
     const w1 = wl(1), w2 = wl(2);
     if (w1.on && w2.on) w2.lvl = Math.min(w2.lvl, w1.lvl - 1);
-    const ch = Math.round(num(c.card_height, DEF.card_height, 0, 1000));
+    const ch = Math.round(num(c.card_height, DEF.card_height, 250, 1000));
     this._last = null;
     this._st = 0;
     this._o = {
@@ -606,7 +606,7 @@ class TankCardEditor extends HTMLElement {
       display: [
         S("unit", UNITS), b("show_title"), g("display_top", [b("show_max"), b("show_current")]),
         g("display_bottom", [b("show_fill_level"), b("show_consumption")]), b("show_tank_label"), b("show_unittank"),
-        { name: "card_height", selector: sl(0, 1000, 10, "px") },
+        { name: "card_height", selector: sl(250, 1000, 10, "px") },
         { name: "theme", selector: { theme: {} } }, { name: "font_size", selector: sl(50, 200, 5, "%") }
       ],
       animation: [
