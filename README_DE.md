@@ -25,6 +25,7 @@
 - Holzpellets und Hackschnitzel neue Darstellung
 - eigene Farbe über `content_type: custom` und `custom_color`
 - Wellen-Animation und aufsteigende Blasen
+- Neuer Slider „Kartenhöhe manuell einstellen“ (0 = automatisch) für eine Mindesthöhe der Karte
 - Titel und Tank-Beschriftung einzeln ein-/ausblendbar
 - gemeinsame Tank-Beschriftung (`tank_label`) mit automatischer Nummerierung
 - Tippen auf die Karte öffnet die Sensor-Details
