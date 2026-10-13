@@ -20,7 +20,7 @@
 ## 🆕 0.9.0
 
 - Glas- und Metalltank (`tank_style`)
-- Gas-Tank mit Standfüßen und Kuppel (Kapsel + Metall, ein Tank)
+- Gas-Tank mit Standfüßen und Kuppel (Kapsel + Metall, ein Gas-Tank-Optik-Schalter)
 - Flüssigkeitsdarstellung wählbar: bisherige oder neue Optik (`liquid_style`)
 - Holzpellets und Hackschnitzel neue Darstellung
 - eigene Farbe über `content_type: custom` und `custom_color`
@@ -32,8 +32,8 @@
 - Schriftgröße des Anzeigewerts je Tank vergrößert und passt sich der Tankbreite an
 - optische Füllhöhe korrigiert
 
-<img width="40%" height="auto" alt="editorUnbenannt" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
-<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+<img width="60%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/eae75993-cd21-4484-98b5-5f8c3b40bb23" />
+<img width="30%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
