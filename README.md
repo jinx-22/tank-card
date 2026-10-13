@@ -17,6 +17,10 @@
 
 **Current Version: 0.9.0**
 
+## 🆕 0.9.1
+
+- Added a “Set card height manually” slider (0 = automatic) that sets a minimum card height
+
 ## 🆕 0.9.0
 
 - Glass and metal tank 
@@ -25,7 +29,6 @@
 - New look for wood pellets and wood chips
 - Custom color via `content_type: custom` and `custom_color`
 - Wave animation and rising bubbles
-- Added a “Set card height manually” slider (0 = automatic) that sets a minimum card height
 - Title and tank label individually show/hide
 - Shared tank label with automatic numbering
 - Tap on the card opens the sensor details
