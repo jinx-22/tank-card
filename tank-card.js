@@ -10,7 +10,7 @@ const TXT = {
     sensor_mode: "Sensor mode", consumption_sensor: "Consumption sensor", level_sensor: "Level sensor", initial_fill: "Initial fill", unit: "Unit",
     show_max: "Show “Max:”", show_current: "Show “Current:”", show_fill_level: "Show “Level:”", show_consumption: "Show “Consumption:”",
     show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval (seconds)", bubbles: "Rising bubbles",
-    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", tank_style: "Tank type", gas_tank: "Gas tank",
+    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", card_height: "Set card height manually", tank_style: "Tank type", gas_tank: "Gas tank",
     h_gas_tank: "Adds legs and a dome to the capsule.",
     h_tank_label: "Name of the tanks, e.g. Water barrel or Gas bottle. The numbering is added automatically. Empty = Tank.",
     h_consumption_sensor: "Sensor used in consumption mode. Tap on the card opens its details.",
@@ -18,6 +18,7 @@ const TXT = {
     h_initial_fill: "Total amount of all tanks at the start (max. total capacity). Empty = full.",
     h_animation_interval: "Time between two waves (5–60 seconds).", h_bubble_amount: "1 = a few bubbles, 8 = very many bubbles.",
     h_font_size: "Font size in percent (50–200).",
+    h_card_height: "Minimum card height in pixels, mainly for the masonry view. 0 = automatic. In the sections view it sets the default number of rows, the layout tab takes precedence.",
     o_consumption: "Consumption sensor", o_fill_level_l: "Level sensor (kg, m³, L)", o_fill_level_percent: "Level sensor (%)",
     o_heating_oil: "Heating oil", o_gas: "Gas", o_pellets: "Pellets", o_wood_chips: "Wood chips", o_water: "Water", o_diesel: "Diesel",
     o_custom: "Custom", o_classic: "Previous style", o_new: "New style",
@@ -31,7 +32,7 @@ const TXT = {
     sensor_mode: "Sensorart", consumption_sensor: "Verbrauchssensor", level_sensor: "Füllstandssensor", initial_fill: "Anfangsbestand", unit: "Einheit",
     show_max: "„Max:“ anzeigen", show_current: "„Aktuell:“ anzeigen", show_fill_level: "„Füllstand:“ anzeigen", show_consumption: "„Verbrauch:“ anzeigen",
     show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle (Sekunden)", bubbles: "Aufsteigende Blasen",
-    bubble_amount: "Menge der Blasen", theme: "Theme", font_size: "Schriftgröße", tank_style: "Tankart", gas_tank: "Gas-Tank",
+    bubble_amount: "Menge der Blasen", theme: "Theme", font_size: "Schriftgröße", card_height: "Kartenhöhe manuell einstellen", tank_style: "Tankart", gas_tank: "Gas-Tank",
     h_gas_tank: "Fügt der Kapsel Standfüße und eine Kuppel hinzu.",
     h_tank_label: "Name der Tanks, z. B. Wasserfass oder Gasflasche. Die Nummerierung kommt automatisch. Leer = Tank.",
     h_consumption_sensor: "Sensor für den Modus Verbrauchssensor. Tippen auf die Karte öffnet dessen Details.",
@@ -39,6 +40,7 @@ const TXT = {
     h_initial_fill: "Gesamtmenge aller Tanks zu Beginn (max. Gesamtkapazität). Leer = voll.",
     h_animation_interval: "Zeit zwischen zwei Wellen (5–60 Sekunden).", h_bubble_amount: "1 = wenige Blasen, 8 = sehr viele Blasen.",
     h_font_size: "Schriftgröße in Prozent (50–200).",
+    h_card_height: "Mindesthöhe der Karte in Pixel, vor allem für die Masonry-Ansicht. 0 = automatisch. In der Sections-Ansicht bestimmt der Wert die Standard-Zeilenzahl, der Layout-Reiter hat Vorrang.",
     o_consumption: "Verbrauchssensor", o_fill_level_l: "Füllstandssensor (kg, m³, L)", o_fill_level_percent: "Füllstandssensor (%)",
     o_heating_oil: "Heizöl", o_gas: "Gas", o_pellets: "Pellets", o_wood_chips: "Hackschnitzel", o_water: "Wasser", o_diesel: "Diesel",
     o_custom: "Benutzerdefiniert", o_classic: "Bisherige Darstellung", o_new: "Neue Darstellung",
@@ -73,7 +75,7 @@ const INFO = [
 const DEF = {
   title: "Tank Card", tank_form: "rect", tank_style: "metal", gas_tank: false, tank_count: 3, tank_capacity: 1500, content_type: "heating_oil", custom_color: [33, 150, 243], liquid_style: "classic", sensor_mode: "consumption", unit: "L",
   show_max: true, show_current: true, show_fill_level: true, show_consumption: true, show_unittank: true, show_title: true, show_tank_label: true, tank_label: "Tank",
-  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100
+  animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100, card_height: 0
 };
 
 // Lichtkugel der Kapsel: size = Größe (Anteil der kurzen Tankseite), shift = Verschiebung (negativ = links)
@@ -283,8 +285,11 @@ class TankCard extends HTMLElement {
     return { ...DEF, initial_fill: 2250, consumption_sensor: "", level_sensor: "", theme: "" };
   }
 
-  getCardSize() { return 6; }
-  getGridOptions() { return { rows: 7, columns: 12, min_rows: 5, min_columns: 12, max_rows: 24 }; }
+  getCardSize() { return this._o?.height ? Math.max(Math.round(this._o.height / 50), 1) : 6; }
+  getGridOptions() {
+    const h = this._o?.height, rows = h ? Math.max(Math.ceil((h + 8) / 64), 1) : 7;
+    return { rows, columns: 12, min_rows: Math.min(5, rows), min_columns: 12, max_rows: 24 };
+  }
 
   connectedCallback() { this._observe(); }
   disconnectedCallback() { this._ro?.disconnect(); }
@@ -304,6 +309,7 @@ class TankCard extends HTMLElement {
     const content = e("content_type"), form = e("tank_form"), style = e("tank_style"), mode = e("sensor_mode");
     const cs = typeof c.consumption_sensor === "string" ? c.consumption_sensor : "", ls = typeof c.level_sensor === "string" ? c.level_sensor : "";
     const anim = !PILE[content];
+    const ch = Math.round(num(c.card_height, DEF.card_height, 0, 1000));
     this._last = null;
     this._o = {
       n, total, content, fill: Math.min(num(c.initial_fill, total, 0), total),
@@ -322,6 +328,7 @@ class TankCard extends HTMLElement {
       bubbles: anim && c.bubbles === true, amount: Math.round(num(c.bubble_amount, DEF.bubble_amount, 1, 8)),
       form, style, gas: style === "metal" && form === "capsule" && n === 1 && c.gas_tank === true,
       theme: typeof c.theme === "string" ? c.theme : "", font: fontPct(c.font_size),
+      height: ch, minH: typeof c.grid_options?.rows === "number" ? 0 : ch,
       names: Array.from({ length: n }, (_, i) => { const x = c.entities?.[i]?.name, t = typeof x === "string" ? x.trim() : ""; return t && t !== `Tank ${i + 1}` ? t : null; })
     };
     this._build();
@@ -394,6 +401,7 @@ class TankCard extends HTMLElement {
     const bright = o.classic && !o.solid;
     const card = el("ha-card", `${o.form} ${o.style}${o.solid ? " solid" : ""}${bright ? " bright" : ""}${o.wave ? " anim" : ""}`);
     card.style.setProperty("--fs", o.font + "%");
+    card.style.minHeight = this.style.minHeight = o.minH ? o.minH + "px" : "";
     card.style.setProperty("--f", o.solid || (bright ? o.fc : `linear-gradient(to bottom,${a},${b})`));
     card.style.setProperty("--g", (bright ? o.glow : a) || "transparent");
 
@@ -553,6 +561,7 @@ class TankCardEditor extends HTMLElement {
       display: [
         S("unit", UNITS), b("show_title"), g("display_top", [b("show_max"), b("show_current")]),
         g("display_bottom", [b("show_fill_level"), b("show_consumption")]), b("show_tank_label"), b("show_unittank"),
+        { name: "card_height", selector: sl(0, 1000, 10, "px") },
         { name: "theme", selector: { theme: {} } }, { name: "font_size", selector: sl(50, 200, 5, "%") }
       ],
       animation: [
@@ -642,6 +651,12 @@ class TankCardEditor extends HTMLElement {
       else { if (k in value) this._empty.add(k); delete next[k]; }
     }
     for (const k in ENUM) if (BLANK(next[k])) { reset.push(k); delete next[k]; }
+    const prevH = this._c.card_height ?? DEF.card_height;
+    if (next.card_height !== undefined && next.card_height !== prevH && next.grid_options && "rows" in next.grid_options) {
+      const { rows, ...rest } = next.grid_options;
+      if (Object.keys(rest).length) next.grid_options = rest;
+      else delete next.grid_options;
+    }
     const fill = next.initial_fill, stored = this._c.initial_fill;
     if (fill !== undefined) {
       if (fill === this._shown) {
