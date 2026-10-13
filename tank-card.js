@@ -109,21 +109,8 @@ const el = (tag, cls, text) => {
   if (text !== undefined) e.textContent = text;
   return e;
 };
-const fontPct = (v) => {
-  let p = 100;
-  if (typeof v === "number") p = v;
-  else if (typeof v === "string") {
-    const m = v.trim().match(/^(\d+(?:\.\d+)?)\s*(%|em|px)?$/);
-    if (m) p = m[2] === "em" ? m[1] * 100 : m[2] === "px" ? (m[1] / 16) * 100 : +m[1];
-  }
-  return clamp(Number.isFinite(p) ? p : 100, 50, 200);
-};
 const fmt = (v, u, lg) => v.toLocaleString(lg === "de" ? "de-DE" : "en-US", { minimumFractionDigits: u === "m3" ? 2 : 0, maximumFractionDigits: u === "m3" ? 2 : 0, useGrouping: lg !== "de" }) + " " + (u === "m3" ? "m³" : u);
-const rgbOf = (v) => {
-  if (Array.isArray(v) && v.length >= 3) return v.slice(0, 3).map((n) => clamp(Math.round(Number(n)) || 0, 0, 255));
-  const m = typeof v === "string" && v.trim().match(/^#?([0-9a-f]{6})$/i);
-  return m ? [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16)) : DEF.custom_color;
-};
+const rgbOf = (v) => Array.isArray(v) && v.length >= 3 ? v.slice(0, 3).map((n) => clamp(Math.round(Number(n)) || 0, 0, 255)) : DEF.custom_color;
 const shade = (rgb, f) => "#" + rgb.map((c) => Math.round(f >= 0 ? c + (255 - c) * f : c * (1 + f)).toString(16).padStart(2, "0")).join("");
 const customPal = (v) => { const c = rgbOf(v); return [shade(c, .3), shade(c, -.45)]; };
 const customClassic = (v) => { const c = rgbOf(v); return `linear-gradient(to top,${shade(c, .25)} 0%,${shade(c, 0)} 32%,${shade(c, -.25)} 68%,${shade(c, -.45)} 100%)`; };
@@ -333,9 +320,8 @@ class TankCard extends HTMLElement {
       wave: anim && c.animation === true, interval: num(c.animation_interval, DEF.animation_interval, 5, 60),
       bubbles: anim && c.bubbles === true, amount: Math.round(num(c.bubble_amount, DEF.bubble_amount, 1, 8)),
       form, style, gas: style === "metal" && form === "capsule" && n === 1 && c.gas_tank === true,
-      theme: typeof c.theme === "string" ? c.theme : "", font: fontPct(c.font_size),
-      height: ch, minH: typeof c.grid_options?.rows === "number" ? 0 : ch,
-      names: Array.from({ length: n }, (_, i) => { const x = c.entities?.[i]?.name, t = typeof x === "string" ? x.trim() : ""; return t && t !== `Tank ${i + 1}` ? t : null; })
+      theme: typeof c.theme === "string" ? c.theme : "", font: num(c.font_size, DEF.font_size, 50, 200),
+      height: ch, minH: typeof c.grid_options?.rows === "number" ? 0 : ch
     };
     this._build();
     this._update();
@@ -368,12 +354,12 @@ class TankCard extends HTMLElement {
     return (this._st = s);
   }
   async _read() {
-    const norm = (v) => (v && typeof v === "object" ? { s: Number(v.s) || 0, t: v.t && typeof v.t === "object" ? v.t : {} } : { s: Number(v) || 0, t: {} });
+    const norm = (v) => ({ s: Number(v?.s) || 0, t: v?.t && typeof v.t === "object" ? v.t : {} });
     try {
       const r = await this._hass?.callWS?.({ type: "frontend/get_user_data", key: "tank_card_" + this._o.nid });
       if (r?.value != null) return norm(r.value);
     } catch {}
-    try { return norm(JSON.parse(localStorage.getItem("tank-card:" + this._o.nid))); } catch { return { s: 0, t: {} }; }
+    try { return norm(JSON.parse(localStorage.getItem("tank-card:" + this._o.nid))); } catch { return norm(null); }
   }
   async _write(m) {
     try { localStorage.setItem("tank-card:" + this._o.nid, JSON.stringify(m)); } catch {}
@@ -392,12 +378,11 @@ class TankCard extends HTMLElement {
       const ids = [1, 2].map((s) => `${o.nid}_s${s}`);
       const bell = [], push = [];
       if (stage === 0) {
-        if (o.notify) [o.nid, ...ids].forEach((id) => bell.push(() => call("persistent_notification", "dismiss", { notification_id: id })));
+        if (o.notify) ids.forEach((id) => bell.push(() => call("persistent_notification", "dismiss", { notification_id: id })));
         phones.forEach((p) => ids.forEach((tag) => push.push(() => call("notify", p, { message: "clear_notification", data: { tag } }))));
       } else {
-        const u = o.unit;
         const title = tpl(tr(lg, "n_title"), { s: stage });
-        const message = tpl(tr(lg, "n_msg"), { t: o.title, s: stage, l: o.warn[stage - 1].lvl, p: pct.toFixed(0), c: fmt(cur, u, lg), m: fmt(total, u, lg) });
+        const message = tpl(tr(lg, "n_msg"), { t: o.title, s: stage, l: o.warn[stage - 1].lvl, p: pct.toFixed(0), c: fmt(cur, o.unit, lg), m: fmt(total, o.unit, lg) });
         const tag = ids[stage - 1];
         const path = window.location.pathname, url = path && !path.startsWith("/config") ? path : "";
         if (o.notify) bell.push(() => call("persistent_notification", "create", { title, message, notification_id: tag }));
@@ -532,7 +517,7 @@ class TankCard extends HTMLElement {
     }
     const vt = o.perTank ? fmt(cur / o.n, u, lg) : "";
     cs.setProperty("--vc", vt.length || 6);
-    const names = this._els.tanks.map((_, i) => o.names[i] ?? `${o.label ?? tr(lg, "u_tank")} ${i + 1}`);
+    const names = this._els.tanks.map((_, i) => `${o.label ?? tr(lg, "u_tank")} ${i + 1}`);
     cs.setProperty("--lc", Math.max(...names.map((x) => x.length)));
     this._els.tanks.forEach((t, i) => {
       t.nm.textContent = names[i];
@@ -576,8 +561,7 @@ class TankCardEditor extends HTMLElement {
     if (total !== null && !this._empty.has("initial_fill")) {
       if (BLANK(d.initial_fill) || Number(d.initial_fill) > total) d.initial_fill = total;
     }
-    d.font_size = fontPct(d.font_size);
-    if (typeof d.custom_color === "string") d.custom_color = rgbOf(d.custom_color);
+    d.font_size = num(d.font_size, DEF.font_size, 50, 200);
     for (const k of this._empty) if (BLANK(this._c[k])) d[k] = undefined;
     return d;
   }
@@ -688,7 +672,9 @@ class TankCardEditor extends HTMLElement {
   _live(e) {
     const inp = e.composedPath().find((n) => n instanceof HTMLInputElement && n.type === "color");
     if (!inp) return;
-    const rgb = rgbOf(inp.value), cur = rgbOf(this._c.custom_color);
+    const m = inp.value.match(/^#([0-9a-f]{6})$/i);
+    if (!m) return;
+    const rgb = [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16)), cur = rgbOf(this._c.custom_color);
     if (rgb.every((v, i) => v === cur[i])) return;
     cancelAnimationFrame(this._raf);
     this._raf = requestAnimationFrame(() => this._changed({ ...this._data(), custom_color: rgb }));
