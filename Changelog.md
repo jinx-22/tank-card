@@ -4,6 +4,12 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
+## [0.9.1] - 2026-10-08
+
+### Added
+
+- Added a “Set card height manually” slider (0 = automatic) that sets a minimum card height
+
 ## [0.9.0] - 2026-10-08
 
 ### Added
