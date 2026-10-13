@@ -244,11 +244,34 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 > Bei Pellets und Hackschnitzel entfallen Welle und Blasen (Schüttgut).
 
 ---
+
+# 🚨 Füllstandswarnungen & Benachrichtigungen
+
+Die Tank Card unterstützt zwei konfigurierbare Warnstufen:
+
+- **Warnstufe 1:** Orange
+- **Warnstufe 2:** Rot
+
+Beide Warnstufen sind standardmäßig deaktiviert. Sie können unabhängig voneinander aktiviert werden. Für jede Warnstufe lässt sich festlegen, bei welchem Füllstand in Prozent die Warnung ausgelöst wird.
+
+### Benachrichtigungsoptionen
+
+- `warn_notify: true` aktiviert Home-Assistant-Benachrichtigungen.
+- `warn_mobile: true` aktiviert Push-Benachrichtigungen über die Home-Assistant-App.
+- `warn_glow: true` aktiviert die visuelle Signalisierung der Warnstufen durch Leuchteffekte und Nebel.
+
+Die Standardgrenzwerte liegen bei 20 % für Warnstufe 1 und 10 % für Warnstufe 2.
+
+Beim Wiederbefüllen des Tanks wird der Warnstatus entsprechend der Warnlogik der Karte zurückgesetzt.
+
+---
+
 # Screenshot:
 
 <img width="50%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 ---
+
 # Fehler & Feature Requests
 
 Bitte gib folgende Informationen an:
