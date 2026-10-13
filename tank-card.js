@@ -2,7 +2,6 @@
 const VERSION = "0.9.0";
 console.info("%c Tank Card %c v" + VERSION, "font-weight:bold;background:#03a9f4;color:#fff;padding:2px 6px;border-radius:3px 0 0 3px", "background:#555;color:#fff;padding:2px 6px;border-radius:0 3px 3px 0");
 
-// ——— Texte (en/de), flach: u_ = Karte, h_ = Hilfetext, o_ = Auswahlwerte, s_ = Editor-Kategorie, sonst Feldname ———
 const TXT = {
   en: {
     u_max: "Max:", u_level: "Current:", u_fill: "Level:", u_cons: "Consumption:", u_tank: "Tank",
@@ -48,19 +47,16 @@ const TXT = {
   }
 };
 
-const LIQUIDS = ["classic", "new"]; // erster Eintrag = Standard („Bisherige Darstellung“)
+const LIQUIDS = ["classic", "new"];
 const MODES = ["consumption", "fill_level_l", "fill_level_percent"];
 const UNITS = ["L", "kg", "m3"];
 const FORMS = ["rect", "pool", "capsule"];
 const STYLES = ["metal", "glass"];
 const CONTENTS = ["heating_oil", "gas", "pellets", "wood_chips", "water", "diesel", "custom"];
-// Dropdowns: ungültiger oder geleerter Wert („X“) → Standard aus DEF
 const ENUM = { tank_form: FORMS, tank_style: STYLES, content_type: CONTENTS, liquid_style: LIQUIDS, sensor_mode: MODES, unit: UNITS };
-// [Farbe an der Oberfläche (hell), Farbe am Boden (dunkel)]
 const COLORS = {
   heating_oil: ["#ff4d73", "#8a0018"], gas: ["#c4f6ff", "#00a8d6"], water: ["#27d3ff", "#0046d0"], diesel: ["#fff35a", "#e0a900"]
 };
-// „Hell unten“ (bisher): kräftigere Verläufe von unten nach oben und Leuchtfarbe der Oberfläche (nur Farben, gleiche Berechnung wie „Hell oben“)
 const CLASSIC = {
   heating_oil: "linear-gradient(to top,#ff2a55 0%,#d91445 32%,#a40024 68%,#8a0018 100%)",
   gas: "linear-gradient(to top,#c4f6ff 0%,#68e4fa 30%,#18c3e5 62%,#00a8d6 100%)",
@@ -70,7 +66,6 @@ const CLASSIC = {
 const GLOWS = {
   heating_oil: "rgba(255,40,80,.75)", gas: "rgba(0,200,255,.75)", water: "rgba(0,190,255,.75)", diesel: "rgba(255,205,45,.75)"
 };
-// Reihenfolge = Reihenfolge im Kopfbereich
 const INFO = [
   { id: "max", flag: "show_max", k: "u_max" }, { id: "fill", flag: "show_fill_level", k: "u_fill" },
   { id: "level", flag: "show_current", k: "u_level" }, { id: "cons", flag: "show_consumption", k: "u_cons" }
@@ -81,16 +76,12 @@ const DEF = {
   animation: false, animation_interval: 30, bubbles: false, bubble_amount: 3, font_size: 100
 };
 
-// ——— Lichtkugel der Kapsel (immer rund, nur die Größe passt sich dem Tank an) ———
-// size  = Größe der Kugel als Anteil der kurzen Tankseite (größer = größere Kugel)
-// shift = Verschiebung als Anteil der kurzen Tankseite (0 = ursprüngliche Position, negativ = weiter nach links, positiv = nach rechts)
+// Lichtkugel der Kapsel: size = Größe (Anteil der kurzen Tankseite), shift = Verschiebung (negativ = links)
 const BALL = { size: .17, shift: -.2 };
 
-// ——— Pellets / Hackschnitzel: Größe der Teile (zugleich die Liste der Feststoffe: keine Welle/Blasen) ———
-// Kachelgröße in em: kleiner = kleinere Pellets bzw. Schnitzel, größer = größere
+// Pellets / Hackschnitzel: Kachelgröße in em (kleiner = kleinere Teile). Diese Inhalte haben keine Welle/Blasen.
 const PILE = { pellets: 6.7, wood_chips: 9 };
 
-// ——— Helfer ———
 const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 const num = (v, d, min = -Infinity, max = Infinity) => {
   if (v === "" || v == null) return d;
@@ -98,7 +89,7 @@ const num = (v, d, min = -Infinity, max = Infinity) => {
   return Number.isFinite(n) ? clamp(n, min, max) : d;
 };
 const BLANK = (v) => v == null || v === "" || (typeof v === "number" && Number.isNaN(v));
-const totalOf = (n, c) => Math.round(n * c * 100) / 100; // Gesamtkapazität (Karte und Editor rechnen gleich)
+const totalOf = (n, c) => Math.round(n * c * 100) / 100;
 const lang = (h) => String(h?.locale?.language || document.documentElement.lang || "en").toLowerCase().startsWith("de") ? "de" : "en";
 const tr = (l, k) => TXT[l][k] ?? TXT.en[k] ?? k;
 const el = (tag, cls, text) => {
@@ -107,7 +98,6 @@ const el = (tag, cls, text) => {
   if (text !== undefined) e.textContent = text;
   return e;
 };
-// Zahl, "120", "120%", "1.2em", "19px" (16px = 100 %) → 50–200
 const fontPct = (v) => {
   let p = 100;
   if (typeof v === "number") p = v;
@@ -117,9 +107,7 @@ const fontPct = (v) => {
   }
   return clamp(Number.isFinite(p) ? p : 100, 50, 200);
 };
-// Zahlen: m³ mit 2 Nachkommastellen, sonst ganze Zahlen; Tausendertrennung nur in Englisch (de: 3000, en: 3,000)
 const fmt = (v, u, lg) => v.toLocaleString(lg === "de" ? "de-DE" : "en-US", { minimumFractionDigits: u === "m3" ? 2 : 0, maximumFractionDigits: u === "m3" ? 2 : 0, useGrouping: lg !== "de" }) + " " + (u === "m3" ? "m³" : u);
-// Eigene Farbe: [r,g,b] oder "#rrggbb" → Oberfläche heller, Boden dunkler
 const rgbOf = (v) => {
   if (Array.isArray(v) && v.length >= 3) return v.slice(0, 3).map((n) => clamp(Math.round(Number(n)) || 0, 0, 255));
   const m = typeof v === "string" && v.trim().match(/^#?([0-9a-f]{6})$/i);
@@ -129,27 +117,22 @@ const shade = (rgb, f) => "#" + rgb.map((c) => Math.round(f >= 0 ? c + (255 - c)
 const customPal = (v) => { const c = rgbOf(v); return [shade(c, .3), shade(c, -.45)]; };
 const customClassic = (v) => { const c = rgbOf(v); return `linear-gradient(to top,${shade(c, .25)} 0%,${shade(c, 0)} 32%,${shade(c, -.25)} 68%,${shade(c, -.45)} 100%)`; };
 
-// ——— Schüttgut: Pellets und Hackschnitzel als kleine nahtlose SVG-Kachel ———
-// Zufällig gestreute Einzelteile in zwei Schichten (hinten dunkler) mit Kontaktschatten und feiner Körnung. Licht von links oben:
-// Jedes Teil wird so gedreht, dass seine helle Seite zum Licht zeigt; der Schatten fällt auf die Gegenseite.
+// Pellets und Hackschnitzel als nahtlose SVG-Kachel (Licht von links oben)
 const solid = (() => {
-  const SZ = { pellets: 160, wood_chips: 120 }, cache = {}; // Kachelgröße in SVG-Einheiten (größer = Muster wiederholt sich seltener)
+  const SZ = { pellets: 160, wood_chips: 120 }, cache = {};
   const prng = (a) => () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const f1 = (n) => +n.toFixed(1);
   const pick = (r, w) => { let s = 0; for (let i = 0; i < w.length; i++) { s += w[i]; if (r < s) return i; } return w.length - 1; };
   const grad = (id, st) => `<linearGradient id='${id}' x1='0' y1='0' x2='0' y2='1'>${st.map((c, i) => `<stop offset='${st.length === 2 ? i : [0, .26, .62, 1][i]}' stop-color='${c}'/>`).join("")}</linearGradient>`;
   const NOISE = "<filter id='n' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .08 0 0 0 0 .04 0 0 0 0 .01 0 0 0 .9 -.35'/></filter>";
-  // Teile gitterartig mit Zufallsversatz verteilen, in Zufallsreihenfolge zeichnen; Teile am Rand erscheinen auch gegenüber (nahtlos).
-  // Drehwinkel: zufällig, aber so, dass die Oberseite des Teils zum Licht (links oben) zeigt.
+
   const scatter = (rnd, T, base, cells, ext, use) => {
     const rect = (f, o) => `<rect width='${T}' height='${T}' fill='${f}'${o ? ` opacity='${o}'` : ""}/>`;
     const layer = () => {
-      const items = [], c = T / cells;
-      // Unordnung: starker Versatz und ~10 % zusätzliche Teile an Zufallsstellen (Häufchen statt Raster), aber keine großen Lücken (Lücken würden das Muster betonen)
-      const wr = (v) => (v % T + T) % T;
+      const items = [], c = T / cells, wr = (v) => (v % T + T) % T;
       for (let i = 0; i < cells; i++) for (let j = 0; j < cells; j++) items.push([wr((i + .5 + (rnd() - .5) * 1.9) * c), wr((j + .5 + (rnd() - .5) * 1.9) * c), rnd(), rnd(), rnd()]);
       for (let k = 0; k < cells * cells * .1; k++) items.push([rnd() * T, rnd() * T, rnd(), rnd(), rnd()]);
-      for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; } // Fisher-Yates: in allen Browsern dasselbe Muster
+      for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
       let out = "";
       for (const [x0, y0, r1, r2, r3] of items) {
         let a = r3 * 180 - 90;
@@ -164,7 +147,6 @@ const solid = (() => {
     return rect(base) + layer() + rect("#120802", .38) + layer() + `<rect width='${T}' height='${T}' filter='url(#n)' opacity='.45'/>`;
   };
 
-  // Pellets: Ø 6–8 mm, Länge 10–30 mm, hell- bis mittelbraun, vereinzelt dunkel (Rindenanteil). Pro Länge eine Gruppe, die Farbe kommt per fill vom <use>.
   const pellets = () => {
     const rnd = prng(11), D = 6.6, h = D / 2, LEN = [7, 10, 14, 18, 23, 28];
     let defs = NOISE + [["#5a3a1c", "#d0a46c", "#a97b44", "#4a2c13"], ["#6a4624", "#dcb67c", "#b88a52", "#59391b"], ["#4a2d14", "#b98650", "#8c5d30", "#3a2110"], ["#35200e", "#80532a", "#5a3519", "#241207"]].map((s, i) => grad("p" + i, s)).join("");
@@ -177,13 +159,11 @@ const solid = (() => {
     return `<defs>${defs}</defs>` + scatter(rnd, SZ.pellets, "#3a2210", 13, 18, (x, y, a, r1, r2) => `<use href='#s${pick(r1, [.1, .17, .3, .22, .13, .08])}' transform='translate(${x} ${y})rotate(${a})scale(${f1(.88 + ((r1 * 97) % 1) * .24)})' fill='url(#p${pick(r2, [.35, .25, .3, .1])})' opacity='${(.86 + ((r2 * 53) % 1) * .14).toFixed(2)}'/>`);
   };
 
-  // Hackschnitzel: flache, eckige Stücke (Aspekt 2–4), hell- bis rotbraun, mit Faserlinien; manche mit dunkler Rindenkante
   const chips = () => {
     const rnd = prng(23), pt = (p) => p.map(f1).join(",");
     let defs = NOISE + [["#ecd5a0", "#c09a5e"], ["#dcb877", "#ae8546"], ["#cb9c58", "#966a33"], ["#a8763e", "#744a1f"], ["#f2e3b8", "#d2b476"], ["#c0834a", "#8a5226"]].map((s, i) => grad("c" + i, s)).join("");
     for (let k = 0; k < 12; k++) {
       const L = 11 + rnd() * 13, W = 4 + rnd() * 4.5, j = (v) => (rnd() - .5) * v, n = 3 + Math.floor(rnd() * 3);
-      // eckiger Umriss: unregelmäßiges Rechteck, Enden schräg abgebrochen
       const P = [[-L / 2 + j(L * .1), -W / 2 + j(W * .25)], [-L * .05 + j(L * .2), -W / 2 + j(W * .2)], [L / 2 + j(L * .06), -W / 2 * (.3 + rnd() * .7)],
         [L / 2 - rnd() * L * .08, W / 2 + j(W * .2)], [L * .1 + j(L * .2), W / 2 + j(W * .2)], [-L / 2 + rnd() * L * .08, W / 2 * (.2 + rnd() * .8)]];
       let g = "";
@@ -201,8 +181,6 @@ const solid = (() => {
     });
   };
 
-  // Ergebnis: CSS-Hintergrundebenen (unten dunkler + Kachel, unten verankert, damit sie beim Füllstandswechsel nicht rutscht)
-  // Große, weiche Hell-/Dunkel-Flecken (in % der Fläche, nicht an die Kachel gebunden) verdecken die Wiederholung der Kachel
   const BLOTCH = [[24, 62, 45, 55, "0,0,0,.24"], [72, 34, 40, 50, "255,230,190,.12"], [90, 78, 32, 42, "0,0,0,.2"], [48, 18, 30, 38, "255,230,190,.1"], [8, 22, 28, 36, "0,0,0,.16"]]
     .map(([x, y, w, h, c]) => `radial-gradient(ellipse ${w}% ${h}% at ${x}% ${y}%,rgba(${c}),rgba(${c.split(",").slice(0, 3)},0) 72%)`).join(",");
   return (kind) => {
@@ -215,13 +193,8 @@ const solid = (() => {
   };
 })();
 
-// ——— Styles: 3D-Glasoptik. ———
-// --h = Höhe des Deckels, --sh = Höhe der Flüssigkeitsoberfläche, --o = Abstand Füllhöhe → Oberflächenmitte
-// (Rechteck: Oberfläche liegt komplett über der Füllhöhe, Zylinder/Kapsel: Füllhöhe = Mitte der Ellipse)
-// --k = Höhenkorrektur der Flüssigkeit: Glas = Oberfläche immer sichtbar, Metall = bei 100 % komplett hinter dem Fensterrahmen
-// --ov = Überstand der Oberfläche links/rechts (Anteil der Fensterbreite je Seite): Glas 0, Metall .08 → verschwindet hinter dem Rahmen
-// --b = Rahmendicke (Kapsel dünner, an den Enden +3px); --bl = Lichtkugel der Kapsel (--br/--bx/--by kommen per JS, siehe _ball)
-// --body = Helligkeit der Schüttung, --lid = Helligkeit der Oberfläche (jeweils gesamt, 1 = unverändert), --edge = Schatten direkt an der Kante, --fade = langer Schatten bis zur Hälfte der Füllung (--sf: dazu leichte Aufhellung nach unten)
+// CSS-Variablen: --h Deckelhöhe, --sh Oberflächenhöhe, --o Abstand Füllhöhe→Oberflächenmitte, --k Höhenkorrektur,
+// --ov Überstand der Oberfläche, --b Rahmendicke, --f Flüssigkeitsfarbe, --g Glow-Farbe
 const CSS = `
 :host{display:block;height:100%;min-height:240px;container-type:inline-size}
 ha-card{height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,100%);color:var(--primary-text-color);background:radial-gradient(120% 70% at 50% 0,color-mix(in srgb,var(--card-background-color,#1c1c1c) 90%,#fff),var(--card-background-color,#1c1c1c))}
@@ -289,10 +262,9 @@ const BUBBLE_CSS = `
 @keyframes b{0%{transform:translate(0,0);opacity:0}10%,90%{opacity:.85}100%{transform:translate(var(--w),calc(-100cqh - 1em));opacity:0}}
 .e .bub{display:none}`;
 
-// Blasen pro Tank je Stufe 1–8 als [kleine, mittlere]: Stufe 1 = ein paar kleine, hier und da eine mittlere, dann langsam mehr; Stufe 8 = Maximum (56)
+// Blasen pro Tank je Stufe 1–8 als [kleine, mittlere]
 const BUBBLE_COUNT = [[4, 1], [6, 2], [9, 3], [13, 5], [18, 7], [24, 10], [32, 14], [40, 16]];
 
-// Welle läuft ca. 3,2 s (bei kurzem Intervall max. 40 % davon) und pausiert dann bis zum Ende des Intervalls
 const waveCss = (s) => `
 @keyframes w{0%{background-position:100% 0}${Math.min(3.2 / s * 100, 40).toFixed(2)}%{background-position:0 0}100%{background-position:0 0}}
 .anim .l::before{animation:w ${s}s linear var(--wd) infinite}`;
@@ -301,16 +273,14 @@ class TankCard extends HTMLElement {
   constructor() {
     super();
     this._hass = this._o = this._els = this._last = this._ro = null;
-    this._tv = []; // vom Theme gesetzte Variablen
+    this._tv = [];
     this.attachShadow({ mode: "open" });
   }
 
   static getConfigElement() { return document.createElement("tank-card-editor"); }
 
   static getStubConfig() {
-    return {
-      ...DEF, initial_fill: 2250, consumption_sensor: "", level_sensor: "", theme: ""
-    };
+    return { ...DEF, initial_fill: 2250, consumption_sensor: "", level_sensor: "", theme: "" };
   }
 
   getCardSize() { return 6; }
@@ -323,22 +293,23 @@ class TankCard extends HTMLElement {
     const old = this._hass, o = this._o;
     this._hass = h || null;
     if (!o || !old || !h || lang(old) !== lang(h) || old.themes !== h.themes ||
+        old.themes?.darkMode !== h.themes?.darkMode || old.selectedTheme !== h.selectedTheme ||
         (o.id && old.states?.[o.id]?.state !== h.states?.[o.id]?.state)) this._update();
   }
 
   setConfig(c) {
     if (!c || typeof c !== "object" || Array.isArray(c)) throw new Error("Invalid Tank Card configuration.");
-    const e = (k) => (ENUM[k].includes(c[k]) ? c[k] : DEF[k]); // ungültiger Wert → Standard
+    const e = (k) => (ENUM[k].includes(c[k]) ? c[k] : DEF[k]);
     const n = Math.round(num(c.tank_count, DEF.tank_count, 1, 20)), total = totalOf(n, num(c.tank_capacity, DEF.tank_capacity, .01));
     const content = e("content_type"), form = e("tank_form"), style = e("tank_style"), mode = e("sensor_mode");
     const cs = typeof c.consumption_sensor === "string" ? c.consumption_sensor : "", ls = typeof c.level_sensor === "string" ? c.level_sensor : "";
-    const anim = !PILE[content]; // Feststoffe: keine Welle/Blasen
+    const anim = !PILE[content];
     this._last = null;
     this._o = {
       n, total, content, fill: Math.min(num(c.initial_fill, total, 0), total),
-      pal: content === "custom" ? customPal(c.custom_color) : COLORS[content], // [Oberfläche, Boden]
+      pal: content === "custom" ? customPal(c.custom_color) : COLORS[content],
       solid: solid(content),
-      classic: e("liquid_style") === "classic", // nur Farben: hell unten (bisher, kräftig und ohne Seitenschatten) oder hell oben (neu)
+      classic: e("liquid_style") === "classic",
       fc: content === "custom" ? customClassic(c.custom_color) : CLASSIC[content],
       glow: content === "custom" ? `rgba(${rgbOf(c.custom_color).join(",")},.75)` : GLOWS[content],
       mode, cs, ls, id: mode === "consumption" ? cs : ls,
@@ -349,21 +320,22 @@ class TankCard extends HTMLElement {
       show: Object.fromEntries(INFO.map((i) => [i.id, c[i.flag] !== false])),
       wave: anim && c.animation === true, interval: num(c.animation_interval, DEF.animation_interval, 5, 60),
       bubbles: anim && c.bubbles === true, amount: Math.round(num(c.bubble_amount, DEF.bubble_amount, 1, 8)),
-      form, style, gas: style === "metal" && form === "capsule" && n === 1 && c.gas_tank === true, // Standfüße + Kuppel nur beim Metall-Gastank
+      form, style, gas: style === "metal" && form === "capsule" && n === 1 && c.gas_tank === true,
       theme: typeof c.theme === "string" ? c.theme : "", font: fontPct(c.font_size),
-      names: Array.from({ length: n }, (_, i) => { const x = c.entities?.[i]?.name; return typeof x === "string" && x.trim() && x.trim() !== `Tank ${i + 1}` ? x : null; }) // eigener Name pro Tank (YAML); „Tank N“ = automatisch
+      names: Array.from({ length: n }, (_, i) => { const x = c.entities?.[i]?.name, t = typeof x === "string" ? x.trim() : ""; return t && t !== `Tank ${i + 1}` ? t : null; })
     };
     this._build();
     this._update();
   }
 
-  // Ohne Sensor: Anfangsbestand. Bei ausgefallenem Sensor: letzter gültiger Wert.
   _values() {
     const o = this._o, id = o.id;
     const s = id ? this._hass?.states?.[id]?.state : undefined;
-    const raw = s === undefined || s === "unknown" || s === "unavailable" ? null : Number.parseFloat(s);
+    const txt = s === undefined || s === null ? "" : String(s).trim();
+    const raw = txt === "" || txt === "unknown" || txt === "unavailable" ? null : Number(txt);
+    const ok = raw !== null && Number.isFinite(raw);
     let r;
-    if (raw === null || !Number.isFinite(raw)) {
+    if (!ok) {
       r = id && this._last ? this._last : { cur: clamp(o.fill, 0, o.total), cons: 0 };
     } else if (o.mode === "consumption") {
       const cons = Math.max(raw, 0);
@@ -372,7 +344,7 @@ class TankCard extends HTMLElement {
       const cur = o.mode === "fill_level_percent" ? o.total * clamp(raw, 0, 100) / 100 : clamp(raw, 0, o.total);
       r = { cur, cons: Math.max(o.fill - cur, 0) };
     }
-    if (raw !== null && Number.isFinite(raw)) this._last = r;
+    if (ok) this._last = r;
     return { total: o.total, ...r };
   }
 
@@ -380,14 +352,13 @@ class TankCard extends HTMLElement {
     const layer = el("div", "bub"), r = Math.random;
     const [small, mid] = BUBBLE_COUNT[this._o.amount - 1];
     for (let k = 0; k < small + mid; k++) {
-      const b = el("span"), size = k < small ? .1 + r() * .16 : .28 + r() * .22; // zuerst kleine, dann mittlere Blasen
+      const b = el("span"), size = k < small ? .1 + r() * .16 : .28 + r() * .22;
       b.style.cssText = `--x:${(5 + r() * 88).toFixed(0)}%;--s:${size.toFixed(2)}em;--w:${((r() - .5) * 1.2).toFixed(2)}em;--t:${(6 + r() * 6).toFixed(1)}s;--d:-${(r() * 10).toFixed(1)}s`;
       layer.append(b);
     }
     return layer;
   }
 
-  // Größe des Kapsel-Sichtfensters beobachten (Lichtkugel passt sich an)
   _observe() {
     this._ro?.disconnect();
     const w = this._o?.form === "capsule" && this._els?.tanks[0]?.w;
@@ -396,42 +367,37 @@ class TankCard extends HTMLElement {
     this._ro.observe(w);
   }
 
-  // Lichtkugel und Lichtstreifen der Kapsel aus der Fenstergröße berechnen.
-  // Orientierung wie die CSS-Containerabfrage (Tank breiter als hoch = waagerecht). Die Lichtkugel ist immer rund,
-  // nur ihre Größe richtet sich nach der kurzen Tankseite (Einstellung: Konstante BALL ganz oben).
   _ball() {
     const t = this._els?.tanks[0], w = t?.w, v = t?.v;
     if (!w || !v || !w.clientWidth || !w.clientHeight) return;
     const a = w.clientWidth, h = w.clientHeight, s = Math.min(a, h), L = Math.max(a, h);
     const wide = v.clientWidth > v.clientHeight, st = this._els.card.style;
     const px = (n, x) => st.setProperty(n, x.toFixed(1) + "px");
-    // Streifen: p = Start entlang der langen Achse, q = Abstand von der Lichtkante, len = Länge, th = Dicke
     const bar = (n, p, q, len, th) => {
       px(`--${n}x`, wide ? p : q); px(`--${n}y`, wide ? q : p);
       px(`--${n}w`, wide ? len : th); px(`--${n}h`, wide ? th : len);
     };
     bar("g1", .22 * s, .13 * s, Math.max(.32 * s, L - .72 * s), .1 * s);
     bar("g2", .3 * s, .785 * s, Math.max(.24 * s, L - .6 * s), .045 * s);
-    px("--gb", .03 * s); px("--gb2", .018 * s); // weiche Ränder
+    px("--gb", .03 * s); px("--gb2", .018 * s);
     st.setProperty("--ga", wide ? "90deg" : "180deg");
-    px("--br", 1.5 * BALL.size * s); // runde Kugel: Radius (Kern wie bisher, Rest läuft transparent aus)
-    px("--bx", Math.max(.12, (wide ? .6 : .3) + BALL.shift) * s); // Lage: Kappe des Tanks, mit BALL.shift verschoben (nie ganz an den Rand)
+    px("--br", 1.5 * BALL.size * s);
+    px("--bx", Math.max(.12, (wide ? .6 : .3) + BALL.shift) * s);
     px("--by", (wide ? .3 : .6) * s);
   }
 
-  // DOM + Style einmalig; Werte setzt danach nur _update() (Höhen-Transition bleibt erhalten)
   _build() {
     const o = this._o, [a, b] = o.pal || [];
     const style = el("style");
     style.textContent = CSS + (o.wave ? waveCss(o.interval) : "") + (o.bubbles ? BUBBLE_CSS : "");
 
-    const bright = o.classic && !o.solid; // „Hell unten“: kräftige Farben, Leuchten, kein dunkler Seitenschatten in der Flüssigkeit
+    const bright = o.classic && !o.solid;
     const card = el("ha-card", `${o.form} ${o.style}${o.solid ? " solid" : ""}${bright ? " bright" : ""}${o.wave ? " anim" : ""}`);
     card.style.setProperty("--fs", o.font + "%");
     card.style.setProperty("--f", o.solid || (bright ? o.fc : `linear-gradient(to bottom,${a},${b})`));
     card.style.setProperty("--g", (bright ? o.glow : a) || "transparent");
 
-    if (o.id) { // Tippen → HA-Sensor-Info
+    if (o.id) {
       const tap = () => this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: o.id } }));
       card.style.cursor = "pointer";
       card.tabIndex = 0;
@@ -451,18 +417,18 @@ class TankCard extends HTMLElement {
       info[i.id] = { l, v, k: i.k };
     }
     if (bar.children.length) {
-      bar.style.setProperty("--cols", Math.max(bar.children.length, 2)); // breite Ansicht: alle sichtbaren Werte in einer Zeile
+      bar.style.setProperty("--cols", Math.max(bar.children.length, 2));
       card.append(bar);
     }
 
     const tanksEl = el("div", "tanks"), tanks = [];
-    tanksEl.style.setProperty("--n", o.n); // Anzahl der Tanks für den Abstand (siehe .tanks im CSS)
+    tanksEl.style.setProperty("--n", o.n);
     for (let i = 0; i < o.n; i++) {
       const t = el("div", "t"), nm = el("div", "n"), v = el("div", "v"), w = el("div", "w"), l = el("div", "l"), val = el("div", "val");
       t.style.setProperty("--wd", (i * .35).toFixed(2) + "s");
       if (o.bubbles) l.append(this._bubbles());
       w.append(l, val);
-      if (o.form === "capsule") w.append(el("i", "gl g1"), el("i", "gl g2")); // Lichtstreifen mit runden Enden
+      if (o.form === "capsule") w.append(el("i", "gl g1"), el("i", "gl g2"));
       v.append(w);
       if (o.showLabel) t.append(nm);
       if (o.gas) t.append(el("div", "dome"));
@@ -490,23 +456,23 @@ class TankCard extends HTMLElement {
       x.l.textContent = tr(lg, x.k);
       x.v.textContent = fm[id];
     }
-    if (this._els.bar) { // längster Chip-Text bestimmt die gemeinsame Schriftgröße aller Chips
+    if (this._els.bar) {
       const n = Math.max(...Object.values(this._els.info).map((x) => x.l.textContent.length + x.v.textContent.length));
       this._els.bar.style.setProperty("--chars", n);
     }
 
     const theme = o.theme && this._hass?.themes?.themes?.[o.theme], cs = this._els.card.style;
-    this._tv.forEach((k) => cs.removeProperty(k)); // Variablen eines früheren Themes entfernen
+    this._tv.forEach((k) => cs.removeProperty(k));
     this._tv = [];
     if (theme && typeof theme === "object") {
-      const th = { ...theme, ...theme.modes?.[this._hass.themes.darkMode ? "dark" : "light"] }; // Hell-/Dunkel-Variablen des Themes
+      const th = { ...theme, ...theme.modes?.[this._hass.themes.darkMode ? "dark" : "light"] };
       for (const [k, v] of Object.entries(th)) if (k.startsWith("--") && typeof v === "string") { cs.setProperty(k, v); this._tv.push(k); }
     }
 
     const vt = o.perTank ? fmt(cur / o.n, u, lg) : "";
-    cs.setProperty("--vc", vt.length || 6); // Textlänge → Schrift schrumpft bei langen Werten
+    cs.setProperty("--vc", vt.length || 6);
     const names = this._els.tanks.map((_, i) => o.names[i] ?? `${o.label ?? tr(lg, "u_tank")} ${i + 1}`);
-    cs.setProperty("--lc", Math.max(...names.map((x) => x.length))); // längster Name → Schrift schrumpft
+    cs.setProperty("--lc", Math.max(...names.map((x) => x.length)));
     this._els.tanks.forEach((t, i) => {
       t.nm.textContent = names[i];
       t.v.style.setProperty("--p", pct / 100);
@@ -516,16 +482,17 @@ class TankCard extends HTMLElement {
   }
 }
 
-/** Editor: Kategorien (ha-expansion-panel), immer nur eine offen; „Animation“ entfällt bei Feststoffen. */
 class TankCardEditor extends HTMLElement {
   constructor() {
     super();
-    this._hass = this._f = this._p = null;
+    this._hass = this._f = this._p = this._t = this._raf = null;
     this._c = {};
-    this._shown = undefined; // aktuell im Feld „Anfangsbestand“ angezeigter Wert
-    this._empty = new Set(); // vom Nutzer geleerte Felder (werden nicht sofort mit dem Standard gefüllt)
+    this._shown = undefined;
+    this._empty = new Set();
     this.attachShadow({ mode: "open" });
   }
+
+  disconnectedCallback() { clearTimeout(this._t); cancelAnimationFrame(this._raf); this._t = null; }
 
   set hass(h) {
     const changed = lang(this._hass) !== lang(h);
@@ -547,18 +514,16 @@ class TankCardEditor extends HTMLElement {
     return Number.isFinite(n) && Number.isFinite(c) && n >= 1 && c > 0 ? totalOf(clamp(Math.round(n), 1, 20), c) : null;
   }
 
-  // Fehlende Keys zeigen den Wert, den die Karte tatsächlich verwendet
   _data() {
     const d = { ...DEF, ...this._c };
-    for (const k in ENUM) if (!ENUM[k].includes(d[k])) d[k] = DEF[k]; // ungültiger Wert (z. B. entfernte Farben): Karte nutzt den Standard
+    for (const k in ENUM) if (!ENUM[k].includes(d[k])) d[k] = DEF[k];
     const total = this._total(d);
     if (total !== null && !this._empty.has("initial_fill")) {
-      // fehlender Anfangsbestand = voll; Anzeige nie größer als die Gesamtkapazität (auch bei bestehenden Karten)
       if (BLANK(d.initial_fill) || Number(d.initial_fill) > total) d.initial_fill = total;
     }
     d.font_size = fontPct(d.font_size);
-    if (typeof d.custom_color === "string") d.custom_color = rgbOf(d.custom_color); // Hex aus der YAML → [r,g,b] für den Farbwähler
-    for (const k of this._empty) if (BLANK(this._c[k])) d[k] = undefined; // geleerte Felder bleiben leer
+    if (typeof d.custom_color === "string") d.custom_color = rgbOf(d.custom_color);
+    for (const k of this._empty) if (BLANK(this._c[k])) d[k] = undefined;
     return d;
   }
 
@@ -573,7 +538,6 @@ class TankCardEditor extends HTMLElement {
       top: [{ name: "title", selector: { text: {} } }],
       tank: [
         S("tank_form", FORMS),
-        // Schalter „Gas-Tank“ erscheint rechts neben der Tankart, nur bei Metalltank + Kapsel + genau einem Tank
         d.tank_style === "metal" && d.tank_form === "capsule" && Number(d.tank_count) === 1 ? g("style_row", [ts, b("gas_tank")]) : ts,
         g("tank_size", [{ name: "tank_count", selector: nb(1, 20) }, { name: "tank_capacity", selector: nb(.01, undefined, "any") }]),
         { name: "tank_label", selector: { text: {} } }
@@ -581,7 +545,7 @@ class TankCardEditor extends HTMLElement {
       content: [
         S("content_type", CONTENTS),
         ...(d.content_type === "custom" ? [{ name: "custom_color", selector: { color_rgb: {} } }] : []),
-        ...(PILE[d.content_type] ? [] : [S("liquid_style", LIQUIDS)]), // bei Pellets/Hackschnitzel ohne Wirkung → ausgeblendet
+        ...(PILE[d.content_type] ? [] : [S("liquid_style", LIQUIDS)]),
         S("sensor_mode", MODES),
         { name: d.sensor_mode === "consumption" ? "consumption_sensor" : "level_sensor", selector: { entity: { domain: "sensor" } } },
         { name: "initial_fill", selector: nb(0, this._total(d) ?? undefined, "any") }
@@ -598,7 +562,6 @@ class TankCardEditor extends HTMLElement {
     }[id];
   }
 
-  // nächster scrollbarer Vorfahre (auch über Shadow-DOM-Grenzen hinweg)
   _scroller() {
     let n = this;
     while (n) {
@@ -623,6 +586,7 @@ class TankCardEditor extends HTMLElement {
       form.computeLabel = (s) => tr(lang(this._hass), s.name);
       form.computeHelper = (s) => TXT[lang(this._hass)]["h_" + s.name];
       form.addEventListener("value-changed", (e) => { e.stopPropagation(); this._changed(e.detail?.value); });
+      form.addEventListener("input", (e) => this._live(e));
       parent.append(form);
       this._f.push({ id, form });
     };
@@ -635,7 +599,6 @@ class TankCardEditor extends HTMLElement {
       p.addEventListener("expanded-changed", (e) => {
         e.stopPropagation();
         if (!(e.detail?.expanded ?? p.expanded)) return;
-        // Beim Schließen der anderen Bereiche bleibt die Kopfzeile des geöffneten Bereichs an derselben Bildschirmstelle
         const sp = this._scroller(), y = p.getBoundingClientRect().top, t0 = performance.now();
         this._p.forEach((x) => { if (x.p !== p) x.p.expanded = false; });
         const fix = () => {
@@ -662,23 +625,28 @@ class TankCardEditor extends HTMLElement {
     });
   }
 
-  // Anfangsbestand wird nur begrenzt, wenn das Feld selbst geändert wurde.
-  // Ändert sich nur Kapazität/Anzahl, bleibt der gespeicherte Wert erhalten (Tippen von „12“ zerstört ihn nicht).
+  _live(e) {
+    const inp = e.composedPath().find((n) => n instanceof HTMLInputElement && n.type === "color");
+    if (!inp) return;
+    const rgb = rgbOf(inp.value), cur = rgbOf(this._c.custom_color);
+    if (rgb.every((v, i) => v === cur[i])) return;
+    cancelAnimationFrame(this._raf);
+    this._raf = requestAnimationFrame(() => this._changed({ ...this._data(), custom_color: rgb }));
+  }
+
   _changed(value) {
     if (!value || typeof value !== "object") return;
     const next = { ...value }, reset = [];
-    for (const k of ["title", "tank_label", "tank_count", "tank_capacity", "initial_fill"]) { // leer = Standard auf der Karte (Anfangsbestand: „voll“), im Editor bleibt das Feld leer
+    for (const k of ["title", "tank_label", "tank_count", "tank_capacity", "initial_fill"]) {
       if (!BLANK(next[k])) this._empty.delete(k);
       else { if (k in value) this._empty.add(k); delete next[k]; }
     }
-    for (const k in ENUM) if (BLANK(next[k])) { reset.push(k); delete next[k]; } // „X“ im Dropdown → Standardwert
+    for (const k in ENUM) if (BLANK(next[k])) { reset.push(k); delete next[k]; }
     const fill = next.initial_fill, stored = this._c.initial_fill;
     if (fill !== undefined) {
       if (fill === this._shown) {
-        // Feld nicht angefasst: gespeicherten Wert behalten (oder weiter „voll“ bleiben)
         if (BLANK(stored)) delete next.initial_fill; else next.initial_fill = stored;
       } else {
-        // Nutzer hat den Wert geändert: über der Gesamtkapazität → Maximum eintragen
         const total = this._total(next), n = Number(fill);
         if (total !== null && Number.isFinite(n)) {
           next.initial_fill = clamp(n, 0, total);
@@ -690,10 +658,10 @@ class TankCardEditor extends HTMLElement {
     this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: next }, bubbles: true, composed: true }));
     this._sync();
     if (reset.length) {
-      // Lit schreibt nur bei geändertem Wert ins Feld: Felder kurz leeren, damit Standard bzw. Maximum wirklich erscheinen
       const e = Object.fromEntries(reset.map((k) => [k, undefined]));
       this._f.forEach(({ form }) => { form.data = { ...this._data(), ...e }; });
-      setTimeout(() => this._f.forEach(({ form }) => { form.data = this._data(); }), 40);
+      clearTimeout(this._t);
+      this._t = setTimeout(() => { this._t = null; this._f?.forEach(({ form }) => { form.data = this._data(); }); }, 40);
     }
   }
 }
