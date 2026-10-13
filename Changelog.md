@@ -4,6 +4,24 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
+## [0.9.2] - 2026-10-13
+
+### Added
+
+* Level warning / signaling system:
+  * Warning level 1 (orange) and level 2 (red) with configurable thresholds (`warn_1` / `warn_1_level`, `warn_2` / `warn_2_level`; defaults 20 % / 10 %).
+  * Home Assistant notification when a warning level is reached (`warn_notify`; cleared on refill).
+  * Optional mobile app push notification (`warn_mobile`; off by default).
+  * Visual signaling with glow and fading fog behind the tanks (`warn_glow`; level 1 orange, level 2 red).
+* Editor: new **Level notification / signaling** category.
+* When a warning switch is enabled, the matching animation under **Animation** is turned on automatically (can still be turned off there).
+
+### Changed
+
+* Hysteresis for warning stages to avoid rapid flapping near the threshold.
+
+---
+
 ## [0.9.0] - 2026-10-08
 
 ### Added
