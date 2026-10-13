@@ -14,6 +14,7 @@ All notable changes to **Tank Card** are documented here.
 * New visual representation for wood pellets and wood chips (seamless SVG tile patterns).
 * Custom color via `content_type: custom` and `custom_color` (RGB or Hex).
 * Wave animation on the liquid surface (`animation`, `animation_interval`).
+* Added a “Set card height manually” slider (0 = automatic)
 * Rising bubbles in the liquid (`bubbles`, `bubble_amount`).
 * Individual show/hide for title and tank label (`show_title`, `show_tank_label`).
 * Shared tank label with automatic numbering (`tank_label`).
