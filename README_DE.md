@@ -15,25 +15,19 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.9.0**
+**Aktuelle Version: 0.9.2**
 
-## 🆕 0.9.0
+## 🆕 0.9.2
 
-- Glas- und Metalltank (`tank_style`)
-- Gas-Tank mit Standfüßen und Kuppel (Kapsel + Metall, ein Gas-Tank-Optik-Schalter)
-- Flüssigkeitsdarstellung wählbar: bisherige oder neue Optik (`liquid_style`)
-- Holzpellets und Hackschnitzel neue Darstellung
-- eigene Farbe über `content_type: custom` und `custom_color`
-- Wellen-Animation und aufsteigende Blasen
-- Titel und Tank-Beschriftung einzeln ein-/ausblendbar
-- gemeinsame Tank-Beschriftung (`tank_label`) mit automatischer Nummerierung
-- Tippen auf die Karte öffnet die Sensor-Details
-- Editor: neue Kategorie Animation, Schriftgröße und Design unter Anzeige
-- Schriftgröße des Anzeigewerts je Tank vergrößert und passt sich der Tankbreite an
-- optische Füllhöhe korrigiert
+- Füllstand-Warnung / Signalisierung (Warnstufe 1 orange, Stufe 2 rot)
+- Konfigurierbare Schwellenwerte (Standard 20 % / 10 %)
+- Home-Assistant-Benachrichtigung bei Erreichen einer Stufe (wird nach dem Nachfüllen entfernt)
+- Optionale Mobile-App-Push-Benachrichtigung
+- Visuelles Leuchten + ein-/ausblendender Nebel hinter den Tanks
+- Editor: neue Kategorie **Füllstand-Meldung / Signalisierung**
 
-<img width="60%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/eae75993-cd21-4484-98b5-5f8c3b40bb23" />
-<img width="30%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+<img width="60%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/59d4b6d2-c54b-4237-b539-f5305c153713" />
+
 
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
@@ -58,6 +52,7 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 - Tankformen `rect`, `pool` und `capsule`
 - Tankart Glas oder Metall
 - Material- und farbabhängige Füllverläufe / Muster
+- Füllstand-Warnung / Signalisierung (Benachrichtigung + visuelles Leuchten)
 - Wellen-Animation und aufsteigende Blasen (bei Flüssigkeiten)
 - Einheiten `L`, `kg` und `m³`
 - Konfigurierbare Schriftgröße (50–200 %)
@@ -97,31 +92,40 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 
 # ⚙️ Beispiel-Konfiguration
 
-    type: custom:tank-card
-    title: Tank Card
-    tank_count: 3
-    tank_capacity: 1500
-    initial_fill: 4500
-    sensor_mode: consumption
-    consumption_sensor: sensor.heating_oil_consumption_total
-    level_sensor: ""
-    content_type: heating_oil
-    liquid_style: classic
-    unit: L
-    tank_form: rect
-    tank_style: metal
-    show_unittank: true
-    show_title: true
-    show_tank_label: true
-    tank_label: Tank
-    animation: false
-    bubbles: false
-    theme: ""
-    font_size: 100
-    entities:
-      - name: Tank 1
-      - name: Tank 2
-      - name: Tank 3
+```
+type: custom:tank-card
+title: Tank Card
+tank_count: 3
+tank_capacity: 1500
+initial_fill: 4500
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+level_sensor: ""
+content_type: heating_oil
+liquid_style: classic
+unit: L
+tank_form: rect
+tank_style: metal
+show_unittank: true
+show_title: true
+show_tank_label: true
+tank_label: Tank
+animation: false
+bubbles: false
+warn_1: false
+warn_1_level: 20
+warn_2: false
+warn_2_level: 10
+warn_notify: true
+warn_mobile: false
+warn_glow: false
+theme: ""
+font_size: 100
+entities:
+  - name: Tank 1
+  - name: Tank 2
+  - name: Tank 3
+```
 
 ---
 
@@ -154,6 +158,13 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 | `liquid_style` | `classic` | string | `classic` (bisherige Darstellung) oder `new` |
 | `animation` | `false` | boolean | Wellen-Animation (nur Flüssigkeiten) |
 | `animation_interval` | `30` | number | Intervall der Welle in Sekunden (5–60) |
+| `warn_1` | `false` | boolean | Warnstufe 1 (orange) aktivieren |
+| `warn_1_level` | `20` | number | Warnstufe 1 bei einem Füllstand unter (%) |
+| `warn_2` | `false` | boolean | Warnstufe 2 (rot) aktivieren |
+| `warn_2_level` | `10` | number | Warnstufe 2 bei einem Füllstand unter (%) |
+| `warn_notify` | `true` | boolean | Home-Assistant-Benachrichtigung senden |
+| `warn_mobile` | `false` | boolean | Mobile-App-Push-Benachrichtigung senden |
+| `warn_glow` | `false` | boolean | Warnstufen visuell signalisieren (Leuchten und Nebel) |
 | `bubbles` | `false` | boolean | Aufsteigende Blasen (nur Flüssigkeiten) |
 | `bubble_amount` | `3` | number | Menge der Blasen (1–8) |
 | `theme` | `""` | string | Optionales HA-Theme |
@@ -233,8 +244,12 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 > Bei Pellets und Hackschnitzel entfallen Welle und Blasen (Schüttgut).
 
 ---
+# Screenshot:
 
-# 🐛 Fehler & Feature Requests
+<img width="50%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+
+---
+# Fehler & Feature Requests
 
 Bitte gib folgende Informationen an:
 
