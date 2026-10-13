@@ -102,6 +102,7 @@ const BLANK = (v) => v == null || v === "" || (typeof v === "number" && Number.i
 const totalOf = (n, c) => Math.round(n * c * 100) / 100;
 const lang = (h) => String(h?.locale?.language || document.documentElement.lang || "en").toLowerCase().startsWith("de") ? "de" : "en";
 const tr = (l, k) => TXT[l][k] ?? TXT.en[k] ?? k;
+const tpl = (s, v) => s.replace(/\{(\w)\}/g, (m, k) => (k in v ? v[k] : m));
 const el = (tag, cls, text) => {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
@@ -395,8 +396,8 @@ class TankCard extends HTMLElement {
         phones.forEach((p) => ids.forEach((tag) => push.push(() => call("notify", p, { message: "clear_notification", data: { tag } }))));
       } else {
         const u = o.unit;
-        const title = tr(lg, "n_title").replace("{s}", stage);
-        const message = tr(lg, "n_msg").replace("{t}", o.title).replace("{s}", stage).replace("{l}", o.warn[stage - 1].lvl).replace("{p}", pct.toFixed(0)).replace("{c}", fmt(cur, u, lg)).replace("{m}", fmt(total, u, lg));
+        const title = tpl(tr(lg, "n_title"), { s: stage });
+        const message = tpl(tr(lg, "n_msg"), { t: o.title, s: stage, l: o.warn[stage - 1].lvl, p: pct.toFixed(0), c: fmt(cur, u, lg), m: fmt(total, u, lg) });
         const tag = ids[stage - 1];
         const path = window.location.pathname, url = path && !path.startsWith("/config") ? path : "";
         if (o.notify) bell.push(() => call("persistent_notification", "create", { title, message, notification_id: tag }));
@@ -512,7 +513,7 @@ class TankCard extends HTMLElement {
     const stage = this._stage(pct);
     this._els.card.classList.toggle("warn1", o.wglow && stage === 1);
     this._els.card.classList.toggle("warn2", o.wglow && stage === 2);
-    if (ok && o.id) this._notify(stage, pct, cur, total, lg);
+    if (ok && o.id) this._notify(stage, pct, cur, total, lg).catch((e) => console.warn("Tank Card: notification error", e));
     const fm = { max: fmt(total, u, lg), level: fmt(cur, u, lg), fill: `${pct.toFixed(0)}%`, cons: fmt(cons, u, lg) };
     for (const [id, x] of Object.entries(this._els.info)) {
       x.l.textContent = tr(lg, x.k);
@@ -580,7 +581,7 @@ class TankCardEditor extends HTMLElement {
     for (const k of this._empty) if (BLANK(this._c[k])) d[k] = undefined;
     return d;
   }
-  _schema(id, d, lg) {
+  _schemas(d, lg) {
     const S = (name, vs) => ({ name, selector: { select: { options: vs.map((v) => ({ value: v, label: tr(lg, "o_" + v) })) } } });
     const nb = (min, max, step = 1) => ({ number: { min, ...(max !== undefined && { max }), step, mode: "box" } });
     const sl = (min, max, step, unit) => ({ number: { min, max, step, mode: "slider", unit_of_measurement: unit } });
@@ -619,7 +620,7 @@ class TankCardEditor extends HTMLElement {
         b("warn_notify"),
         b("warn_mobile")
       ]
-    }[id];
+    };
   }
   _scroller() {
     let n = this;
@@ -674,12 +675,12 @@ class TankCardEditor extends HTMLElement {
     this.shadowRoot.replaceChildren(st, root);
   }
   _sync() {
-    const lg = lang(this._hass), d = this._data();
+    const lg = lang(this._hass), d = this._data(), sc = this._schemas(d, lg);
     this._shown = d.initial_fill;
-    this._f.forEach(({ id, form }) => { form.hass = this._hass; form.data = d; form.schema = this._schema(id, d, lg); });
+    this._f.forEach(({ id, form }) => { form.hass = this._hass; form.data = d; form.schema = sc[id]; });
     this._p.forEach(({ id, p }) => {
       p.header = tr(lg, "s_" + id);
-      p.hidden = !this._schema(id, d, lg).length;
+      p.hidden = !sc[id].length;
       if (p.hidden) p.expanded = false;
     });
     if (this._info) this._info.textContent = tr(lg, "i_warn_t") + ": " + tr(lg, "i_warn");
