@@ -33,6 +33,12 @@
 
 ---
 
+Vorschau auf die nächste Version (Pre-Release):
+
+<img width="40%" height="auto" alt="9 3" src="https://github.com/user-attachments/assets/28d22df7-e9d6-49bd-9ce9-0d0837f942ca" /><img width="40%" height="auto" alt="9 3" src="https://github.com/user-attachments/assets/7373409e-08d3-406c-9c4e-bcd98b048e8d" />
+
+---
+
 ## 📖 Über Tank Card
 
 Unterstützt werden Verbrauchssensoren sowie Füllstandssensoren mit absoluten Werten oder Prozentangaben. Geeignet für Heizöl, Wasser, Diesel, Gas, Pellets, Hackschnitzel und weitere Flüssigkeiten oder Schüttgüter – sowie für freie Farbdarstellungen.
