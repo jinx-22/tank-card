@@ -20,7 +20,8 @@
 - Editor reorganized: guided questions under **Content**, liquid style moved to **Display**, new category **Level notification / signaling**
 - Removed: `entities` (individual tank names), Hex colors for `custom_color`, and `%` / `em` / `px` values for `font_size` – see [Configuration Options](#-configuration-options)
 
-![warn](https://github.com/user-attachments/assets/59d4b6d2-c54b-4237-b539-f5305c153713)
+<img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
+
 
 > **Note:** After updating, hard-reload the dashboard with `Ctrl + F5` and clear the browser cache so the editor and card load the new version.
 
@@ -295,7 +296,7 @@ When the tank is refilled and the level rises above the threshold again, the not
 
 # 📸 Screenshot
 
-![New-look](https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80)
+<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 ---
 
@@ -317,28 +318,31 @@ Create a [GitHub Issue](https://github.com/jinx-22/tank-card/issues).
 
 # 🧡 Support & Donations
 
-### Lightning
+<div align="center">
 
-[![Lightning](https://github.com/user-attachments/assets/0bff59d2-7986-46cf-9d39-17fe0dbb128a)](https://github.com/user-attachments/assets/0bff59d2-7986-46cf-9d39-17fe0dbb128a)
+### <a id="lightning"></a>Lightning
+
+<img width="32" alt="Lightning" src="https://github.com/user-attachments/assets/0bff59d2-7986-46cf-9d39-17fe0dbb128a" />
 
 `usefulplay52@walletofsatoshi.com`
 
-[![Lightning - Wallet of Satoshi](https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf)](https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf)
+<img height="300" alt="Lightning - Wallet of Satoshi" src="https://github.com/user-attachments/assets/65cc18d9-05d1-4a00-8ccc-9922fdb54baf" />
 
-### Bitcoin
+### <a id="bitcoin"></a>Bitcoin
 
-[![Bitcoin](https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b)](https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b)
+<img width="32" alt="Bitcoin" src="https://github.com/user-attachments/assets/f74cad36-8c05-4a33-89cd-b998075af33b" />
 
 `bc1qkz7mtp23cmshxnru96lzgeayu0urlysvqk5vry`
 
-[![Bitcoin donation](https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45)](https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45)
+<img height="300" alt="Bitcoin donation" src="https://github.com/user-attachments/assets/196f68e4-b0e8-4f27-bded-8c4fe13b9d45" />
+
+</div>
 
 Thank you for your support — a free ⭐ helps others discover the project:
 
 [![stars](https://img.shields.io/github/stars/jinx-22/tank-card)](https://github.com/jinx-22/tank-card/stargazers)
 
 ---
-
 # 📜 License
 
 **Apache-2.0**
