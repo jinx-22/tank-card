@@ -4,43 +4,94 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
+## [0.9.2] - 2026-10-16
+
+### Added
+
+- Level warning / signaling system:
+  * Warning level 1 (orange) and level 2 (red) with configurable thresholds (`warn_1` / `warn_1_level`, `warn_2` / `warn_2_level`; 1–99 %, defaults 20 % / 10 %). With both levels enabled, level 2 is kept below level 1.
+  * Visual signaling with pulsing glow and fading fog behind the tanks (`warn_glow`; level 1 orange, level 2 red and faster). Static glow with “reduce motion”.
+- Notification automation, created from the card editor (`warn_auto`, administrator rights required):
+  * Home Assistant notification (`warn_notify`) and/or mobile app push notification (`warn_mobile`; opens the dashboard).
+  * Optional repeat while the level stays below the threshold (`warn_repeat`, `warn_repeat_unit`: `h` / `d`, `warn_time` for daily repeats; `0` = no repeat).
+  * Notifications are removed automatically after refilling.
+  * Editor buttons to create, update and delete the automation, plus a status display.
+- Automatic unit detection (`unit: auto`) from the sensor’s unit, otherwise from the Home Assistant unit system.
+- New unit `gal` and free entry of your own units (e.g. `t`).
+- Configurable decimal places (`decimals`, 0–5).
+- Editor: new **Level notification / signaling** category.
+- Editor: enabling the first warning level automatically turns on `warn_glow` and `warn_notify` (can still be turned off).
+- Editor: the gas tank switch is always visible and only available for metal + capsule + one tank; it turns on automatically when these conditions are met.
+
+### Changed
+
+- Default unit is now `auto` (previously `L`).
+- `card_height` now defaults to 350 px and is limited to 250–1000 px (previously unset = automatic).
+- Editor reorganized: guided questions under **Content** (content, sensor, unit, initial fill), liquid style, title and tank label moved to **Display**.
+- Rectangular tanks are labeled “Cuboid” in the editor.
+- Hysteresis (0.5 percentage points) for warning stages to avoid rapid flapping near the threshold.
+- Improved performance: the card only re-renders when displayed values, theme or language change.
+
+### Removed
+
+- `entities` (individual tank names). Use `tank_label`, the numbering is automatic.
+- Hex strings for `custom_color`. Use `[r, g, b]`.
+- `%` / `em` / `px` values for `font_size`. Use a number (50–200).
+
+---
+
 ## [0.9.1] - 2026-10-13
 
 ### Added
 
-- Added a “Set card height manually” slider (0 = automatic) that sets a minimum card height
-
-## [0.9.0] - 2026-10-13
-
-### Added
-
-* Glass and metal tank styles (`tank_style`: `metal` / `glass`).
-* Gas tank mode with legs and dome (`gas_tank`, only for metal capsule with a single tank).
-* Selectable liquid style: previous look or new look (`liquid_style`: `classic` / `new`).
-* New visual representation for wood pellets and wood chips (seamless SVG tile patterns).
-* Custom color via `content_type: custom` and `custom_color` (RGB or Hex).
-* Wave animation on the liquid surface (`animation`, `animation_interval`).
-* Added a “Set card height manually” slider (0 = automatic)
-* Rising bubbles in the liquid (`bubbles`, `bubble_amount`).
-* Individual show/hide for title and tank label (`show_title`, `show_tank_label`).
-* Shared tank label with automatic numbering (`tank_label`).
-* Tap on the card opens the linked sensor’s more-info dialog.
-* Editor: new **Animation** category; font size and design options under **Display**.
+- Manual card height (`card_height`, 250–1000 px; unset = automatic) in the editor under **Display**.
+  * Masonry view: minimum card height in pixels.
+  * Sections view: sets the default number of rows; the layout tab takes precedence.
+- Editor: the color picker now updates the card live while a color is being chosen.
 
 ### Changed
 
-* Font size of the per-tank value increased; adapts to tank width on narrow tanks.
-* Optical fill height corrected (absolute positioning of the fill layer).
-* Editor layout reorganized (Tank / Content / Display / Animation).
-* Pellets and wood chips no longer use wave or bubble animations (bulk material).
+- Card size and grid options now follow the configured card height.
+- Changing `card_height` in the editor overrides a row count saved in the layout (`grid_options.rows`).
+- The card now also updates when the Home Assistant light/dark mode or the selected theme changes.
+- Stricter sensor value handling: only purely numeric sensor states are accepted; anything else keeps the last valid value.
+- Individual tank names from `entities` are trimmed of surrounding spaces.
 
 ### Fixed
 
-* Fill-level visualization reliability across browsers (including Safari / iOS).
-* Fill height calculation and surface alignment for glass and metal tanks.
+- Editor: pending timers are cleaned up when the editor is closed.
 
-<img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb" />
-<img width="40%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
+---
+
+## [0.9.0] - 2026-10-12
+
+### Added
+
+- Glass and metal tank styles (`tank_style`: `metal` / `glass`).
+- Gas tank mode with legs and dome (`gas_tank`, only for metal capsule with a single tank).
+- Selectable liquid style: previous look or new look (`liquid_style`: `classic` / `new`).
+- New visual representation for wood pellets and wood chips (seamless SVG tile patterns).
+- Custom color via `content_type: custom` and `custom_color` (RGB or Hex).
+- Wave animation on the liquid surface (`animation`, `animation_interval`).
+- Rising bubbles in the liquid (`bubbles`, `bubble_amount`).
+- Individual show/hide for title and tank label (`show_title`, `show_tank_label`).
+- Shared tank label with automatic numbering (`tank_label`).
+- Tap on the card opens the linked sensor’s more-info dialog.
+- Editor: new **Animation** category; font size and design options under **Display**.
+
+### Changed
+
+- Font size of the per-tank value increased; adapts to tank width on narrow tanks.
+- Optical fill height corrected (absolute positioning of the fill layer).
+- Editor layout reorganized (Tank / Content / Display / Animation).
+- Pellets and wood chips no longer use wave or bubble animations (bulk material).
+
+### Fixed
+
+- Fill-level visualization reliability across browsers (including Safari / iOS).
+- Fill height calculation and surface alignment for glass and metal tanks.
+
+![editor](https://github.com/user-attachments/assets/5c4fc6e3-bdc3-475b-9df7-cc22bd2705cb) ![New-look](https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80)
 
 ---
 
@@ -48,26 +99,26 @@ All notable changes to **Tank Card** are documented here.
 
 ### Fixed
 
-* Fill level positioning – visual fill no longer collapsed on some browsers (Safari / iOS / webOS).
-* Tank fill uses absolute positioning from the bottom so percentage height works reliably.
+- Fill level positioning – visual fill no longer collapsed on some browsers (Safari / iOS / webOS).
+- Tank fill uses absolute positioning from the bottom so percentage height works reliably.
 
 ---
 
-## [0.8.0] - 2026-10-07
+## [0.8.0] - 2026-10-08
 
 ### Added
 
-* All values can be removed and individually enabled
+- All values can be removed and individually enabled
 
 ### Changed
 
-* New, clearer editor layout
+- New, clearer editor layout
 
 ### Fixed
 
-* Minor bug fixes
+- Minor bug fixes
 
-<img width="40%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00" />
+![editor](https://github.com/user-attachments/assets/63ee6c91-7265-42ce-9725-005c56d14d00)
 
 ---
 

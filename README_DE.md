@@ -15,30 +15,19 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.9.1**
+**Aktuelle Version: 0.9.2**
 
-## 🆕 0.9.1
+## 🆕 0.9.2
 
-- Neuer Slider „Kartenhöhe manuell einstellen“ (0 = automatisch) für eine Mindesthöhe der Karte
+- Füllstand-Warnung / Signalisierung (Warnstufe 1 orange, Stufe 2 rot) mit konfigurierbaren Schwellenwerten (Standard 20 % / 10 %)
+- Visuelles Leuchten + ein-/ausblendender Nebel hinter den Tanks
+- Optionale Benachrichtigungs-Automation, direkt im Karten-Editor erstellt: Home-Assistant-Benachrichtigung und/oder Mobile-App-Push, optional mit Wiederholung alle x Stunden / Tage
+- Automatische Einheitenerkennung über den Sensor (`unit: auto`), neue Einheit `gal`, eigene Einheiten und einstellbare Nachkommastellen (`decimals`)
+- Kartenhöhe jetzt mit Standard 350 px (250–1000 px)
+- Editor neu gegliedert: geführte Fragen unter **Inhalt**, Darstellung der Flüssigkeit unter **Anzeige**, neue Kategorie **Füllstand-Meldung / Signalisierung**
+- Entfernt: `entities` (individuelle Tanknamen), Hex-Farben bei `custom_color` und `%` / `em` / `px` bei `font_size` – siehe [Konfigurationsoptionen](#-konfigurationsoptionen)
 
-## 🆕 0.9.0
-
-- Glas- und Metalltank (`tank_style`)
-- Gas-Tank mit Standfüßen und Kuppel (Kapsel + Metall, ein Gas-Tank-Optik-Schalter)
-- Flüssigkeitsdarstellung wählbar: bisherige oder neue Optik (`liquid_style`)
-- Holzpellets und Hackschnitzel neue Darstellung
-- eigene Farbe über `content_type: custom` und `custom_color`
-- Wellen-Animation und aufsteigende Blasen
-- Titel und Tank-Beschriftung einzeln ein-/ausblendbar
-- gemeinsame Tank-Beschriftung (`tank_label`) mit automatischer Nummerierung
-- Tippen auf die Karte öffnet die Sensor-Details
-- Editor: neue Kategorie Animation, Schriftgröße und Design unter Anzeige
-- Schriftgröße des Anzeigewerts je Tank vergrößert und passt sich der Tankbreite an
-- optische Füllhöhe korrigiert
-
-<img width="60%" height="auto" alt="editor" src="https://github.com/user-attachments/assets/eae75993-cd21-4484-98b5-5f8c3b40bb23" />
-<img width="30%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
-
+<img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/5e204451-2a55-4fc3-bd03-fe171db6a82d" />
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.
 
@@ -56,15 +45,16 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 
 ### Highlights
 
-- Ein oder mehrere Tanks (1–20) mit individuellen Namen
+- Ein oder mehrere Tanks (1–20) mit automatischer Nummerierung und gemeinsamer Beschriftung
 - Anzeige von Füllstand und Gesamtkapazität
 - Verbrauchs- und Füllstandssensoren (absolut oder prozentual)
 - Tankformen `rect`, `pool` und `capsule`
 - Tankart Glas oder Metall
 - Material- und farbabhängige Füllverläufe / Muster
+- Füllstand-Warnung / Signalisierung (Leuchten + optionale Benachrichtigungs-Automation)
 - Wellen-Animation und aufsteigende Blasen (bei Flüssigkeiten)
-- Einheiten `L`, `kg` und `m³`
-- Konfigurierbare Schriftgröße (50–200 %)
+- Einheiten `L`, `gal`, `kg`, `m³` oder eigene, mit automatischer Erkennung
+- Konfigurierbare Schriftgröße (50–200 %) und Kartenhöhe (250–1000 px)
 - Optionales Home-Assistant-Theme
 - Responsives Layout (Container Queries)
 - Visueller Home-Assistant-Editor
@@ -75,7 +65,7 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 
 # 📦 Installation
 
-## Einfache Installation → [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
+## Einfache Installation → [Open in HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
 
 ## HACS
 
@@ -88,12 +78,14 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 ## Manuell
 
 1. `tank-card.js` herunterladen
+
 2. Nach `/config/www/community/tank-card/` kopieren
+
 3. Unter **Einstellungen → Dashboards → Ressourcen** folgende Ressource hinzufügen:
 
-   `/local/community/tank-card/tank-card.js`
+    `/local/community/tank-card/tank-card.js`
 
-   Typ: **JavaScript-Modul**
+    Typ: **JavaScript-Modul**
 
 Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 
@@ -101,71 +93,95 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 
 # ⚙️ Beispiel-Konfiguration
 
-    type: custom:tank-card
-    title: Tank Card
-    tank_count: 3
-    tank_capacity: 1500
-    initial_fill: 4500
-    sensor_mode: consumption
-    consumption_sensor: sensor.heating_oil_consumption_total
-    level_sensor: ""
-    content_type: heating_oil
-    liquid_style: classic
-    unit: L
-    tank_form: rect
-    tank_style: metal
-    show_unittank: true
-    show_title: true
-    show_tank_label: true
-    tank_label: Tank
-    animation: false
-    bubbles: false
-    theme: ""
-    font_size: 100
-    entities:
-      - name: Tank 1
-      - name: Tank 2
-      - name: Tank 3
+```
+type: custom:tank-card
+title: Tank Card
+tank_count: 3
+tank_capacity: 1500
+initial_fill: 4500
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+level_sensor: ""
+content_type: heating_oil
+liquid_style: classic
+unit: auto
+tank_form: rect
+tank_style: metal
+show_unittank: true
+show_title: true
+show_tank_label: true
+tank_label: Tank
+animation: false
+bubbles: false
+warn_1: false
+warn_1_level: 20
+warn_2: false
+warn_2_level: 10
+warn_glow: false
+warn_auto: false
+warn_notify: true
+warn_mobile: false
+warn_repeat: 1
+warn_repeat_unit: d
+warn_time: "14:00:00"
+theme: ""
+font_size: 100
+card_height: 350
+```
 
 ---
 
 # 📋 Konfigurationsoptionen
 
-| Option | Standard | Typ | Beschreibung |
-|---|---|---|---|
-| `type` | `custom:tank-card` | string | Kartentyp |
-| `title` | `Tank Card` | string | Kartentitel |
-| `show_title` | `true` | boolean | Titel anzeigen |
-| `tank_count` | `3` | number | Anzahl der Tanks (1–20) |
-| `tank_capacity` | `1500` | number | Kapazität pro Tank |
-| `initial_fill` | `tank_count × tank_capacity` | number | Anfangsfüllstand des Gesamtsystems (leer = voll) |
-| `sensor_mode` | `consumption` | string | `consumption`, `fill_level_l` oder `fill_level_percent` |
-| `consumption_sensor` | `""` | string | Verbrauchssensor (nur bei `consumption`) |
-| `level_sensor` | `""` | string | Füllstandssensor (bei beiden Level-Modi) |
-| `unit` | `L` | string | `L`, `kg` oder `m3` |
-| `tank_form` | `rect` | string | `rect`, `pool` oder `capsule` |
-| `tank_style` | `metal` | string | `metal` oder `glass` |
-| `gas_tank` | `false` | boolean | Standfüße und Kuppel (nur Metall + Kapsel + 1 Tank) |
-| `show_unittank` | `true` | boolean | Menge pro Tank im Füllbalken anzeigen |
-| `show_tank_label` | `true` | boolean | Tank-Beschriftung anzeigen |
-| `tank_label` | `Tank` | string | Gemeinsamer Name der Tanks (Nummerierung automatisch) |
-| `show_max` | `true` | boolean | „Max:“ anzeigen |
-| `show_current` | `true` | boolean | „Aktuell:“ anzeigen |
-| `show_fill_level` | `true` | boolean | „Füllstand:“ anzeigen |
-| `show_consumption` | `true` | boolean | „Verbrauch:“ anzeigen |
-| `content_type` | `heating_oil` | string | Material / Farbe (siehe unten) |
-| `custom_color` | `[33, 150, 243]` | list / string | RGB oder Hex (nur bei `content_type: custom`) |
-| `liquid_style` | `classic` | string | `classic` (bisherige Darstellung) oder `new` |
-| `animation` | `false` | boolean | Wellen-Animation (nur Flüssigkeiten) |
-| `animation_interval` | `30` | number | Intervall der Welle in Sekunden (5–60) |
-| `bubbles` | `false` | boolean | Aufsteigende Blasen (nur Flüssigkeiten) |
-| `bubble_amount` | `3` | number | Menge der Blasen (1–8) |
-| `theme` | `""` | string | Optionales HA-Theme |
-| `font_size` | `100` | number / string | Schriftgröße (Zahl = %, auch `%` / `em` / `px`; Anzeige 50–200 %) |
-| `entities` | `[]` | list | Liste der Tanks mit `name` |
+| Option               | Standard                     | Typ     | Beschreibung                                                                                                                                                          |
+| -------------------- | ---------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`               | `custom:tank-card`           | string  | Kartentyp                                                                                                                                                             |
+| `title`              | `Tank Card`                  | string  | Kartentitel                                                                                                                                                           |
+| `show_title`         | `true`                       | boolean | Titel anzeigen                                                                                                                                                        |
+| `tank_count`         | `3`                          | number  | Anzahl der Tanks (1–20)                                                                                                                                               |
+| `tank_capacity`      | `1500`                       | number  | Kapazität pro Tank (in der Mess-Einheit)                                                                                                                              |
+| `initial_fill`       | `tank_count × tank_capacity` | number  | Anfangsfüllstand des Gesamtsystems (leer = voll)                                                                                                                      |
+| `sensor_mode`        | `consumption`                | string  | `consumption`, `fill_level_l` oder `fill_level_percent`                                                                                                               |
+| `consumption_sensor` | `""`                         | string  | Verbrauchssensor (nur bei `consumption`)                                                                                                                              |
+| `level_sensor`       | `""`                         | string  | Füllstandssensor (bei beiden Level-Modi)                                                                                                                              |
+| `unit`               | `auto`                       | string  | `auto`, `L`, `gal`, `m3`, `kg` oder eine eigene Einheit (z. B. `t`). `auto` nutzt die Einheit des Sensors, sonst das Einheitensystem von Home Assistant (`L` / `gal`) |
+| `decimals`           | automatisch                  | number  | Nachkommastellen (0–5). Leer = 2 bei `m³` / `t`, sonst 0                                                                                                              |
+| `tank_form`          | `rect`                       | string  | `rect`, `pool` oder `capsule`                                                                                                                                         |
+| `tank_style`         | `metal`                      | string  | `metal` oder `glass`                                                                                                                                                  |
+| `gas_tank`           | `false`                      | boolean | Standfüße und Kuppel (nur Metall + Kapsel + 1 Tank)                                                                                                                   |
+| `show_unittank`      | `true`                       | boolean | Menge pro Tank im Füllbalken anzeigen                                                                                                                                 |
+| `show_tank_label`    | `true`                       | boolean | Tank-Beschriftung anzeigen                                                                                                                                            |
+| `tank_label`         | `Tank`                       | string  | Gemeinsamer Name der Tanks (Nummerierung automatisch)                                                                                                                 |
+| `show_max`           | `true`                       | boolean | „Max:“ anzeigen                                                                                                                                                       |
+| `show_current`       | `true`                       | boolean | „Aktuell:“ anzeigen                                                                                                                                                   |
+| `show_fill_level`    | `true`                       | boolean | „Füllstand:“ anzeigen                                                                                                                                                 |
+| `show_consumption`   | `true`                       | boolean | „Verbrauch:“ anzeigen                                                                                                                                                 |
+| `content_type`       | `heating_oil`                | string  | Material / Farbe (siehe unten)                                                                                                                                        |
+| `custom_color`       | `[33, 150, 243]`             | list    | RGB `[r, g, b]` (nur bei `content_type: custom`)                                                                                                                      |
+| `liquid_style`       | `classic`                    | string  | `classic` (bisherige Darstellung) oder `new`                                                                                                                          |
+| `animation`          | `false`                      | boolean | Wellen-Animation (nur Flüssigkeiten)                                                                                                                                  |
+| `animation_interval` | `30`                         | number  | Intervall der Welle in Sekunden (5–60)                                                                                                                                |
+| `bubbles`            | `false`                      | boolean | Aufsteigende Blasen (nur Flüssigkeiten)                                                                                                                               |
+| `bubble_amount`      | `3`                          | number  | Menge der Blasen (1–8)                                                                                                                                                |
+| `warn_1`             | `false`                      | boolean | Warnstufe 1 (orange) aktivieren                                                                                                                                       |
+| `warn_1_level`       | `20`                         | number  | Warnstufe 1 bei einem Füllstand unter (%), 1–99                                                                                                                       |
+| `warn_2`             | `false`                      | boolean | Warnstufe 2 (rot) aktivieren                                                                                                                                          |
+| `warn_2_level`       | `10`                         | number  | Warnstufe 2 bei einem Füllstand unter (%), 1–99                                                                                                                       |
+| `warn_glow`          | `false`                      | boolean | Warnstufen visuell signalisieren (Leuchten und Nebel)                                                                                                                 |
+| `warn_auto`          | `false`                      | boolean | Benachrichtigungs-Automation (wird im Editor erstellt, siehe unten)                                                                                                   |
+| `warn_notify`        | `true`                       | boolean | Home-Assistant-Benachrichtigung (über die Automation)                                                                                                                 |
+| `warn_mobile`        | `false`                      | boolean | Mobile-App-Push-Benachrichtigung (über die Automation)                                                                                                                |
+| `warn_repeat`        | `1`                          | number  | Benachrichtigung wiederholen alle … (0–100, 0 = keine Wiederholung)                                                                                                   |
+| `warn_repeat_unit`   | `d`                          | string  | `h` (Stunden) oder `d` (Tage)                                                                                                                                         |
+| `warn_time`          | `"14:00:00"`                 | string  | Uhrzeit für die Wiederholung (nur bei `warn_repeat_unit: d`)                                                                                                          |
+| `theme`              | `""`                         | string  | Optionales HA-Theme                                                                                                                                                   |
+| `font_size`          | `100`                        | number  | Schriftgröße in Prozent (50–200)                                                                                                                                      |
+| `card_height`        | `350`                        | number  | Kartenhöhe in Pixel (250–1000). In der Sections-Ansicht hat der Layout-Reiter Vorrang                                                                                 |
 
-> **Entfernt seit v0.4.0:** `bg_color`  
+> **Entfernt seit v0.4.0:** `bg_color`
 > Die Hintergrundgestaltung erfolgt über das Home-Assistant-Theme.
+
+> **Entfernt seit v0.9.2:** `entities` (individuelle Tanknamen, stattdessen `tank_label` verwenden), Hex-Werte bei `custom_color` (stattdessen `[r, g, b]`) sowie `%` / `em` / `px` bei `font_size` (stattdessen eine Zahl).
 
 ---
 
@@ -173,8 +189,10 @@ Anschließend den Browser neu laden, z. B. mit **Strg + F5**.
 
 ### Verbrauchssensor
 
-    sensor_mode: consumption
-    consumption_sensor: sensor.heating_oil_consumption_total
+```
+sensor_mode: consumption
+consumption_sensor: sensor.heating_oil_consumption_total
+```
 
 Aktueller Füllstand:
 
@@ -183,15 +201,19 @@ Aktueller Füllstand:
 
 ### Absoluter Füllstand
 
-    sensor_mode: fill_level_l
-    level_sensor: sensor.heating_oil_level
+```
+sensor_mode: fill_level_l
+level_sensor: sensor.heating_oil_level
+```
 
 Sensorwert wird direkt als aktueller Füllstand verwendet (begrenzt auf 0 … Gesamtkapazität).
 
 ### Prozentualer Füllstand
 
-    sensor_mode: fill_level_percent
-    level_sensor: sensor.heating_oil_level_percent
+```
+sensor_mode: fill_level_percent
+level_sensor: sensor.heating_oil_level_percent
+```
 
 Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 
@@ -200,9 +222,17 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 
 ---
 
+# 📏 Einheiten
+
+Mit `unit: auto` übernimmt die Karte die Einheit des gewählten Sensors (`unit_of_measurement`). Hat der Sensor keine Einheit (oder meldet `%`), entscheidet das Einheitensystem von Home Assistant (`L` oder `gal`). Alternativ `L`, `gal`, `m3`, `kg` wählen oder eine eigene Einheit wie `t` eintragen.
+
+`tank_capacity` und `initial_fill` werden in derselben Mess-Einheit angegeben. Standardmäßig werden Mengen ohne Nachkommastellen angezeigt, `m³` und `t` mit zwei. Mit `decimals` (0–5) lässt sich das ändern.
+
+---
+
 # 🛢️ Tankformen
 
-- `rect` – rechteckiger Tank
+- `rect` – rechteckiger Tank (Quader)
 - `pool` – zylindrischer / abgerundeter Tank
 - `capsule` – Kapsel-Tank
 
@@ -235,6 +265,44 @@ Sensorwert (0–100 %) wird auf die Gesamtkapazität bezogen:
 - `new` – neue Darstellung (hell oben)
 
 > Bei Pellets und Hackschnitzel entfallen Welle und Blasen (Schüttgut).
+
+---
+
+# 🚨 Füllstandswarnungen & Benachrichtigungen
+
+Die Tank Card unterstützt zwei konfigurierbare Warnstufen:
+
+- **Warnstufe 1:** Orange
+- **Warnstufe 2:** Rot
+
+Beide Warnstufen sind standardmäßig deaktiviert und können unabhängig voneinander aktiviert werden. Für jede Stufe legst du den Füllstand in Prozent fest, unter dem die Warnung ausgelöst wird (Standard: 20 % und 10 %). Sind beide Stufen aktiv, liegt Stufe 2 immer unter Stufe 1. Eine Hysterese von 0,5 Prozentpunkten verhindert, dass die Warnstufen in der Nähe eines Schwellenwerts schnell hin- und herspringen.
+
+### Visuelle Signalisierung
+
+`warn_glow: true` lässt die Tanks orange (Stufe 1) bzw. rot (Stufe 2) pulsieren, mit einem ein- und ausblendenden Nebel dahinter. Stufe 2 pulsiert schneller. Ist im System „Bewegung reduzieren“ aktiv, wird stattdessen ein statisches Leuchten angezeigt.
+
+Wenn du im Editor die erste Warnstufe aktivierst, werden `warn_glow` und `warn_notify` automatisch eingeschaltet (sie lassen sich wieder ausschalten).
+
+### Benachrichtigungs-Automation
+
+Eine Karte läuft nur, solange ein Dashboard geöffnet ist. Benachrichtigungen verschickt deshalb eine Home-Assistant-**Automation**, die der Karten-Editor für dich anlegt:
+
+1. Mindestens eine Warnstufe aktivieren und einen Sensor wählen.
+2. `warn_auto` einschalten und die Kanäle wählen:
+   - `warn_notify: true` – Home-Assistant-Benachrichtigung (Glocke in der Seitenleiste, auch auf dem Handy sichtbar)
+   - `warn_mobile: true` – Push-Nachricht an alle Geräte mit der Home-Assistant-Companion-App (Tippen öffnet das Dashboard)
+3. Optional `warn_repeat` und `warn_repeat_unit` setzen. Solange der Füllstand unter der Schwelle bleibt, wird die Benachrichtigung in diesem Abstand wiederholt: bei `d` täglich zur Uhrzeit `warn_time`, bei `h` im festen Takt zu vollen Stunden. `0` = keine Wiederholung.
+4. Auf **Automation anlegen** klicken.
+
+Der Editor zeigt an, ob die Automation aktuell ist. Änderungen an den Karteneinstellungen gelten erst nach **Automation aktualisieren**; **Automation löschen** entfernt sie wieder. Die Automation heißt „<Titel> Benachrichtigung“. Bitte Einstellungen nur im Karten-Editor ändern, manuelle Änderungen werden überschrieben. Dafür sind Administratorrechte nötig.
+
+Wird der Tank nachgefüllt und der Füllstand liegt wieder über der Schwelle, werden die Benachrichtigungen automatisch entfernt.
+
+---
+
+# Screenshot:
+
+<img width="50%" height="auto" alt="New-look" src="https://github.com/user-attachments/assets/fdb74b57-51d6-444a-9698-ff5592e45c80" />
 
 ---
 
