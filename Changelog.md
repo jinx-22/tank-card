@@ -4,6 +4,34 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
+<!-- Insert this section directly above the entry [0.6.4] in Changelog.md -->
+
+## [0.9.5] - 2026-10-26
+
+### Added
+
+- Warning sign **Sensor unavailable** (only when a sensor is selected). Without a sensor the tanks show the initial fill.
+- Individual tank names via `entities[].name` (YAML).
+- Automatic correction of the warning levels when the field is left (level 1 stays above level 2).
+
+### Changed
+
+- The editor preview and the dashboard now look the same: the card uses a fixed base font (14 px / 20 px, scaled by `font_size`) instead of inheriting it from the surrounding dialog.
+- Badges: labels are written out and only abbreviated when a badge is too narrow, then the font shrinks down to 0.4 em (measured, not estimated). Every badge is sized individually. With large fonts or narrow cards the badges switch to one column.
+- Badges appear in the order in which they are switched on (order of the keys in the configuration). Hint added in the editor. Existing cards: switch a badge off and on once.
+- The card picker shows half-filled tanks; the warning sign never appears there.
+- The configuration stays tidy: default values are removed and the keys are sorted.
+- Editor: dividers between all blocks, new order in the panels Display (title, tank label, liquid style, theme, font size, card height, badges) and Content (initial fill directly after the sensor), all sliders have the same size (units are in the labels), help texts fall back to English, German label “Design” instead of “Theme”.
+- Notification automation: no time lock any more (a drop from level 1 to level 2 is always reported), the push message of the previous level is removed from the phone, exact interval for every number of hours (divisors of 24 follow the clock), values are stored in the automation and can be read back into the editor (**Read values from automation**), the unit in the message text is sanitized, a different automation id per edition.
+- Calculations (consumption, level, range) are unchanged.
+
+### Fixed
+
+- Number fields (card height, font size, wave interval, bubbles) jumped back to the default while typing; they can be typed freely now and are corrected when the field is left.
+- Warning level 2 could drop to 0 % when level 1 was set to 1 %.
+
+---
+
 ## [0.9.2] - 2026-10-16
 
 ### Added
