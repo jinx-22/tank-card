@@ -379,7 +379,7 @@ ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-o
 .info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em .8em}
 @container (max-width:55.9em){.info.one{grid-template-columns:1fr}}
 @container (min-width:56em){.info{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))}}
-.chip{display:flex;justify-content:space-between;gap:.5em;padding:.35em .8em;border-radius:.9em;font-weight:600;white-space:nowrap;min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.25)}
+.chip{display:flex;justify-content:space-between;gap:calc(var(--s,1)*.5em);padding:.35em calc(var(--s,1)*.8em);border-radius:.9em;font-weight:600;white-space:nowrap;min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.25)}
 .chip span{font-size:calc(var(--s,1)*1em)}
 .chip[hidden]{display:none}
 .chip span:first-child{opacity:.7;font-weight:500;flex:none}
@@ -554,23 +554,24 @@ class TankCard extends HTMLElement {
     if (e.bar) this._ro.observe(e.bar);
   }
   _labels() {
-    // Two columns as long as the abbreviated badges fit with a font of at least 65 %; only then one column.
-    // Full label if it fits, else the short form (ab_*); the font shrinks down to .4 em.
+    // Two columns as long as the abbreviated badges fit with a scale of at least 50 %; only then one column.
+    // Squeezing order: short label (ab_*), then 2-digit year in dates, then font, padding and gap shrink together down to .4.
     const lg = lang(this._hass), bar = this._els?.bar, list = bar ? Object.values(this._els.info).filter((x) => !x.chip.hidden) : [];
     if (!list.length || !bar.clientWidth) return;
+    list.forEach((x) => x.chip.style.setProperty("--s", 1));
     const cs = getComputedStyle(list[0].chip), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + (parseFloat(cs.columnGap) || 0);
-    const half = (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2 - pad;
-    const w = (x, t) => { x.l.textContent = t; return x.l.offsetWidth + x.v.offsetWidth; };
+    const half = (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2;
+    const w = (x, t, v) => { x.l.textContent = t; x.v.textContent = v; return x.l.offsetWidth + x.v.offsetWidth + pad; };
     const m = list.map((x) => {
-      x.chip.style.setProperty("--s", 1);
-      const t = tr(lg, x.k), a = TXT[lg]["ab_" + x.k.slice(2)] || t;
-      return { t, a, wt: w(x, t), wa: w(x, a) };
+      const t = tr(lg, x.k), a = TXT[lg]["ab_" + x.k.slice(2)] || t, y = x.fv.replace(/([./]\d\d[./])20(\d\d)\b/, "$1$2");
+      return { t, a, y, wt: w(x, t, x.fv), wa: w(x, a, x.fv), wy: y === x.fv ? 0 : w(x, a, y) };
     });
-    bar.classList.toggle("one", m.some((q) => half < q.wa * .65));
+    bar.classList.toggle("one", m.some((q) => half < (q.wy || q.wa) * .5));
     list.forEach((x, i) => {
-      const q = m[i], r = x.chip.clientWidth - pad, f = q.wt <= r;
+      const q = m[i], r = x.chip.clientWidth, f = q.wt <= r, d = !f && q.wa > r && q.wy;
       x.l.textContent = f ? q.t : q.a;
-      x.chip.style.setProperty("--s", clamp(r / (f ? q.wt : q.wa), .4, 1));
+      x.v.textContent = d ? q.y : x.fv;
+      x.chip.style.setProperty("--s", clamp(r / (f ? q.wt : d ? q.wy : q.wa), .4, 1));
     });
   }
   _ball() {
@@ -674,7 +675,7 @@ class TankCard extends HTMLElement {
     this._els.sens.box.hidden = !bad;
     if (bad) this._els.sens.tx.textContent = tr(lg, bad);
     for (const [id, x] of Object.entries(this._els.info)) {
-      x.v.textContent = fm[id];
+      x.v.textContent = x.fv = fm[id];
       x.chip.hidden = fm[id] === "";
     }
     this._labels();
