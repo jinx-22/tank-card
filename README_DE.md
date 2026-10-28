@@ -25,6 +25,8 @@
 
 <img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
 
+---
+
 Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** ergänzt Durchschnitts- und Tagesverbrauch, Reichweite, Nachfüllerkennung und Kosten. 
 
 <img width="33%" height="auto" alt="Pro" src="https://github.com/user-attachments/assets/771db771-cc6a-404c-83aa-6caccfed6c16" />
