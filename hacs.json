@@ -1,6 +1,6 @@
 {
   "name": "Tank Card",
   "filename": "tank-card.js",
-  "homeassistant": "2024.10.0",
+  "homeassistant": "2026.08.0",
   "render_readme": true
 }
