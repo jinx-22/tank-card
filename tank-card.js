@@ -10,7 +10,7 @@ const TXT = {
     q_content: "What is in the tank:", q_mode: "Which measuring sensor is used:", q_sensor: "Select your {m} here:", q_fill: "Enter initial fill:", unit: "Unit", decimals: "Decimal places",
     show_max: "Show “Max:”", show_current: "Show “Current:”", show_fill_level: "Show “Level:”", show_consumption: "Show “Consumption:”",
     show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval (seconds)", bubbles: "Rising bubbles",
-    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size (%)", card_height: "Card height (px)", tank_style: "Tank type", gas_tank: "Gas tank",
+    bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", card_height: "Card height", tank_style: "Tank type", gas_tank: "Gas tank",
     i_gas: "Adds legs and a dome to the capsule.", i_gas_on: "Available: capsule + metal + number 1.",
     h_tank_label: "Name of the tanks, e.g. Water barrel or Gas bottle. The numbering is added automatically. Empty = Tank.",
     h_consumption_sensor: "Sensor used in consumption mode. Tap on the card opens its details.",
@@ -58,7 +58,7 @@ const TXT = {
     q_content: "Was wurde getankt:", q_mode: "Welcher Mess-Sensor wird verwendet:", q_sensor: "Wählen Sie Ihren {m} hier aus:", q_fill: "Anfangsbestand eingeben:", unit: "Einheit", decimals: "Nachkommastellen",
     show_max: "„Max:“ anzeigen", show_current: "„Aktuell:“ anzeigen", show_fill_level: "„Füllstand:“ anzeigen", show_consumption: "„Verbrauch:“ anzeigen",
     show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle (Sekunden)", bubbles: "Aufsteigende Blasen",
-    bubble_amount: "Menge der Blasen", theme: "Design", font_size: "Schriftgröße (%)", card_height: "Kartenhöhe (px)", tank_style: "Tankart", gas_tank: "Gas-Tank",
+    bubble_amount: "Menge der Blasen", theme: "Design", font_size: "Schriftgröße", card_height: "Kartenhöhe", tank_style: "Tankart", gas_tank: "Gas-Tank",
     i_gas: "Fügt der Kapsel Standfüße und eine Kuppel hinzu.", i_gas_on: "Verfügbar: Kapsel + Metall + Anzahl 1.",
     h_tank_label: "Name der Tanks, z. B. Wasserfass oder Gasflasche. Die Nummerierung kommt automatisch. Leer = Tank.",
     h_consumption_sensor: "Sensor für den Modus Verbrauchssensor. Tippen auf die Karte öffnet dessen Details.",
@@ -554,28 +554,24 @@ class TankCard extends HTMLElement {
     if (e.bar) this._ro.observe(e.bar);
   }
   _labels() {
-    // Every badge: full label, the short form (ab_*) when it does not fit, then the font shrinks (down to .4 em).
-    // If even two columns are too tight (font shrinks by more than 10 %), the badges switch to one column.
-    const lg = lang(this._hass), bar = this._els?.bar;
-    if (!bar?.clientWidth) return;
-    let tight = false;
-    for (const x of Object.values(this._els.info)) {
-      const c = x.chip, short = TXT[lg]["ab_" + x.k.slice(2)], need = () => x.l.offsetWidth + x.v.offsetWidth;
-      c.style.setProperty("--s", 1);
-      x.l.textContent = tr(lg, x.k);
-      if (!c.clientWidth) continue;
-      const cs = getComputedStyle(c), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + (parseFloat(cs.columnGap) || 0), full = need();
-      let min = full;
-      if (short) {
-        const t = x.l.textContent;
-        x.l.textContent = short;
-        min = need();
-        if (full <= c.clientWidth - pad) x.l.textContent = t;
-      }
-      tight = tight || (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2 - pad < min * .9;
-      c.style.setProperty("--s", clamp((c.clientWidth - pad) / need(), .4, 1));
-    }
-    bar.classList.toggle("one", tight);
+    // Two columns as long as the abbreviated badges fit with a font of at least 65 %; only then one column.
+    // Full label if it fits, else the short form (ab_*); the font shrinks down to .4 em.
+    const lg = lang(this._hass), bar = this._els?.bar, list = bar ? Object.values(this._els.info).filter((x) => !x.chip.hidden) : [];
+    if (!list.length || !bar.clientWidth) return;
+    const cs = getComputedStyle(list[0].chip), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + (parseFloat(cs.columnGap) || 0);
+    const half = (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2 - pad;
+    const w = (x, t) => { x.l.textContent = t; return x.l.offsetWidth + x.v.offsetWidth; };
+    const m = list.map((x) => {
+      x.chip.style.setProperty("--s", 1);
+      const t = tr(lg, x.k), a = TXT[lg]["ab_" + x.k.slice(2)] || t;
+      return { t, a, wt: w(x, t), wa: w(x, a) };
+    });
+    bar.classList.toggle("one", m.some((q) => half < q.wa * .65));
+    list.forEach((x, i) => {
+      const q = m[i], r = x.chip.clientWidth - pad, f = q.wt <= r;
+      x.l.textContent = f ? q.t : q.a;
+      x.chip.style.setProperty("--s", clamp(r / (f ? q.wt : q.wa), .4, 1));
+    });
   }
   _ball() {
     if (this._o?.form !== "capsule") return;
@@ -766,7 +762,7 @@ class TankCardEditor extends HTMLElement {
   _schemas(d, lg) {
     const S = (name, vs, x, pre = "o_") => ({ name, selector: { select: { ...x, options: vs.map((v) => ({ value: v, label: tr(lg, pre + v) })) } } });
     const nb = (min, max, step = 1) => ({ number: { min, ...(max !== undefined && { max }), step, mode: "box" } });
-    const sl = (min, max, step) => ({ number: { min, max, step, mode: "slider" } });
+    const sl = (min, max, step, unit) => ({ number: { min, max, step, mode: "slider", unit_of_measurement: unit } });
     const b = (name) => ({ name, selector: { boolean: {} } });
     const g = (name, schema, w) => ({ type: "grid", name, flatten: true, ...(w && { column_min_width: w }), schema });
     const dd = { mode: "dropdown" }, wOn = warnOn(d), aOn = autoOn(d);
@@ -793,10 +789,10 @@ class TankCardEditor extends HTMLElement {
       ],
       d_unit: [b("show_unittank")],
       d_liq: PILE[d.content_type] ? [] : [S("liquid_style", LIQUIDS, dd)],
-      d_h: [{ name: "card_height", selector: sl(250, 1000, 10) }],
-      d_fs: [{ name: "font_size", selector: sl(50, 200, 5) }],
+      d_h: [{ name: "card_height", selector: sl(250, 1000, 10, "px") }],
+      d_fs: [{ name: "font_size", selector: sl(50, 200, 5, "%") }],
       d_th: [{ name: "theme", selector: { theme: {} } }],
-      animation: PILE[d.content_type] ? [] : [b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1) }] : [])],
+      animation: PILE[d.content_type] ? [] : [b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1, "s") }] : [])],
       anim_b: PILE[d.content_type] ? [] : [b("bubbles"), ...(d.bubbles ? [{ name: "bubble_amount", selector: sl(1, 8, 1) }] : [])],
       warn: [g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: nb(1, 99) }])],
       w2: [g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: nb(1, 99) }])],
