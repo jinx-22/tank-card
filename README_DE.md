@@ -10,7 +10,17 @@
 
 Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** ergänzt Durchschnitts- und Tagesverbrauch, Reichweite, Nachfüllerkennung und Kosten. Die einfache Karte bleibt klein und schnell.
 
-**Aktuelle Version: 0.9.5**
+**Aktuelle Version: 0.9.6**
+
+## 🆕 0.9.6
+
+### Geändert
+- Kleinere optische Verbesserungen und Feinschliff der Benutzeroberfläche.
+- Einheitlicheres Erscheinungsbild der Karte.
+
+### Behoben
+- Kleinere Fehler und optische Unstimmigkeiten behoben.
+- Allgemeine Verbesserungen der Stabilität und Darstellung.*
 
 ## 🆕 0.9.5
 
