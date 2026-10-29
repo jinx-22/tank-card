@@ -8,8 +8,6 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** ergänzt Durchschnitts- und Tagesverbrauch, Reichweite, Nachfüllerkennung und Kosten. Die einfache Karte bleibt klein und schnell.
-
 **Aktuelle Version: 0.9.6**
 
 ## 🆕 0.9.6
@@ -20,7 +18,9 @@ Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)**
 
 ### Behoben
 - Kleinere Fehler und optische Unstimmigkeiten behoben.
-- Allgemeine Verbesserungen der Stabilität und Darstellung.*
+- Allgemeine Verbesserungen der Stabilität und Darstellung.
+
+---
 
 ## 🆕 0.9.5
 
@@ -36,6 +36,13 @@ Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)**
 - Deutscher Editor: „Design“ statt „Theme“
 
 <img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
+
+---
+
+Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** ergänzt Durchschnitts- und Tagesverbrauch, Reichweite, Nachfüllerkennung und Kosten. 
+
+<img width="33%" height="auto" alt="Pro" src="https://github.com/user-attachments/assets/771db771-cc6a-404c-83aa-6caccfed6c16" />
+
 
 
 > **Hinweis:** Nach dem Update das Dashboard mit `Strg + F5` hart neu laden und den Browser-Cache löschen, damit Editor und Karte die neue Version laden.

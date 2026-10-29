@@ -8,8 +8,6 @@
 
 **Tank Card** is a Home Assistant custom card that visualizes tank levels, total capacity and consumption.
 
-Looking for more? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** adds average and daily consumption, range forecasts, refill detection and costs. The basic card stays small and fast.
-
 **Current version: 0.9.6**
 
 ## 🆕 0.9.6
@@ -21,7 +19,8 @@ Looking for more? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** 
 ### Fixed
 - Fixed minor bugs and visual inconsistencies.
 - General stability and rendering improvements.
-  
+
+---
 
 ## 🆕 0.9.5
 
@@ -37,6 +36,12 @@ Looking for more? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** 
 - German editor: “Design” instead of “Theme”
 
 <img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
+
+---
+
+Looking for more? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** adds average and daily consumption, range forecasts, refill detection and costs.
+
+<img width="33%" height="auto" alt="Pro" src="https://github.com/user-attachments/assets/771db771-cc6a-404c-83aa-6caccfed6c16" />
 
 > **Note:** After the update, hard-reload the dashboard with `Ctrl + F5` and clear the browser cache so that the editor and the card load the new version.
 
