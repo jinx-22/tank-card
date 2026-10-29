@@ -4,7 +4,17 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
-<!-- Insert this section directly above the entry [0.6.4] in Changelog.md -->
+## [0.9.6] - 2026-10-29
+
+### Changed
+- Minor visual refinements and UI polish.
+- Improved consistency of the card's appearance.
+
+### Fixed
+- Fixed minor bugs and visual inconsistencies.
+- General stability and rendering improvements.
+
+---
 
 ## [0.9.5] - 2026-10-26
 
