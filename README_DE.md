@@ -20,6 +20,8 @@
 - Kleinere Fehler und optische Unstimmigkeiten behoben.
 - Allgemeine Verbesserungen der Stabilität und Darstellung.
 
+---
+
 ## 🆕 0.9.5
 
 - Editor-Vorschau und Dashboard sehen jetzt gleich aus: Die Karte nutzt eine feste Basisschrift (14 px / 20 px, skaliert mit `font_size`), statt sie vom umgebenden Dialog zu erben

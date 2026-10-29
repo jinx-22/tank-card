@@ -1,4 +1,4 @@
-const VERSION = "0.9.5";
+const VERSION = "0.9.6";
 console.info("%c Tank Card %c v" + VERSION, "font-weight:bold;background:#03a9f4;color:#fff;padding:2px 6px;border-radius:3px 0 0 3px", "background:#555;color:#fff;padding:2px 6px;border-radius:0 3px 3px 0");
 const TXT = {
   en: {
@@ -9,7 +9,7 @@ const TXT = {
     sensor_mode: "Sensor mode", initial_fill: "Initial fill",
     q_content: "What is in the tank:", q_mode: "Which measuring sensor is used:", q_sensor: "Select your {m} here:", q_fill: "Enter initial fill:", unit: "Unit", decimals: "Decimal places",
     show_max: "Show “Max:”", show_current: "Show “Current:”", show_fill_level: "Show “Level:”", show_consumption: "Show “Consumption:”",
-    show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval (seconds)", bubbles: "Rising bubbles",
+    show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval", bubbles: "Rising bubbles",
     bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", card_height: "Card height", tank_style: "Tank type", gas_tank: "Gas tank",
     i_gas: "Adds legs and a dome to the capsule.", i_gas_on: "Available: capsule + metal + number 1.",
     h_tank_label: "Name of the tanks, e.g. Water barrel or Gas bottle. The numbering is added automatically. Empty = Tank.",
@@ -23,7 +23,7 @@ const TXT = {
     h_animation_interval: "Time between two waves (5–60 seconds).", h_bubble_amount: "1 = a few bubbles, 8 = very many bubbles.",
     h_font_size: "Font size in percent (50–200).",
     h_card_height: "250–1000 pixels. In the sections view the layout tab takes precedence.",
-    s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below (%)", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below (%)", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
+    s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
     a_order: "Warning level 1 must always be higher than warning level 2!",
     h_warn_1_level: "Warning when the level falls below this value (default 20 %).", h_warn_2_level: "Warning when the level falls below this value (default 10 %).",
     h_warn_notify: "Creates a notification in Home Assistant (bell in the sidebar, also visible on mobile) when a level is reached.",
@@ -57,7 +57,7 @@ const TXT = {
     sensor_mode: "Sensorart", initial_fill: "Anfangsbestand",
     q_content: "Was wurde getankt:", q_mode: "Welcher Mess-Sensor wird verwendet:", q_sensor: "Wählen Sie Ihren {m} hier aus:", q_fill: "Anfangsbestand eingeben:", unit: "Einheit", decimals: "Nachkommastellen",
     show_max: "„Max:“ anzeigen", show_current: "„Aktuell:“ anzeigen", show_fill_level: "„Füllstand:“ anzeigen", show_consumption: "„Verbrauch:“ anzeigen",
-    show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle (Sekunden)", bubbles: "Aufsteigende Blasen",
+    show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle", bubbles: "Aufsteigende Blasen",
     bubble_amount: "Menge der Blasen", theme: "Design", font_size: "Schriftgröße", card_height: "Kartenhöhe", tank_style: "Tankart", gas_tank: "Gas-Tank",
     i_gas: "Fügt der Kapsel Standfüße und eine Kuppel hinzu.", i_gas_on: "Verfügbar: Kapsel + Metall + Anzahl 1.",
     h_tank_label: "Name der Tanks, z. B. Wasserfass oder Gasflasche. Die Nummerierung kommt automatisch. Leer = Tank.",
@@ -71,7 +71,7 @@ const TXT = {
     h_animation_interval: "Zeit zwischen zwei Wellen (5–60 Sekunden).", h_bubble_amount: "1 = wenige Blasen, 8 = sehr viele Blasen.",
     h_font_size: "Schriftgröße in Prozent (50–200).",
     h_card_height: "250–1000 Pixel. In der Sections-Ansicht hat der Layout-Reiter Vorrang.",
-    s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter (%)", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter (%)", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
+    s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
     a_order: "Warnstufe 1 muss immer einen höheren Wert haben als Warnstufe 2!",
     h_warn_1_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 20 %).", h_warn_2_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 10 %).",
     h_warn_notify: "Erstellt in Home Assistant eine Benachrichtigung (Glocke in der Seitenleiste, auch auf dem Handy sichtbar), sobald eine Stufe erreicht wird.",
@@ -361,8 +361,8 @@ const fromVars = (v) => ({
   warn_auto: true
 });
 const CARD_CSS = `
-:host{display:block;height:100%;min-height:240px;container-type:inline-size}
-ha-card{position:relative;height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,14px);line-height:var(--lh,20px);letter-spacing:normal;color:var(--primary-text-color);background:radial-gradient(120% 70% at 50% 0,color-mix(in srgb,var(--card-background-color,#1c1c1c) 90%,#fff),var(--card-background-color,#1c1c1c))}
+:host{display:block;height:100%;min-height:240px}
+ha-card{position:relative;height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,14px);line-height:var(--lh,20px)}
 ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-offset:-2px}
 .rect{--rad:0 0 6px 6px;--h:14px;--o:var(--sh)}
 .pool{--rad:50%/calc(var(--h)/2);--h:24px;--o:calc(var(--sh)/2)}
@@ -379,7 +379,7 @@ ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-o
 .info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em .8em}
 @container (max-width:55.9em){.info.one{grid-template-columns:1fr}}
 @container (min-width:56em){.info{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))}}
-.chip{display:flex;justify-content:space-between;gap:.5em;padding:.35em .8em;border-radius:.9em;font-weight:600;white-space:nowrap;min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.25)}
+.chip{display:flex;justify-content:space-between;gap:calc(var(--s,1)*.5em);padding:.35em calc(var(--s,1)*.8em);border-radius:.9em;font-weight:600;white-space:nowrap;min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.25)}
 .chip span{font-size:calc(var(--s,1)*1em)}
 .chip[hidden]{display:none}
 .chip span:first-child{opacity:.7;font-weight:500;flex:none}
@@ -554,23 +554,24 @@ class TankCard extends HTMLElement {
     if (e.bar) this._ro.observe(e.bar);
   }
   _labels() {
-    // Two columns as long as the abbreviated badges fit with a font of at least 65 %; only then one column.
-    // Full label if it fits, else the short form (ab_*); the font shrinks down to .4 em.
+    // Two columns as long as the abbreviated badges fit with a scale of at least 50 %; only then one column.
+    // Squeezing order: short label (ab_*), then 2-digit year in dates, then font, padding and gap shrink together down to .4.
     const lg = lang(this._hass), bar = this._els?.bar, list = bar ? Object.values(this._els.info).filter((x) => !x.chip.hidden) : [];
     if (!list.length || !bar.clientWidth) return;
+    list.forEach((x) => x.chip.style.setProperty("--s", 1));
     const cs = getComputedStyle(list[0].chip), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + (parseFloat(cs.columnGap) || 0);
-    const half = (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2 - pad;
-    const w = (x, t) => { x.l.textContent = t; return x.l.offsetWidth + x.v.offsetWidth; };
+    const half = (bar.clientWidth - (parseFloat(getComputedStyle(bar).columnGap) || 0)) / 2;
+    const w = (x, t, v) => { x.l.textContent = t; x.v.textContent = v; return x.l.offsetWidth + x.v.offsetWidth + pad; };
     const m = list.map((x) => {
-      x.chip.style.setProperty("--s", 1);
-      const t = tr(lg, x.k), a = TXT[lg]["ab_" + x.k.slice(2)] || t;
-      return { t, a, wt: w(x, t), wa: w(x, a) };
+      const t = tr(lg, x.k), a = TXT[lg]["ab_" + x.k.slice(2)] || t, y = x.fv.replace(/([./]\d\d[./])20(\d\d)\b/, "$1$2");
+      return { t, a, y, wt: w(x, t, x.fv), wa: w(x, a, x.fv), wy: y === x.fv ? 0 : w(x, a, y) };
     });
-    bar.classList.toggle("one", m.some((q) => half < q.wa * .65));
+    bar.classList.toggle("one", m.some((q) => half < (q.wy || q.wa) * .5));
     list.forEach((x, i) => {
-      const q = m[i], r = x.chip.clientWidth - pad, f = q.wt <= r;
+      const q = m[i], r = x.chip.clientWidth, f = q.wt <= r, d = !f && q.wa > r && q.wy;
       x.l.textContent = f ? q.t : q.a;
-      x.chip.style.setProperty("--s", clamp(r / (f ? q.wt : q.wa), .4, 1));
+      x.v.textContent = d ? q.y : x.fv;
+      x.chip.style.setProperty("--s", clamp(r / (f ? q.wt : d ? q.wy : q.wa), .4, 1));
     });
   }
   _ball() {
@@ -649,7 +650,8 @@ class TankCard extends HTMLElement {
     this._tv = [];
     this._key = this._th = this._dk = null;
     this._els = { card, info, bar: bar.children.length ? bar : null, tanks, sens: { box: sens, tx: stx } };
-    this.shadowRoot.replaceChildren(style, card);
+    this._own?.forEach((n) => n.remove());
+    this.shadowRoot.prepend(...(this._own = [style, card]));
     this._observe();
   }
   _update() {
@@ -674,7 +676,7 @@ class TankCard extends HTMLElement {
     this._els.sens.box.hidden = !bad;
     if (bad) this._els.sens.tx.textContent = tr(lg, bad);
     for (const [id, x] of Object.entries(this._els.info)) {
-      x.v.textContent = fm[id];
+      x.v.textContent = x.fv = fm[id];
       x.chip.hidden = fm[id] === "";
     }
     this._labels();
@@ -685,7 +687,7 @@ class TankCard extends HTMLElement {
       this._tv = [];
       if (theme) {
         const th = { ...theme, ...theme.modes?.[dark ? "dark" : "light"] };
-        for (const [k, v] of Object.entries(th)) if (k.startsWith("--") && typeof v === "string") { cs.setProperty(k, v); this._tv.push(k); }
+        for (const [k, v] of Object.entries(th)) if (typeof v === "string") { const n = k.startsWith("--") ? k : "--" + k; cs.setProperty(n, v); this._tv.push(n); }
       }
     }
     cs.setProperty("--vc", vt.length || 6);
@@ -794,8 +796,8 @@ class TankCardEditor extends HTMLElement {
       d_th: [{ name: "theme", selector: { theme: {} } }],
       animation: PILE[d.content_type] ? [] : [b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1, "s") }] : [])],
       anim_b: PILE[d.content_type] ? [] : [b("bubbles"), ...(d.bubbles ? [{ name: "bubble_amount", selector: sl(1, 8, 1) }] : [])],
-      warn: [g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: nb(1, 99) }])],
-      w2: [g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: nb(1, 99) }])],
+      warn: [g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: { number: { min: 1, max: 99, step: 1, mode: "box", unit_of_measurement: "%" } } }])],
+      w2: [g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: { number: { min: 1, max: 99, step: 1, mode: "box", unit_of_measurement: "%" } } }])],
       w_glow: [{ ...b("warn_glow"), disabled: !wOn }],
       w_auto: [{ ...b("warn_auto"), disabled: !wOn }],
       wrep: aOn ? [g("warn_sched", [{ name: "warn_time", selector: { time: { no_second: true } }, disabled: d.warn_repeat_unit !== "d" }, { name: "warn_repeat", selector: nb(0, 100) }, S("warn_repeat_unit", REPEATS, dd)], "110px")] : [],

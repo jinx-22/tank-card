@@ -20,6 +20,8 @@
 - Fixed minor bugs and visual inconsistencies.
 - General stability and rendering improvements.
 
+---
+
 ## 🆕 0.9.5
 
 - The editor preview and the dashboard now look the same: the card uses a fixed base font (14 px / 20 px, scaled by `font_size`) instead of inheriting it from the surrounding dialog
