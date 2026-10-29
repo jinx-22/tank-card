@@ -9,7 +9,7 @@ const TXT = {
     sensor_mode: "Sensor mode", initial_fill: "Initial fill",
     q_content: "What is in the tank:", q_mode: "Which measuring sensor is used:", q_sensor: "Select your {m} here:", q_fill: "Enter initial fill:", unit: "Unit", decimals: "Decimal places",
     show_max: "Show “Max:”", show_current: "Show “Current:”", show_fill_level: "Show “Level:”", show_consumption: "Show “Consumption:”",
-    show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval (seconds)", bubbles: "Rising bubbles",
+    show_unittank: "Show amount per tank", show_title: "Show title", show_tank_label: "Show tank label", tank_label: "Tank label", animation: "Wave", animation_interval: "Wave interval", bubbles: "Rising bubbles",
     bubble_amount: "Amount of bubbles", theme: "Theme", font_size: "Font size", card_height: "Card height", tank_style: "Tank type", gas_tank: "Gas tank",
     i_gas: "Adds legs and a dome to the capsule.", i_gas_on: "Available: capsule + metal + number 1.",
     h_tank_label: "Name of the tanks, e.g. Water barrel or Gas bottle. The numbering is added automatically. Empty = Tank.",
@@ -23,7 +23,7 @@ const TXT = {
     h_animation_interval: "Time between two waves (5–60 seconds).", h_bubble_amount: "1 = a few bubbles, 8 = very many bubbles.",
     h_font_size: "Font size in percent (50–200).",
     h_card_height: "250–1000 pixels. In the sections view the layout tab takes precedence.",
-    s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below (%)", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below (%)", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
+    s_warn: "Level notification / signaling", warn_1: "Warning level 1 (orange)", warn_1_level: "Level 1 below", warn_2: "Warning level 2 (red)", warn_2_level: "Level 2 below", warn_notify: "Send notification", warn_mobile: "Send mobile app notification", warn_glow: "Signal warning levels",
     a_order: "Warning level 1 must always be higher than warning level 2!",
     h_warn_1_level: "Warning when the level falls below this value (default 20 %).", h_warn_2_level: "Warning when the level falls below this value (default 10 %).",
     h_warn_notify: "Creates a notification in Home Assistant (bell in the sidebar, also visible on mobile) when a level is reached.",
@@ -57,7 +57,7 @@ const TXT = {
     sensor_mode: "Sensorart", initial_fill: "Anfangsbestand",
     q_content: "Was wurde getankt:", q_mode: "Welcher Mess-Sensor wird verwendet:", q_sensor: "Wählen Sie Ihren {m} hier aus:", q_fill: "Anfangsbestand eingeben:", unit: "Einheit", decimals: "Nachkommastellen",
     show_max: "„Max:“ anzeigen", show_current: "„Aktuell:“ anzeigen", show_fill_level: "„Füllstand:“ anzeigen", show_consumption: "„Verbrauch:“ anzeigen",
-    show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle (Sekunden)", bubbles: "Aufsteigende Blasen",
+    show_unittank: "Menge pro Tank anzeigen", show_title: "Titel anzeigen", show_tank_label: "Tank-Beschriftung anzeigen", tank_label: "Tank-Beschriftung", animation: "Welle", animation_interval: "Intervall der Welle", bubbles: "Aufsteigende Blasen",
     bubble_amount: "Menge der Blasen", theme: "Design", font_size: "Schriftgröße", card_height: "Kartenhöhe", tank_style: "Tankart", gas_tank: "Gas-Tank",
     i_gas: "Fügt der Kapsel Standfüße und eine Kuppel hinzu.", i_gas_on: "Verfügbar: Kapsel + Metall + Anzahl 1.",
     h_tank_label: "Name der Tanks, z. B. Wasserfass oder Gasflasche. Die Nummerierung kommt automatisch. Leer = Tank.",
@@ -71,7 +71,7 @@ const TXT = {
     h_animation_interval: "Zeit zwischen zwei Wellen (5–60 Sekunden).", h_bubble_amount: "1 = wenige Blasen, 8 = sehr viele Blasen.",
     h_font_size: "Schriftgröße in Prozent (50–200).",
     h_card_height: "250–1000 Pixel. In der Sections-Ansicht hat der Layout-Reiter Vorrang.",
-    s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter (%)", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter (%)", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
+    s_warn: "Füllstand-Meldung / Signalisierung", warn_1: "Warnstufe 1 (orange)", warn_1_level: "Stufe 1 unter", warn_2: "Warnstufe 2 (rot)", warn_2_level: "Stufe 2 unter", warn_notify: "Benachrichtigung senden", warn_mobile: "Mobile-App-Benachrichtigung senden", warn_glow: "Warnstufen signalisieren",
     a_order: "Warnstufe 1 muss immer einen höheren Wert haben als Warnstufe 2!",
     h_warn_1_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 20 %).", h_warn_2_level: "Warnung, wenn der Füllstand unter diesen Wert fällt (Standard 10 %).",
     h_warn_notify: "Erstellt in Home Assistant eine Benachrichtigung (Glocke in der Seitenleiste, auch auf dem Handy sichtbar), sobald eine Stufe erreicht wird.",
@@ -361,8 +361,8 @@ const fromVars = (v) => ({
   warn_auto: true
 });
 const CARD_CSS = `
-:host{display:block;height:100%;min-height:240px;container-type:inline-size}
-ha-card{position:relative;height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,14px);line-height:var(--lh,20px);letter-spacing:normal;color:var(--primary-text-color);background:radial-gradient(120% 70% at 50% 0,color-mix(in srgb,var(--card-background-color,#1c1c1c) 90%,#fff),var(--card-background-color,#1c1c1c))}
+:host{display:block;height:100%;min-height:240px}
+ha-card{position:relative;height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;box-sizing:border-box;overflow:hidden;container-type:inline-size;font-size:var(--fs,14px);line-height:var(--lh,20px)}
 ha-card[tabindex]:focus-visible{outline:2px solid var(--primary-color);outline-offset:-2px}
 .rect{--rad:0 0 6px 6px;--h:14px;--o:var(--sh)}
 .pool{--rad:50%/calc(var(--h)/2);--h:24px;--o:calc(var(--sh)/2)}
@@ -650,7 +650,8 @@ class TankCard extends HTMLElement {
     this._tv = [];
     this._key = this._th = this._dk = null;
     this._els = { card, info, bar: bar.children.length ? bar : null, tanks, sens: { box: sens, tx: stx } };
-    this.shadowRoot.replaceChildren(style, card);
+    this._own?.forEach((n) => n.remove());
+    this.shadowRoot.prepend(...(this._own = [style, card]));
     this._observe();
   }
   _update() {
@@ -686,7 +687,7 @@ class TankCard extends HTMLElement {
       this._tv = [];
       if (theme) {
         const th = { ...theme, ...theme.modes?.[dark ? "dark" : "light"] };
-        for (const [k, v] of Object.entries(th)) if (k.startsWith("--") && typeof v === "string") { cs.setProperty(k, v); this._tv.push(k); }
+        for (const [k, v] of Object.entries(th)) if (typeof v === "string") { const n = k.startsWith("--") ? k : "--" + k; cs.setProperty(n, v); this._tv.push(n); }
       }
     }
     cs.setProperty("--vc", vt.length || 6);
@@ -795,8 +796,8 @@ class TankCardEditor extends HTMLElement {
       d_th: [{ name: "theme", selector: { theme: {} } }],
       animation: PILE[d.content_type] ? [] : [b("animation"), ...(d.animation ? [{ name: "animation_interval", selector: sl(5, 60, 1, "s") }] : [])],
       anim_b: PILE[d.content_type] ? [] : [b("bubbles"), ...(d.bubbles ? [{ name: "bubble_amount", selector: sl(1, 8, 1) }] : [])],
-      warn: [g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: nb(1, 99) }])],
-      w2: [g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: nb(1, 99) }])],
+      warn: [g("warn_row1", [b("warn_1"), { name: "warn_1_level", selector: { number: { min: 1, max: 99, step: 1, mode: "box", unit_of_measurement: "%" } } }])],
+      w2: [g("warn_row2", [b("warn_2"), { name: "warn_2_level", selector: { number: { min: 1, max: 99, step: 1, mode: "box", unit_of_measurement: "%" } } }])],
       w_glow: [{ ...b("warn_glow"), disabled: !wOn }],
       w_auto: [{ ...b("warn_auto"), disabled: !wOn }],
       wrep: aOn ? [g("warn_sched", [{ name: "warn_time", selector: { time: { no_second: true } }, disabled: d.warn_repeat_unit !== "d" }, { name: "warn_repeat", selector: nb(0, 100) }, S("warn_repeat_unit", REPEATS, dd)], "110px")] : [],
