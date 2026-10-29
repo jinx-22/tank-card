@@ -10,7 +10,18 @@
 
 Looking for more? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** adds average and daily consumption, range forecasts, refill detection and costs. The basic card stays small and fast.
 
-**Current version: 0.9.5**
+**Current version: 0.9.6**
+
+## 🆕 0.9.6
+
+### Changed
+- Minor visual refinements and UI polish.
+- Improved consistency of the card's appearance.
+
+### Fixed
+- Fixed minor bugs and visual inconsistencies.
+- General stability and rendering improvements.
+  
 
 ## 🆕 0.9.5
 
