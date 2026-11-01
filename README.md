@@ -8,32 +8,13 @@
 
 **Tank Card** is a Home Assistant custom card that visualizes tank levels, total capacity and consumption.
 
-**Current version: 0.9.6**
+**Current version: 0.9.7**
 
-## 🆕 0.9.6
+## 🆕 0.9.7
+(I think the card is now pretty much finished the way I envisioned it! For more options, there is the "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)")
 
-### Changed
-- Minor visual refinements and UI polish.
-- Improved consistency of the card's appearance.
-
-### Fixed
-- Fixed minor bugs and visual inconsistencies.
-- General stability and rendering improvements.
-
----
-
-## 🆕 0.9.5
-
-- The editor preview and the dashboard now look the same: the card uses a fixed base font (14 px / 20 px, scaled by `font_size`) instead of inheriting it from the surrounding dialog
-- Badges: labels are written out and only abbreviated when a badge is too narrow; the font then shrinks down to 0.4 em. Every badge is sized individually. With large fonts or narrow cards the badges switch to one column automatically
-- Badges appear in the **order in which you switch them on** (hint in the editor). Existing cards: switch a badge off and on again once to put it in order
-- Warning sign **Sensor unavailable** (only when a sensor is selected, never in the card picker); the card picker shows half-filled tanks
-- Individual tank names again via `entities[].name` (YAML)
-- Editor: dividers between all blocks, new order in the panels **Display** and **Content** (initial fill directly after the sensor), all sliders have the same size and their number fields (card height, font size, wave interval, bubbles) can be typed freely without jumping back, automatic correction of the warning levels, help texts fall back to English
-- The configuration stays tidy: default values are removed and the keys are sorted
-- Notification automation: no more time lock (a drop from level 1 to level 2 is always reported), the push message of the previous level is removed from the phone, exact interval for every number of hours, values are stored in the automation and can be read back into the editor, the unit in the message text is sanitized
-- Warning level 2 can no longer drop below 1 %
-- German editor: “Design” instead of “Theme”
+### Added
+- Accessibility: screen readers now read the title, the fill level, the amount and a possible warning of the card.
 
 <img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
 
