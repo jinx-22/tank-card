@@ -4,6 +4,14 @@ All notable changes to **Tank Card** are documented here.
 
 ---
 
+## [0.9.7] - 2026-10-31
+
+### Added
+
+- Accessibility: screen readers now read the title, the fill level, the amount and a possible warning of the card.
+
+---
+
 ## [0.9.6] - 2026-10-29
 
 ### Changed
