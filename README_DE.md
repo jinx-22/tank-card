@@ -8,38 +8,21 @@
 
 **Tank Card** ist eine Home-Assistant-Custom-Card zur Visualisierung von Tankfüllständen, Gesamtkapazität und Verbrauch.
 
-**Aktuelle Version: 0.9.6**
+**Aktuelle Version: 0.9.7**
 
-## 🆕 0.9.6
+## 🆕 0.9.7 
+(Hinweis: Ich denke die Karte ist nach meinen Vorstellungen nun soweit fertig! Für mehr Optionen gibts die "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)")
 
-### Geändert
-- Kleinere optische Verbesserungen und Feinschliff der Benutzeroberfläche.
-- Einheitlicheres Erscheinungsbild der Karte.
+### Neu
+- Barrierefreiheit: Bildschirmleser lesen Titel, Füllstand, Menge und eine mögliche Warnung der Karte vor.
 
-### Behoben
-- Kleinere Fehler und optische Unstimmigkeiten behoben.
-- Allgemeine Verbesserungen der Stabilität und Darstellung.
-
----
-
-## 🆕 0.9.5
-
-- Editor-Vorschau und Dashboard sehen jetzt gleich aus: Die Karte nutzt eine feste Basisschrift (14 px / 20 px, skaliert mit `font_size`), statt sie vom umgebenden Dialog zu erben
-- Schilder (Badges): Die Bezeichnungen werden ausgeschrieben und nur bei Platzmangel abgekürzt, danach wird die Schrift bis auf 0,4 em verkleinert. Jedes Schild wird einzeln angepasst. Bei großer Schrift oder schmaler Karte schalten die Schilder automatisch auf eine Spalte um
-- Die Schilder erscheinen in der **Reihenfolge, in der du sie aktivierst** (Hinweis im Editor). Bestehende Karten: ein Schild einmal aus- und wieder einschalten, um es einzusortieren
-- Warnschild **Sensor nicht verfügbar** (nur bei gewähltem Sensor, nie im Karten-Picker); der Karten-Picker zeigt halbvolle Tanks
-- Einzelne Tank-Namen wieder über `entities[].name` (YAML)
-- Editor: Trennlinien zwischen allen Blöcken, neue Reihenfolge in den Bereichen **Anzeige** und **Inhalt** (Anfangsbestand direkt nach dem Sensor), alle Schieberegler sind gleich groß und ihre Zahlenfelder (Kartenhöhe, Schriftgröße, Wellen-Intervall, Blasen) lassen sich frei eintippen, ohne zurückzuspringen, automatische Korrektur der Warnstufen, Hilfetexte fallen auf Englisch zurück
-- Die Konfiguration bleibt aufgeräumt: Standardwerte werden entfernt, die Schlüssel sind sortiert
-- Benachrichtigungs-Automation: keine Zeitsperre mehr (ein Rückgang von Stufe 1 auf Stufe 2 wird immer gemeldet), die Push-Nachricht der vorherigen Stufe wird auf dem Handy entfernt, exakter Abstand bei jeder Stundenzahl, die Werte werden in der Automation gespeichert und lassen sich in den Editor zurücklesen, die Einheit im Meldungstext wird bereinigt
-- Warnstufe 2 kann nicht mehr unter 1 % fallen
-- Deutscher Editor: „Design“ statt „Theme“
 
 <img width="50%" height="auto" alt="warn" src="https://github.com/user-attachments/assets/a4df9b41-6878-4e8f-be1a-7486a4f33984" />
 
 ---
 
 Du möchtest mehr? **[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)** ergänzt Durchschnitts- und Tagesverbrauch, Reichweite, Nachfüllerkennung und Kosten. 
+-
 
 <img width="33%" height="auto" alt="Pro" src="https://github.com/user-attachments/assets/771db771-cc6a-404c-83aa-6caccfed6c16" />
 
