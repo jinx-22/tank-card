@@ -11,7 +11,9 @@
 **Aktuelle Version: 0.9.7**
 
 ## 🆕 0.9.7 
-(Hinweis: Ich denke die Karte ist nach meinen Vorstellungen nun soweit fertig! Für mehr Optionen gibts die "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)")
+Hinweis: Ich denke die Karte ist nach meinen Vorstellungen nun soweit fertig! 
+Für noch mehr und weitere Optionen gibts jetzt auch die "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)"
+
 
 ### Neu
 - Barrierefreiheit: Bildschirmleser lesen Titel, Füllstand, Menge und eine mögliche Warnung der Karte vor.
