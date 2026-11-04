@@ -64,15 +64,14 @@ Die Berechnung hängt vom gewählten Sensormodus ab:
 
 # 📦 Installation
 
-## Einfache Installation → [Open in HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
+## Einfache Installation → [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jinx-22&repository=tank-card&category=plugin)
 
-## HACS
+## HA Marketplace (HACS)
 
-1. **HACS** öffnen
-2. **Frontend** auswählen
-3. Nach **Tank Card** suchen
-4. Karte installieren
-5. Home Assistant bzw. den Browser neu laden
+1. **Eintesllungen -> Marketplace** öffnen
+2. Nach **Tank Card** suchen
+3. Karte installieren
+4. Home Assistant bzw. den Browser neu laden
 
 ## Manuell
 
