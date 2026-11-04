@@ -11,7 +11,9 @@
 **Current version: 0.9.7**
 
 ## 🆕 0.9.7
-(I think the card is now pretty much finished the way I envisioned it! For more options, there is the "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)")
+I think the card is now pretty much finished the way I envisioned it! 
+
+For more options, there is the "[Tank Card Pro](https://github.com/jinx-22/tank-card-pro)"
 
 ### Added
 - Accessibility: screen readers now read the title, the fill level, the amount and a possible warning of the card.
