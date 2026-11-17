@@ -1,4 +1,4 @@
-const VERSION = "0.9.6";
+const VERSION = "0.9.7";
 console.info("%c Tank Card %c v" + VERSION, "font-weight:bold;background:#03a9f4;color:#fff;padding:2px 6px;border-radius:3px 0 0 3px", "background:#555;color:#fff;padding:2px 6px;border-radius:0 3px 3px 0");
 const TXT = {
   en: {
@@ -612,7 +612,7 @@ class TankCard extends HTMLElement {
       card.setAttribute("role", "button");
       card.addEventListener("click", tap);
       card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tap(); } });
-    }
+    } else card.setAttribute("role", "group");
     if (o.showTitle) card.append(el("div", "title", o.title));
     const info = {}, bar = el("div", "info");
     for (const i of o.order) {
@@ -690,6 +690,8 @@ class TankCard extends HTMLElement {
         for (const [k, v] of Object.entries(th)) if (typeof v === "string") { const n = k.startsWith("--") ? k : "--" + k; cs.setProperty(n, v); this._tv.push(n); }
       }
     }
+    const al = [o.title, fm.fill, fm.level, bad && tr(lg, bad)].filter(Boolean).join(", ");
+    if (this._els.card._al !== al) { this._els.card._al = al; this._els.card.setAttribute("aria-label", al); }
     cs.setProperty("--vc", vt.length || 6);
     const names = this._els.tanks.map((_, i) => o.names[i] ?? `${o.label ?? tr(lg, "u_tank")} ${i + 1}`);
     cs.setProperty("--lc", Math.max(...names.map((x) => x.length)));
